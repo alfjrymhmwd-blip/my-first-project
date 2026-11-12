@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "studio": "remotion studio src/index.ts",
-    "render": "remotion render src/index.ts NujoomClip out/nujoom.mp4"
+    "render": "remotion render src/index.ts NujoomClip out/nujoom.mp4",
+    "render:aghani": "remotion render src/index.ts AghaniClip out/aghani.mp4"
   },
   "dependencies": {
     "@fontsource/amiri": "^5.3.0",

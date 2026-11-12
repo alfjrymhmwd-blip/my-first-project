@@ -201,7 +201,7 @@ export const ScenePurpose: React.FC = () => {
 };
 
 /* 5 — الخاتمة: dawn over a mosque skyline */
-export const SceneDawn: React.FC = () => {
+export const SceneDawn: React.FC<{children?: React.ReactNode}> = ({children}) => {
   const f = useCurrentFrame();
   const dawn = ramp(f, 0, 255);
   return (
@@ -225,11 +225,13 @@ export const SceneDawn: React.FC = () => {
         </g>
         <path d="M585 1338 a26 26 0 1 0 22 40 a20 20 0 1 1 -22 -40Z" fill={GOLD} />
       </Svg>
+      {children ?? (
       <TextBlock top={260}>
         <Line at={8} dimAt={75} size={70}>النجومُ لا تكتبُ قدَرَك</Line>
         <Line at={75} dimAt={150} size={70}>قدَرُك بيدِ مَن خلقَ النجوم</Line>
         <Line at={150} size={92} weight={700} color={GOLD}>فعلِّق قلبَك بالله وحده</Line>
       </TextBlock>
+      )}
     </Scene>
   );
 };
