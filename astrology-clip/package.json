@@ -1,0 +1,20 @@
+{
+  "name": "astrology-clip",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "render": "remotion render src/index.ts NujoomClip out/nujoom.mp4"
+  },
+  "dependencies": {
+    "@fontsource/amiri": "^5.3.0",
+    "@fontsource/aref-ruqaa": "^5.3.0",
+    "@remotion/cli": "^4.0.543",
+    "@remotion/fonts": "^4.0.543",
+    "@types/react": "^19.3.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "remotion": "^4.0.543",
+    "typescript": "^7.0.2"
+  }
+}
