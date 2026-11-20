@@ -1,0 +1,496 @@
+<title>موسوعة الصحيحين</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#1d3557">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="الصحيحان">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Kufi+Arabic:wght@400;600;700&family=Reem+Kufi:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  /* Layout: a library — sticky ink header, a reading column of book shelves and hadith folios, a fixed tab bar. */
+  :root {
+    --paper: #f3f2ee;
+    --surface: #ffffff;
+    --surface-2: #e9e8e2;
+    --ink: #1a2230;
+    --muted: #5f6878;
+    --line: #dcdbd3;
+    --navy: #1d3557;
+    --navy-soft: #dfe6f0;
+    --on-navy: #ffffff;
+    --gold: #9a6a12;
+    --gold-soft: #f3e6c6;
+    --sea: #0e6e6a;
+    --sea-soft: #d9eeec;
+    --rose: #8a3a55;
+    --rose-soft: #f4e1e8;
+    --font-text: "Amiri", "Traditional Arabic", serif;
+    --font-ui: "Noto Kufi Arabic", "Segoe UI", Tahoma, sans-serif;
+    --font-display: "Reem Kufi", "Noto Kufi Arabic", sans-serif;
+    --matn-size: 1.45rem;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #0e121a; --surface: #161c27; --surface-2: #1e2532; --ink: #e6eaf1; --muted: #98a2b3;
+      --line: #2a3242; --navy: #8fb3e6; --navy-soft: #1c2a40; --on-navy: #0b111b;
+      --gold: #e0b75e; --gold-soft: #3a2f18; --sea: #5fc7bf; --sea-soft: #15302e; --rose: #e095b0; --rose-soft: #3a2230;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0e121a; --surface: #161c27; --surface-2: #1e2532; --ink: #e6eaf1; --muted: #98a2b3;
+    --line: #2a3242; --navy: #8fb3e6; --navy-soft: #1c2a40; --on-navy: #0b111b;
+    --gold: #e0b75e; --gold-soft: #3a2f18; --sea: #5fc7bf; --sea-soft: #15302e; --rose: #e095b0; --rose-soft: #3a2230;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--paper); color: var(--ink); font-family: var(--font-ui); font-size: 15px; line-height: 1.7;
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+  }
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--navy); }
+  button, select, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  a { color: var(--navy); }
+
+  header {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--navy); color: var(--on-navy);
+    padding-block: 10px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .head-in { max-width: 780px; margin: 0 auto; display: flex; align-items: center; gap: 10px; }
+  .head-in h1 { font-family: var(--font-display); font-size: 21px; margin: 0; flex: 1; line-height: 1.3; }
+  .head-in h1 small { display: block; font-family: var(--font-ui); font-size: 11px; font-weight: 400; opacity: .8; }
+  .hbtn { background: transparent; border: 1px solid color-mix(in srgb, var(--on-navy) 40%, transparent); color: var(--on-navy); border-radius: 10px; padding: 3px 10px; font-size: 13px; }
+
+  main {
+    max-width: 780px; margin: 0 auto; padding-block: 16px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  h2 { font-family: var(--font-display); font-size: 20px; margin: 0; text-wrap: balance; line-height: 1.4; }
+  h3 { font-size: 14px; margin: 0 0 6px; color: var(--navy); }
+  p { margin: 0; }
+  .muted { color: var(--muted); }
+  .small { font-size: 12.5px; }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .spacer { flex: 1; }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .crumbs { display: flex; gap: 6px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+  .crumbs a { text-decoration: none; color: var(--navy); }
+
+  .btn { border: 1px solid var(--line); background: var(--surface-2); border-radius: 12px; padding: 7px 14px; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: var(--ink); }
+  .btn.primary { background: var(--navy); border-color: var(--navy); color: var(--on-navy); font-weight: 600; }
+  .btn.on { background: var(--gold-soft); border-color: var(--gold); color: var(--gold); font-weight: 600; }
+  .btn:disabled { opacity: .5; cursor: default; }
+  .badge { display: inline-flex; font-size: 12px; font-weight: 600; padding: 1px 10px; border-radius: 999px; white-space: nowrap; }
+  .b-b { background: var(--sea-soft); color: var(--sea); }
+  .b-m { background: var(--rose-soft); color: var(--rose); }
+  .b-g { background: var(--gold-soft); color: var(--gold); }
+
+  /* Collections */
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .col { text-align: right; text-decoration: none; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 16px 18px; display: flex; flex-direction: column; gap: 6px; position: relative; overflow: hidden; }
+  .col::after { content: ""; position: absolute; inset: 0 auto 0 0; width: 6px; background: var(--c); }
+  .col.b { --c: var(--sea); } .col.m { --c: var(--rose); }
+  .col .t { font-family: var(--font-display); font-size: 22px; }
+  .col .a { font-size: 12.5px; color: var(--muted); }
+  .bar { height: 6px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
+  .bar > i { display: block; height: 100%; background: var(--c, var(--navy)); border-radius: 99px; }
+
+  /* Books */
+  .books { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+  .book { text-decoration: none; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: grid; grid-template-columns: 34px 1fr; gap: 8px; align-items: center; }
+  .book:hover, .item:hover, .col:hover { border-color: var(--navy); }
+  .book .no { font-family: var(--font-display); color: var(--gold); text-align: center; font-variant-numeric: tabular-nums; }
+  .book .nm { font-weight: 600; min-width: 0; }
+  .book .rg { display: block; font-size: 11.5px; color: var(--muted); font-weight: 400; }
+
+  /* Hadith list */
+  .list { display: flex; flex-direction: column; gap: 8px; }
+  .item { text-decoration: none; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 14px; display: grid; grid-template-columns: 52px 1fr; gap: 10px; }
+  .item .no { font-family: var(--font-display); color: var(--gold); font-size: 15px; text-align: center; font-variant-numeric: tabular-nums; padding-top: 3px; }
+  .item .no.read { color: var(--sea); }
+  .item .tx { font-family: var(--font-text); font-size: 1.12rem; line-height: 1.9; min-width: 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .item .meta { grid-column: 2; font-size: 12px; color: var(--muted); margin-top: -4px; }
+
+  /* Folio */
+  .folio { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px; position: relative; display: flex; flex-direction: column; gap: 10px; }
+  .folio::before { content: ""; position: absolute; inset: 6px; border: 1px solid color-mix(in srgb, var(--gold) 40%, transparent); border-radius: 13px; pointer-events: none; }
+  .folio > * { position: relative; }
+  .num { font-family: var(--font-display); color: var(--gold); font-variant-numeric: tabular-nums; }
+  .matn { font-family: var(--font-text); font-size: var(--matn-size); line-height: 2.1; text-align: justify; }
+  .matn .q { color: var(--navy); font-weight: 700; }
+  .sizer { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .sizer button { background: var(--surface-2); border: 0; padding: 2px 10px; }
+
+  .sharh { gap: 12px; }
+  .sharh .blk { border-top: 1px solid var(--line); padding-top: 10px; }
+  .sharh .blk:first-of-type { border-top: 0; padding-top: 0; }
+  .sharh ul { margin: 0; padding: 0 20px 0 0; display: flex; flex-direction: column; gap: 4px; }
+  dl.words { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; }
+  dl.words dt { font-family: var(--font-text); font-weight: 700; font-size: 1.12rem; color: var(--rose); }
+  dl.words dd { margin: 0; }
+  .apply { background: var(--gold-soft); border-radius: 12px; padding: 10px 14px; }
+  .apply h3 { color: var(--gold); }
+  .note { font-size: 12px; color: var(--muted); border-inline-start: 3px solid var(--gold); padding-inline-start: 10px; }
+  .thinking { display: flex; align-items: center; gap: 10px; color: var(--muted); }
+  .dots::after { content: "…"; animation: dots 1.2s steps(4) infinite; display: inline-block; width: 1.2em; overflow: hidden; vertical-align: bottom; }
+  @keyframes dots { from { width: 0 } to { width: 1.2em } }
+
+  .search { width: 100%; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px; background: var(--surface); }
+  .seg button { border: 0; background: transparent; border-radius: 999px; padding: 3px 12px; font-size: 13px; }
+  .seg button.on { background: var(--navy); color: var(--on-navy); }
+  mark { background: var(--gold-soft); color: inherit; border-radius: 4px; padding: 0 2px; }
+  .empty { text-align: center; padding: 26px 10px; color: var(--muted); }
+
+  nav.tabs {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 20; background: var(--surface); border-top: 1px solid var(--line);
+    padding-top: 6px; padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+    padding-left: max(8px, env(safe-area-inset-left, 0px)); padding-right: max(8px, env(safe-area-inset-right, 0px));
+  }
+  .tabs-in { max-width: 520px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+  .tab { background: transparent; border: 0; border-radius: 12px; padding: 4px 2px; display: flex; flex-direction: column; align-items: center; font-size: 12px; color: var(--muted); }
+  .tab svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .tab.on { color: var(--navy); background: var(--navy-soft); font-weight: 700; }
+  .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(84px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--paper); padding: 8px 16px; border-radius: 999px; font-size: 13px; z-index: 40; opacity: 0; transition: opacity .25s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+  @media (max-width: 420px) { :root { --matn-size: 1.3rem; } .head-in h1 small { display: none; } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+
+<div dir="rtl" lang="ar">
+<header>
+  <div class="head-in">
+    <h1>موسوعة الصحيحين<small>كل أحاديث صحيح البخاري وصحيح مسلم مع الشرح</small></h1>
+    <button class="hbtn" id="themeBtn" type="button" aria-label="تبديل الوضع الليلي">الوضع</button>
+  </div>
+</header>
+<main id="app"><div class="panel"><p class="muted">جارٍ تحميل فهرس الكتابين…</p></div></main>
+<nav class="tabs" aria-label="التنقل">
+  <div class="tabs-in">
+    <button class="tab" data-go="home" type="button"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>الرئيسية</button>
+    <button class="tab" data-go="c-b" type="button"><svg viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/></svg>البخاري</button>
+    <button class="tab" data-go="c-m" type="button"><svg viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/></svg>مسلم</button>
+    <button class="tab" data-go="search" type="button"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>البحث</button>
+  </div>
+</nav>
+<div class="toast" id="toast" role="status"></div>
+</div>
+
+<script>
+/* ---------- الأساسيات ---------- */
+const COL = { b: { name: "صحيح البخاري", short: "البخاري", author: "الإمام محمد بن إسماعيل البخاري (ت 256هـ)", cls: "b-b" },
+              m: { name: "صحيح مسلم", short: "مسلم", author: "الإمام مسلم بن الحجاج النيسابوري (ت 261هـ)", cls: "b-m" } };
+const app = document.getElementById("app");
+const ar = (n) => String(n).replace(/\d/g, (d) => "٠١٢٣٤٥٦٧٨٩"[d]);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const strip = (t) => t.replace(/[ؐ-ًؚ-ٰٟۖ-ۭـ]/g, "").replace(/[أإآٱ]/g, "ا").replace(/ى/g, "ي").replace(/ة/g, "ه");
+const KEY = "sahihain-v1";
+let S = { read: {}, fav: {}, last: null, size: 0 };
+try { Object.assign(S, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) {}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+const store = { get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
+
+let INDEX = null, CURATED = {};
+const BOOKS = {};               // "b8" -> rows [[key, displayNo, text]]
+async function getJSON(u) { const r = await fetch(u); if (!r.ok) throw new Error(u + " " + r.status); return r.json(); }
+async function loadBook(c, id) { const k = c + id; if (!BOOKS[k]) BOOKS[k] = await getJSON(`data/${k}.json`); return BOOKS[k]; }
+const bookMeta = (c, id) => INDEX[c].books.find((b) => b.id === +id);
+const hkey = (c, id, key) => `h-${c}-${id}-${key}`;
+const dispNo = (c, row) => row[1] ? ar(row[1]) : (c === "m" ? "—" : ar(row[0]));
+const refText = (c, row) => `${COL[c].name}${row[1] ? "، رقم " + ar(row[1]) : ""}`;
+const readCount = (c, id) => Object.keys(S.read).filter((k) => k.startsWith(c + id + ":")).length;
+
+// كلام النبي ﷺ يرد غالبًا بين علامتي تنصيص
+function matnHTML(t) { if ((t.match(/"/g) || []).length % 2) t += '"'; return esc(t).replace(/&quot;([^&]+?)&quot;/g, '<span class="q">"$1"</span>'); }
+function quoted(t) { if ((t.match(/"/g) || []).length % 2) t += '"'; const all = [...t.matchAll(/"([^"]+)"/g)].map((m) => m[1].trim()); return all.sort((a, b) => b.length - a.length)[0] || ""; }
+function snippet(t) { const q = quoted(t); if (q.split(" ").length >= 4) return q; const w = t.split(" "); return w.slice(Math.max(0, w.length - 28)).join(" "); }
+function dorarURL(t) { const base = snippet(t); return "https://dorar.net/hadith/search?q=" + encodeURIComponent(strip(base).replace(/[^ء-ي ]/g, " ").split(/\s+/).filter(Boolean).slice(0, 8).join(" ")); }
+
+/* ---------- الشرح عبر Claude ---------- */
+let sample = null;
+(async () => { try { sample = window.claude ? await window.claude.use("sample") : null; } catch (e) { sample = null; } if (location.hash.startsWith("#h-")) route(); })();
+
+/* ---------- الشاشات ---------- */
+async function viewHome() {
+  let today = "";
+  const ck = Object.keys(CURATED);
+  if (ck.length) {
+    const k = ck[Math.floor(Date.now() / 86400000) % ck.length];
+    const [c, key] = k.split(":");
+    const loc = await findCurated(c, key);
+    if (loc) {
+      const cur = CURATED[k];
+      today = `<section class="folio">
+        <div class="row"><span class="badge b-g">حديث اليوم</span><span class="spacer"></span><span class="badge ${COL[c].cls}">${COL[c].short} ${dispNo(c, loc.row)}</span></div>
+        <h2>${esc(cur.ttl)}</h2>
+        <p class="matn">${matnHTML(snippet(loc.row[2]))}</p>
+        <div class="row"><span class="muted small">${esc(bookMeta(c, loc.id).name)}</span><span class="spacer"></span><a class="btn primary" href="#${hkey(c, loc.id, key)}">اقرأ الحديث وشرحه</a></div>
+      </section>`;
+    }
+  }
+  const last = S.last ? (() => { const [c, id, key] = S.last; return `<a class="btn" href="#${hkey(c, id, key)}">تابع القراءة: ${COL[c].short}، ${esc(bookMeta(c, id).name)}</a>`; })() : "";
+  const nFav = Object.keys(S.fav).length;
+  return `${today}
+  <section class="cols">${["b", "m"].map((c) => {
+    const read = Object.keys(S.read).filter((k) => k[0] === c).length;
+    return `<a class="col ${c}" href="#c-${c}"><span class="t">${COL[c].name}</span>
+      <span class="a">${COL[c].author}</span>
+      <span>${INDEX[c].count.toLocaleString("ar-EG")} حديثًا في ${ar(INDEX[c].books.length)} كتابًا</span>
+      <div class="bar"><i style="width:${(read / INDEX[c].count) * 100}%"></i></div>
+      <span class="a">قرأت ${ar(read)} حديثًا</span></a>`;
+  }).join("")}</section>
+  <div class="row">${last}${nFav ? `<a class="btn" href="#fav">المفضلة (${ar(nFav)})</a>` : ""}<a class="btn" href="#search">ابحث في كل الأحاديث</a></div>
+  <section class="panel small">
+    <h3>كيف تستفيد من الموسوعة؟</h3>
+    <p>تصفّح الكتب كما رتّبها الإمامان، أو ابحث بكلمة من الحديث. في صفحة كل حديث اضغط <b>«اشرح لي»</b> ليُكتب لك شرح مبسّط: المعنى، والكلمات الغريبة، والفوائد، وكيف تطبّقه. ويوجد شرح جاهز مختصر لأشهر الأحاديث.</p>
+    <p class="muted">النصوص بأسانيدها كاملة من نسخة إلكترونية مفتوحة لصحيح البخاري (ترقيم فتح الباري) وصحيح مسلم (ترقيم محمد فؤاد عبد الباقي). للتحقق من أي حديث استخدم زر «الدرر السنية» في صفحته.</p>
+  </section>
+  ${offlineBox()}`;
+}
+
+function viewCollection(c) {
+  const bs = INDEX[c].books;
+  return `<div class="crumbs"><a href="#home">الرئيسية</a> ‹ <span>${COL[c].name}</span></div>
+  <div class="row"><h2>${COL[c].name}</h2><span class="spacer"></span><span class="muted small">${ar(bs.length)} كتابًا · ${ar(INDEX[c].count)} حديثًا</span></div>
+  <div class="books">${bs.map((b, i) => {
+    const r = readCount(c, b.id);
+    return `<a class="book" href="#k-${c}-${b.id}"><span class="no">${ar(i + 1)}</span>
+      <span class="nm">كتاب ${esc(b.name)}<span class="rg">${ar(b.count)} حديثًا${b.first && c === "b" ? ` · ${ar(b.first)}–${ar(b.last)}` : ""}${r ? ` · قرأت ${ar(r)}` : ""}</span></span></a>`;
+  }).join("")}</div>`;
+}
+
+const PAGE = 40;
+let listLimit = {};
+async function viewBook(c, id) {
+  const b = bookMeta(c, id); if (!b) return viewCollection(c);
+  const rows = await loadBook(c, id);
+  const lim = listLimit[c + id] || PAGE;
+  return `<div class="crumbs"><a href="#home">الرئيسية</a> ‹ <a href="#c-${c}">${COL[c].name}</a> ‹ <span>كتاب ${esc(b.name)}</span></div>
+  <div class="row"><h2>كتاب ${esc(b.name)}</h2><span class="spacer"></span><span class="muted small">${ar(rows.length)} حديثًا · قرأت ${ar(readCount(c, id))}</span></div>
+  <div class="list">${rows.slice(0, lim).map((r) => `
+    <a class="item" href="#${hkey(c, id, r[0])}"><span class="no ${S.read[c + id + ":" + r[0]] ? "read" : ""}">${dispNo(c, r)}</span>
+      <span class="tx">${esc(snippet(r[2]))}</span>
+      ${CURATED[c + ":" + r[0]] ? `<span class="meta">شرح جاهز: ${esc(CURATED[c + ":" + r[0]].ttl)}</span>` : ""}</a>`).join("")}</div>
+  ${lim < rows.length ? `<button class="btn" data-more="${c + id}" type="button" style="align-self:center">عرض المزيد (${ar(rows.length - lim)} متبقٍّ)</button>` : ""}`;
+}
+
+async function viewHadith(c, id, key) {
+  const b = bookMeta(c, id); if (!b) return viewCollection(c);
+  const rows = await loadBook(c, id);
+  const i = rows.findIndex((r) => r[0] === key); if (i < 0) return viewBook(c, id);
+  const row = rows[i];
+  S.read[c + id + ":" + key] = 1; S.last = [c, id, key]; save();
+  const bi = INDEX[c].books.indexOf(b);
+  const prev = i > 0 ? hkey(c, id, rows[i - 1][0]) : (bi > 0 ? `k-${c}-${INDEX[c].books[bi - 1].id}` : "");
+  const next = i < rows.length - 1 ? hkey(c, id, rows[i + 1][0]) : (bi < INDEX[c].books.length - 1 ? `k-${c}-${INDEX[c].books[bi + 1].id}` : "");
+  const fk = c + ":" + key, isFav = !!S.fav[fk];
+  return `<div class="crumbs"><a href="#c-${c}">${COL[c].name}</a> ‹ <a href="#k-${c}-${id}">كتاب ${esc(b.name)}</a></div>
+  <article class="folio">
+    <div class="row"><span class="num">الحديث ${dispNo(c, row)}</span><span class="spacer"></span><span class="badge ${COL[c].cls}">${COL[c].name}</span></div>
+    <p class="matn">${matnHTML(row[2])}</p>
+    <div class="row small muted"><span>${esc(refText(c, row))} · كتاب ${esc(b.name)}</span><span class="spacer"></span>
+      <span class="sizer" role="group" aria-label="حجم الخط"><button data-size="-1" type="button" aria-label="تصغير الخط">ص-</button><button data-size="1" type="button" aria-label="تكبير الخط">ك+</button></span></div>
+  </article>
+  <div class="row">
+    ${sample ? `<button class="btn primary" data-act="explain" type="button">اشرح لي</button>` : ""}
+    <a class="btn" href="${dorarURL(row[2])}" target="_blank" rel="noopener">الدرر السنية</a>
+    <button class="btn ${isFav ? "on" : ""}" data-act="fav" type="button">${isFav ? "★ في المفضلة" : "☆ مفضلة"}</button>
+    <button class="btn" data-act="copy" type="button">نسخ</button>
+  </div>
+  <div id="sharhBox">${sharhInitial(c, key)}</div>
+  <div class="row">${prev ? `<a class="btn" href="#${prev}">→ السابق</a>` : ""}<span class="spacer"></span>${next ? `<a class="btn" href="#${next}">التالي ←</a>` : ""}</div>`;
+}
+
+function sharhHTML(s, label) {
+  const words = (s.words || []).filter((w) => w && w.w);
+  const lessons = (s.lessons || s.f || []).filter(Boolean);
+  return `<section class="panel sharh">
+    <div class="row"><h2>${esc(s.title || s.ttl || "شرح الحديث")}</h2><span class="spacer"></span><span class="badge b-g">${label}</span></div>
+    ${s.rawi || s.n ? `<p class="muted small">الصحابي الراوي: ${esc(s.rawi || s.n)}</p>` : ""}
+    <div class="blk"><h3>المعنى الإجمالي</h3><p>${esc(s.summary || s.sharh || "")}</p></div>
+    ${s.context ? `<div class="blk"><h3>السياق</h3><p>${esc(s.context)}</p></div>` : ""}
+    ${words.length || (s.w && s.w.length) ? `<div class="blk"><h3>معاني الكلمات</h3><dl class="words">${(words.length ? words.map((w) => [w.w, w.m]) : s.w).map(([a, b]) => `<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join("")}</dl></div>` : ""}
+    ${lessons.length ? `<div class="blk"><h3>ماذا نتعلّم؟</h3><ul>${lessons.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></div>` : ""}
+    ${s.apply || s.amal ? `<div class="blk apply"><h3>طبّقه اليوم</h3><p>${esc(s.apply || s.amal)}</p></div>` : ""}
+    <p class="note">هذا شرح مبسّط للتعلّم، وليس فتوى. للتوسع راجع الشروح المعتمدة مثل «فتح الباري» لابن حجر و«المنهاج شرح صحيح مسلم» للنووي، أو صفحة الحديث في الدرر السنية.</p>
+  </section>`;
+}
+function sharhInitial(c, key) {
+  const cur = CURATED[c + ":" + key];
+  if (cur) return sharhHTML(cur, "شرح جاهز");
+  const saved = store.get(`sharh:${c}:${key}`);
+  if (saved) return sharhHTML(saved, "شرح محفوظ");
+  if (sample) return `<section class="panel small muted"><p>اضغط «اشرح لي» ليُكتب لك شرح مبسّط لهذا الحديث: معناه، وكلماته الغريبة، وفوائده، وكيف تطبّقه.</p></section>`;
+  return `<section class="panel small muted"><p>الشرح الفوري متاح عند فتح الموسوعة داخل Claude. ويمكنك قراءة شرح الحديث وحكمه من زر «الدرر السنية».</p></section>`;
+}
+
+let explainCtl = null;
+async function explain() {
+  const [c, id, key] = S.last; const b = bookMeta(c, id);
+  const row = (await loadBook(c, id)).find((r) => r[0] === key);
+  const box = document.getElementById("sharhBox");
+  explainCtl = new AbortController();
+  box.innerHTML = `<section class="panel"><div class="thinking"><span>يُكتب الشرح الآن<span class="dots"></span></span><span class="spacer"></span><button class="btn" data-act="stop" type="button">إيقاف</button></div><p class="muted small">قد يستغرق ذلك نصف دقيقة تقريبًا.</p></section>`;
+  const prompt = `أنت مُعلّم متمكّن في علم الحديث. اشرح الحديث التالي من ${COL[c].name}${row[1] ? " (رقم " + row[1] + ")" : ""}، كتاب ${b.name}، شرحًا مبسّطًا يفهمه المسلم العادي.
+اعتمد على ما قرره شُرّاح الحديث المعتبرون (مثل ابن حجر في فتح الباري والنووي في شرح مسلم)، ولا تنسب إليهم كلامًا حرفيًا، ولا تذكر أحاديث أو أرقامًا لست متأكدًا منها. إن كان في المسألة خلاف معتبر فاذكره باختصار. إن لم تكن متأكدًا من شيء فقل ذلك صراحة. تجاهل الإسناد إلا لذكر الصحابي الراوي.
+
+نص الحديث بإسناده:
+${row[2].slice(0, 6000)}
+
+أجب بكائن JSON واحد فقط بهذا الشكل، وكل القيم بالعربية الفصحى السهلة:
+{"title":"عنوان قصير لموضوع الحديث","rawi":"اسم الصحابي راوي الحديث","summary":"المعنى الإجمالي في ثلاث إلى خمس جمل","context":"سبب ورود الحديث أو سياقه إن كان معروفًا، وإلا نص فارغ","words":[{"w":"كلمة غريبة من الحديث","m":"معناها"}],"lessons":["فائدة مستنبطة","فائدة أخرى"],"apply":"عمل عملي واحد يطبّق به القارئ الحديث اليوم"}`;
+  try {
+    const s = await sample.json(prompt, { signal: explainCtl.signal, cache: { gcTime: 86400000 } });
+    if (!s || typeof s !== "object" || !s.summary) throw { code: "invalid_json" };
+    store.set(`sharh:${c}:${key}`, s);
+    if (S.last && S.last[2] === key) box.innerHTML = sharhHTML(s, "شرح مولَّد بواسطة Claude");
+  } catch (e) {
+    const msg = {
+      cancelled: "أُوقف الشرح.",
+      not_granted: "لم يُسمح للموسوعة باستخدام Claude، لذلك أُخفي زر الشرح.",
+      sampling_disabled: "Claude غير متاح لهذا الحساب.",
+      rate_limited: "طلبات كثيرة في وقت قصير. انتظر قليلًا ثم اضغط «اشرح لي» مرة أخرى.",
+      invalid_json: "لم يصل الشرح بالشكل المتوقع. اضغط «اشرح لي» للمحاولة مرة أخرى.",
+      refused: "تعذّر شرح هذا النص. جرّب الدرر السنية.",
+    }[e && e.code] || "انقطع الاتصال أثناء كتابة الشرح. اضغط «اشرح لي» للمحاولة مرة أخرى.";
+    if (e && ["not_granted", "sampling_disabled", "not_declared", "capability_disabled", "capability_removed"].includes(e.code)) sample = null;
+    box.innerHTML = `<section class="panel"><p>${msg}</p></section>`;
+    if (!sample) { const btn = document.querySelector('[data-act="explain"]'); if (btn) btn.remove(); }
+  }
+}
+
+/* ---------- البحث ---------- */
+const SEARCH = {}; let sq = { q: "", c: "all", lim: 30 }, searchTimer;
+async function loadSearch(c) { if (!SEARCH[c]) SEARCH[c] = await getJSON(`data/s-${c}.json`); return SEARCH[c]; }
+function viewSearch() {
+  return `<h2>البحث في الصحيحين</h2>
+  <input class="search" id="q" type="search" value="${esc(sq.q)}" placeholder="اكتب كلمات من الحديث بلا تشكيل، مثل: إنما الأعمال بالنيات" aria-label="بحث" autocomplete="off">
+  <div class="row"><div class="seg" role="group" aria-label="نطاق البحث">${[["all", "الكل"], ["b", "البخاري"], ["m", "مسلم"]].map(([k, t]) => `<button class="${sq.c === k ? "on" : ""}" data-scope="${k}" type="button">${t}</button>`).join("")}</div>
+  <span class="muted small">أول بحث يحمّل نصوص الكتاب (قرابة ٥ ميغابايت لكل كتاب).</span></div>
+  <div id="results"></div>`;
+}
+async function runSearch() {
+  const out = document.getElementById("results"); if (!out) return;
+  const terms = strip(sq.q).replace(/[^ء-ي0-9 ]/g, " ").split(/\s+/).filter((w) => w.length > 1);
+  if (!terms.length) { out.innerHTML = `<div class="empty">اكتب كلمتين أو أكثر من الحديث الذي تبحث عنه.</div>`; return; }
+  out.innerHTML = `<div class="empty">جارٍ البحث<span class="dots"></span></div>`;
+  const asked = sq.q + "|" + sq.c;
+  const cols = sq.c === "all" ? ["b", "m"] : [sq.c];
+  let hits = [];
+  try {
+    for (const c of cols) { const data = await loadSearch(c); for (const r of data) if (terms.every((t) => r[2].includes(t))) hits.push([c, ...r]); }
+  } catch (e) { out.innerHTML = `<div class="empty">تعذّر تحميل نصوص البحث. تحقق من الاتصال ثم أعد المحاولة.</div>`; return; }
+  if (asked !== sq.q + "|" + sq.c || !document.getElementById("results")) return;   // a newer search replaced this one
+  if (!hits.length) { out.innerHTML = `<div class="empty">لا نتائج. جرّب كلمات أقل أو اكتبها بلا تشكيل.</div>`; return; }
+  const re = new RegExp("(" + terms.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|") + ")", "g");
+  out.innerHTML = `<p class="muted small">${ar(hits.length)} نتيجة</p><div class="list">${hits.slice(0, sq.lim).map(([c, bk, key, t]) => {
+    const p = t.indexOf(terms[0]); const s = t.slice(Math.max(0, p - 80), p + 220);
+    const b = bookMeta(c, bk);
+    return `<a class="item" href="#${hkey(c, bk, key)}"><span class="no"><span class="badge ${COL[c].cls}">${COL[c].short}</span></span>
+      <span class="tx">${p > 80 ? "… " : ""}${esc(s).replace(re, "<mark>$1</mark>")} …</span><span class="meta">كتاب ${esc(b.name)}</span></a>`;
+  }).join("")}</div>${hits.length > sq.lim ? `<button class="btn" data-act="moreResults" type="button" style="align-self:center;margin-top:8px">عرض المزيد</button>` : ""}`;
+}
+
+/* ---------- المفضلة ---------- */
+async function viewFav() {
+  const keys = Object.keys(S.fav);
+  if (!keys.length) return `<h2>المفضلة</h2><div class="empty">لم تضف أحاديث بعد. اضغط «☆ مفضلة» في صفحة أي حديث.</div>`;
+  const items = [];
+  for (const k of keys) { const [c, id, key] = S.fav[k]; const row = (await loadBook(c, id)).find((r) => r[0] === key); if (row) items.push([c, id, row]); }
+  return `<h2>المفضلة</h2><div class="list">${items.map(([c, id, r]) => `<a class="item" href="#${hkey(c, id, r[0])}"><span class="no"><span class="badge ${COL[c].cls}">${COL[c].short}</span></span><span class="tx">${esc(snippet(r[2]))}</span><span class="meta">${esc(refText(c, r))}</span></a>`).join("")}</div>`;
+}
+
+/* ---------- القراءة دون إنترنت ---------- */
+const canOffline = "serviceWorker" in navigator && location.protocol === "https:" && !/claude/.test(location.hostname);
+function offlineBox() {
+  if (!canOffline) return "";
+  return `<section class="panel small"><h3>القراءة دون إنترنت</h3><p>الكتب التي تفتحها تُحفظ تلقائيًا. ولحفظ الصحيحين كاملين (قرابة ١٧ ميغابايت) اضغط:</p>
+    <div class="row"><button class="btn" data-act="offline" type="button">حفظ كل الأحاديث على جهازي</button><span class="muted" id="offMsg"></span></div></section>`;
+}
+async function saveAll() {
+  const msg = document.getElementById("offMsg"); const all = [];
+  for (const c of ["b", "m"]) for (const b of INDEX[c].books) all.push(`data/${c}${b.id}.json`);
+  let n = 0;
+  for (const u of all) { try { await fetch(u); } catch (e) {} n++; if (msg) msg.textContent = `${ar(Math.round((n / all.length) * 100))}٪`; }
+  if (msg) msg.textContent = "تم الحفظ ✓";
+}
+
+/* ---------- لمعرفة موضع الأحاديث المشروحة ---------- */
+async function findCurated(c, key) {
+  for (const b of INDEX[c].books) { if (c === "b" && (parseFloat(key) < parseFloat(b.k0) || parseFloat(key) > parseFloat(b.k1))) continue;
+    const rows = await loadBook(c, b.id); const row = rows.find((r) => r[0] === key); if (row) return { id: b.id, row }; }
+  return null;
+}
+
+/* ---------- التوجيه ---------- */
+let seq = 0;
+async function route() {
+  const h = location.hash.slice(1) || "home", my = ++seq; let tab = "home", m, html;
+  try {
+    if ((m = h.match(/^c-(b|m)$/))) { tab = "c-" + m[1]; html = viewCollection(m[1]); }
+    else if ((m = h.match(/^k-(b|m)-(\d+)$/))) { tab = "c-" + m[1]; html = await viewBook(m[1], +m[2]); }
+    else if ((m = h.match(/^h-(b|m)-(\d+)-(.+)$/))) { tab = "c-" + m[1]; html = await viewHadith(m[1], +m[2], m[3]); }
+    else if (h === "search") { tab = "search"; html = viewSearch(); }
+    else if (h === "fav") { html = await viewFav(); }
+    else html = await viewHome();
+  } catch (e) { html = `<div class="panel"><p>تعذّر تحميل البيانات. تحقق من الاتصال ثم حدّث الصفحة.</p><p class="muted small">${esc(e.message || e)}</p></div>`; }
+  if (my !== seq) return;
+  app.innerHTML = html;
+  document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("on", t.dataset.go === tab));
+  if (tab === "search") { const q = document.getElementById("q"); if (sq.q) runSearch(); else q.focus(); }
+}
+window.addEventListener("hashchange", () => { route(); window.scrollTo(0, 0); });
+function go(h) { if (location.hash === "#" + h) route(); else location.hash = h; }
+
+let toastT;
+function toast(t) { const el = document.getElementById("toast"); el.textContent = t; el.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove("show"), 1800); }
+function applySize() { document.documentElement.style.setProperty("--matn-size", S.size ? `${1.45 + S.size * 0.15}rem` : ""); }
+
+document.addEventListener("click", async (e) => {
+  const el = e.target.closest("[data-go],[data-more],[data-act],[data-scope],[data-size]"); if (!el) return;
+  const d = el.dataset;
+  if (d.go) { go(d.go); window.scrollTo(0, 0); return; }
+  if (d.more) { listLimit[d.more] = (listLimit[d.more] || PAGE) + PAGE * 2; const y = scrollY; await route(); scrollTo(0, y); return; }
+  if (d.scope) { sq.c = d.scope; sq.lim = 30; document.querySelectorAll("[data-scope]").forEach((b) => b.classList.toggle("on", b === el)); runSearch(); return; }
+  if (d.size) { S.size = Math.max(-2, Math.min(4, (S.size || 0) + +d.size)); save(); applySize(); return; }
+  switch (d.act) {
+    case "explain": if (sample) explain(); break;
+    case "stop": explainCtl && explainCtl.abort(); break;
+    case "fav": { const [c, id, key] = S.last; const k = c + ":" + key; if (S.fav[k]) delete S.fav[k]; else S.fav[k] = [c, id, key]; save();
+      el.classList.toggle("on", !!S.fav[k]); el.textContent = S.fav[k] ? "★ في المفضلة" : "☆ مفضلة"; toast(S.fav[k] ? "أُضيف إلى المفضلة" : "أُزيل من المفضلة"); break; }
+    case "copy": { const [c, id, key] = S.last; const row = (await loadBook(c, id)).find((r) => r[0] === key);
+      const txt = `${row[2]}\n— ${refText(c, row)}، كتاب ${bookMeta(c, id).name}`;
+      const ok = () => toast("نُسخ الحديث");
+      try { await navigator.clipboard.writeText(txt); ok(); } catch (err) { const ta = document.createElement("textarea"); ta.value = txt; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); ok(); } catch (x) { toast("تعذّر النسخ"); } ta.remove(); }
+      break; }
+    case "moreResults": sq.lim += 30; runSearch(); break;
+    case "offline": el.disabled = true; saveAll(); break;
+  }
+});
+document.addEventListener("input", (e) => { if (e.target.id === "q") { sq.q = e.target.value; sq.lim = 30; clearTimeout(searchTimer); searchTimer = setTimeout(runSearch, 450); } });
+
+/* ---------- الوضع الليلي والتشغيل ---------- */
+const root = document.documentElement; root.lang = "ar"; root.dir = "rtl";
+try { const t = localStorage.getItem(KEY + "-theme"); if (t) root.dataset.theme = t; } catch (e) {}
+document.getElementById("themeBtn").addEventListener("click", () => {
+  const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  root.dataset.theme = dark ? "light" : "dark"; try { localStorage.setItem(KEY + "-theme", root.dataset.theme); } catch (e) {}
+});
+applySize();
+if (canOffline) navigator.serviceWorker.register("sw.js").catch(() => {});
+(async () => {
+  try { INDEX = await getJSON("data/index.json"); } catch (e) { app.innerHTML = `<div class="panel"><p>تعذّر تحميل فهرس الكتابين. تحقق من الاتصال ثم حدّث الصفحة.</p></div>`; return; }
+  try { CURATED = await getJSON("data/curated.json"); } catch (e) { CURATED = {}; }
+  route();
+})();
+</script>
