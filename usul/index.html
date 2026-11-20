@@ -128,6 +128,17 @@
   .welcome ol { margin: 0; padding-right: 20px; }
   .note { font-size: .8em; color: var(--muted); text-align: center; margin-top: 18px; }
   .hidden { display: none !important; }
+  .player { position: sticky; top: calc(64px + env(safe-area-inset-top, 0px)); z-index: 5; }
+  .now { font-family: Amiri, serif; font-size: 1.3em; line-height: 2; min-height: 4.2em; background: var(--surface-2); border-radius: 12px; padding: 10px 14px; margin: 8px 0; }
+  .now.quran { background: var(--accent-soft); }
+  .ctrls { display: flex; gap: 8px; justify-content: center; align-items: center; }
+  .ctrls .btn { min-width: 52px; font-size: 1.1em; }
+  .ctrls .play { min-width: 76px; font-size: 1.4em; border-radius: 99px; }
+  .opts { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 10px; font-size: .85em; }
+  .opts label { display: flex; align-items: center; gap: 4px; }
+  .lesson.playing { border: 2px solid var(--gold); }
+  .mini { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(68px + env(safe-area-inset-bottom, 0px)); z-index: 11;
+    background: var(--accent); color: var(--on-accent); border: 0; border-radius: 99px; padding: 8px 16px; font-weight: 600; box-shadow: var(--shadow); max-width: calc(100% - 32px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 </style>
 </head>
 <body>
@@ -140,8 +151,10 @@
   <button class="hbtn" id="theme" aria-label="الوضع الليلي">🌙</button>
 </header>
 <main id="app"></main>
+<button class="mini hidden" id="mini"></button>
 <nav class="bottom">
   <button data-go="home"><span>📚</span>الدروس</button>
+  <button data-go="audio"><span>🎧</span>مسموع</button>
   <button data-go="map"><span>🗺️</span>الخريطة</button>
   <button data-go="review"><span>🗂️</span>المراجعة<i class="badge hidden" id="mbadge"></i></button>
   <button data-go="exam"><span>📝</span>اختبار شامل</button>
@@ -149,6 +162,7 @@
 
 <script src="lessons.js"></script>
 <script src="extras.js"></script>
+<script src="audio.js"></script>
 <script>
 const L = window.LESSONS, CARDS = window.CARDS, X = window.EXTRAS || {}, MAP = window.MAP || [];
 const $ = (s) => document.querySelector(s);
@@ -198,6 +212,7 @@ const canSpeak = "speechSynthesis" in window;
 let speakingBtn = null;
 function speak(text, btn, times = 1) {
   if (!canSpeak) return;
+  player.stop();
   const label = btn ? btn.dataset.label || (btn.dataset.label = btn.textContent) : "";
   const wasMe = speakingBtn === btn;
   speechSynthesis.cancel();
@@ -221,15 +236,17 @@ document.querySelectorAll("nav.bottom button").forEach((b) => (b.onclick = () =>
 $("#back").onclick = () => history.length > 1 ? history.back() : go("home");
 
 function route() {
-  if (canSpeak) speechSynthesis.cancel(); speakingBtn = null;
+  if (speakingBtn) { speechSynthesis.cancel(); speakingBtn.textContent = speakingBtn.dataset.label; speakingBtn = null; }
   const [view, arg, tab] = location.hash.slice(1).split("-");
   document.querySelectorAll("nav.bottom button").forEach((b) => b.classList.toggle("on", b.dataset.go === (view || "home")));
   $("#back").classList.toggle("hidden", !view || view === "home");
   updateBadge();
+  if (typeof player !== "undefined") player.ui();
   scrollTo(0, 0);
   if (view === "lesson") return lessonView(+arg || 0, tab || "explain");
   if (view === "review") return reviewView(arg || "cards");
   if (view === "map") return mapView();
+  if (view === "audio") return audioView();
   if (view === "exam") return quizView(null);
   homeView();
 }
@@ -314,6 +331,7 @@ function lessonView(i, tab) {
   if (tab === "explain") {
     body = `${e.summary ? `<div class="sum"><small>✨ الدرس في جملة واحدة</small>${e.summary}</div>` : ""}
       <div class="goal">🎯 <b>هدف الدرس:</b> ${l.goal}</div>
+      <button class="btn wide" id="listenAll" style="margin-bottom:14px">🎧 استمع للدرس كاملًا (الشرح والمتن والأدلة)</button>
       <div class="card"><div class="row" style="margin:0 0 6px">${speakBtn("🔊 استمع للشرح")}</div>
         <ul class="points">${l.points.map((p) => `<li>${p}</li>`).join("")}</ul></div>
       ${e.words.length ? `<div class="card"><div class="muted" style="margin-bottom:8px">📖 معاني الكلمات</div>
@@ -329,6 +347,8 @@ function lessonView(i, tab) {
   else if (tab === "memo") { app.innerHTML = head + `<div id="mm"></div>` + nextBtn; memoView(l, $("#mm"), "read"); }
   else app.innerHTML = head + body;
   app.querySelectorAll("[data-tab]").forEach((b) => (b.onclick = () => { history.replaceState(null, "", `#lesson-${i}-${b.dataset.tab}`); route(); }));
+  const la = $("#listenAll");
+  if (la) la.onclick = () => { player.start(i); go("audio"); };
   const sp = app.querySelector("[data-speak]");
   if (sp) sp.onclick = () => speak(tab === "explain" ? (e.summary ? e.summary + ". " : "") + l.points.map(strip).join(". ") : l.matn, sp);
 }
@@ -474,6 +494,133 @@ function mapView() {
       <div class="branch">${MAP.map((m) => `<div style="margin-bottom:12px"><div class="node">${m.t}</div><ul>${m.c.map((c) => `<li>${c}</li>`).join("")}</ul></div>`).join("")}</div>
     </div>
     <div class="row"><button class="btn wide" onclick="go('home')">📚 اذهب إلى الدروس</button></div>`;
+}
+
+// ---- الدروس المسموعة ----
+function lessonSegments(i) {
+  const l = L[i], e = ex(l), segs = [];
+  const add = (label, text, extra = {}) => segs.push({ label, text, ...extra });
+  const rec = (window.RECORDINGS || {})[l.id];
+  if (rec) { add("تسجيل الدرس", `الدرس ${AR(i + 1)}: ${l.title}`, { file: rec }); return segs; }
+  add("العنوان", `الدرس ${["الأول","الثاني","الثالث","الرابع","الخامس","السادس","السابع","الثامن","التاسع","العاشر","الحادي عشر","الثاني عشر","الثالث عشر","الرابع عشر"][i] || AR(i + 1)}: ${l.title}`);
+  if (e.summary) add("الخلاصة", "خلاصة الدرس: " + e.summary);
+  l.points.forEach((p) => add("الشرح", strip(p)));
+  (e.words || []).forEach(([w, m], k) => add("معاني الكلمات", (k === 0 ? "معاني الكلمات. " : "") + w + ": " + m));
+  add("المتن", "ونقرأ الآن كلام الشيخ رحمه الله.");
+  chunks(l.matn).forEach((c) => add("المتن", c));
+  l.evidence.forEach((v, k) => {
+    add("الدليل", k === 0 ? "والدليل قوله تعالى:" : "وقوله تعالى:");
+    add("الدليل", v.text, { urls: window.ayahUrls ? window.ayahUrls(v.ref) : [], quran: true, ref: v.ref });
+  });
+  add("الختام", "انتهى الدرس. ثبّت ما تعلمته بالحفظ والاختبار.");
+  return segs;
+}
+const player = {
+  li: null, segs: [], k: 0, playing: false, speed: store.get("speed", 1), cont: store.get("cont", true), audio: new Audio(), token: 0,
+  start(i, k = 0) { this.stop(); this.li = i; this.segs = lessonSegments(i); this.k = k; this.playing = true; this.run(); },
+  stop() { this.token++; this.playing = false; try { speechSynthesis.cancel(); } catch {} this.audio.pause(); this.ui(); },
+  toggle() { if (this.li == null) return this.start(0); if (this.playing) this.stop(); else { this.playing = true; this.run(); } },
+  jump(d) { if (this.li == null) return; this.err = ""; this.k = Math.max(0, Math.min(this.segs.length - 1, this.k + d)); if (this.playing) { this.stop(); this.playing = true; this.run(); } else this.ui(); },
+  next() {
+    if (this.k + 1 < this.segs.length) { this.k++; return this.run(); }
+    if (this.cont && this.li + 1 < L.length) { this.li++; this.segs = lessonSegments(this.li); this.k = 0; return this.run(); }
+    this.playing = false; this.ui();
+  },
+  tts(text, t) {
+    if (!canSpeak) return setTimeout(() => t === this.token && this.next(), 1500);
+    const u = new SpeechSynthesisUtterance(text); u.lang = "ar-SA"; u.rate = 0.85 * this.speed;
+    u.onend = () => { if (t === this.token && this.playing) this.next(); };
+    u.onerror = (ev) => {
+      if (t !== this.token || !this.playing || ev.error === "interrupted" || ev.error === "canceled") return;
+      this.playing = false; this.err = "تعذّر تشغيل الصوت الآلي على هذا الجهاز. ثبّت الصوت العربي من إعدادات الجوال (تحويل النص إلى كلام) ثم حاول مرة أخرى.";
+      this.ui();
+    };
+    speechSynthesis.speak(u);
+  },
+  playFiles(urls, fallback, t) {
+    let j = 0;
+    const a = this.audio;
+    const step = () => {
+      if (t !== this.token) return;
+      if (j >= urls.length) return this.next();
+      a.src = urls[j++]; a.playbackRate = this.speed;
+      a.onended = step;
+      a.onerror = () => { if (t === this.token) { a.onerror = null; fallback ? this.tts(fallback, t) : this.next(); } };
+      a.play().catch(() => { if (t === this.token && this.playing) { a.onerror = null; fallback ? this.tts(fallback, t) : this.next(); } });
+    };
+    step();
+  },
+  run() {
+    this.err = "";
+    const t = ++this.token;
+    try { speechSynthesis.cancel(); } catch {}
+    this.audio.pause();
+    const s = this.segs[this.k];
+    this.ui();
+    if (s.file) return this.playFiles([s.file], null, t);
+    if (s.urls && s.urls.length) return this.playFiles(s.urls, s.text, t);
+    this.tts(s.text, t);
+  },
+  ui() {
+    const m = $("#mini");
+    if (m) {
+      const show = this.playing && !location.hash.startsWith("#audio");
+      m.classList.toggle("hidden", !show);
+      if (show) m.textContent = `⏸ ${L[this.li].title} — إيقاف`;
+    }
+    if (location.hash.startsWith("#audio") && $("#pl")) renderPlayer();
+  }
+};
+$("#mini").onclick = () => player.stop();
+
+function renderPlayer() {
+  const p = player, pl = $("#pl");
+  if (!pl) return;
+  if (p.li == null) {
+    pl.innerHTML = `<div class="muted" style="text-align:center">اختر درسًا من القائمة ليبدأ التشغيل</div>
+      <div class="row"><button class="btn wide" id="pStart">▶ ابدأ من الدرس الأول</button></div>`;
+    $("#pStart").onclick = () => p.start(0);
+  } else {
+    const s = p.segs[p.k];
+    pl.innerHTML = `
+      <div class="muted">الدرس ${AR(p.li + 1)}: <b>${L[p.li].title}</b> — ${s.label}${s.ref ? " [" + s.ref + "]" : ""}</div>
+      <div class="bar"><i style="width:${((p.k + 1) / p.segs.length) * 100}%"></i></div>
+      <div class="now ${s.quran ? "quran" : ""}">${s.text}</div>
+      <div class="ctrls">
+        <button class="btn ghost" id="pPrev" aria-label="السابق">⏮</button>
+        <button class="btn play" id="pPlay" aria-label="${p.playing ? "إيقاف" : "تشغيل"}">${p.playing ? "⏸" : "▶"}</button>
+        <button class="btn ghost" id="pNext" aria-label="التالي">⏭</button>
+      </div>${p.err ? `<p class="why">⚠️ ${p.err}</p>` : ""}`;
+    $("#pPrev").onclick = () => p.jump(-1);
+    $("#pNext").onclick = () => p.jump(1);
+    $("#pPlay").onclick = () => p.toggle();
+  }
+  document.querySelectorAll(".lesson[data-li]").forEach((b) => b.classList.toggle("playing", +b.dataset.li === p.li));
+}
+
+function audioView() {
+  $("#title").textContent = "الدروس المسموعة";
+  const p = player;
+  app.innerHTML = `
+    <div class="goal">🎧 استمع للدروس وأنت في السيارة أو قبل النوم. يقرأ التطبيق الشرح والمتن، وتُتلى الآيات بصوت الشيخ مشاري العفاسي.</div>
+    <div class="card player" id="pl"></div>
+    <div class="opts">
+      <label>السرعة:
+        <select id="pSpeed">${[0.75, 1, 1.25, 1.5].map((v) => `<option value="${v}" ${v === p.speed ? "selected" : ""}>${AR(v)}×</option>`).join("")}</select></label>
+      <label><input type="checkbox" id="pCont" ${p.cont ? "checked" : ""}> تشغيل الدروس متتالية</label>
+    </div>
+    ${!canSpeak ? `<p class="why">⚠️ متصفحك لا يدعم القراءة الآلية، فستُتلى الآيات فقط. جرّب متصفح Chrome أو Safari.</p>` : ""}
+    <div class="part">قائمة الدروس</div>
+    ${L.map((l, i) => `<button class="lesson" data-li="${i}">
+      <span class="num">${(window.RECORDINGS || {})[l.id] ? "🎙️" : "🎧"}</span>
+      <span class="t"><b>${AR(i + 1)}. ${l.title}</b><span class="muted">${(window.RECORDINGS || {})[l.id] ? "تسجيل صوتي" : (ex(l).summary || l.goal)}</span></span>
+      <span class="muted">▶</span></button>`).join("")}
+    <p class="note">جودة الصوت الآلي تختلف من جهاز لآخر. لأفضل نتيجة ثبّت الصوت العربي من إعدادات الجوال (تحويل النص إلى كلام).<br>تحتاج تلاوة الآيات اتصالًا بالإنترنت؛ ودونه تُقرأ الآية بالصوت الآلي.</p>`;
+  $("#pSpeed").onchange = (e) => { p.speed = +e.target.value; store.set("speed", p.speed); p.audio.playbackRate = p.speed; };
+  $("#pCont").onchange = (e) => { p.cont = e.target.checked; store.set("cont", p.cont); };
+  app.querySelectorAll(".lesson[data-li]").forEach((b) => (b.onclick = () => { p.start(+b.dataset.li); scrollTo(0, 0); }));
+  renderPlayer();
+  p.ui();
 }
 
 route();

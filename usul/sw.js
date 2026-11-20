@@ -1,6 +1,6 @@
 // دروس ثلاثة الأصول — يحفظ التطبيق على الجهاز ليعمل دون إنترنت.
-const SHELL = "usul-shell-v2";
-const ASSETS = ["./", "./index.html", "./lessons.js", "./extras.js", "./manifest.webmanifest", "../icon-192.png", "../icon-512.png"];
+const SHELL = "usul-shell-v3";
+const ASSETS = ["./", "./index.html", "./lessons.js", "./extras.js", "./audio.js", "./manifest.webmanifest", "../icon-192.png", "../icon-512.png"];
 self.addEventListener("install", (e) => e.waitUntil(caches.open(SHELL).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting())));
 self.addEventListener("activate", (e) => e.waitUntil(
   caches.keys().then((ks) => Promise.all(ks.filter((k) => k.startsWith("usul-shell-") && k !== SHELL).map((k) => caches.delete(k)))).then(() => self.clients.claim())
