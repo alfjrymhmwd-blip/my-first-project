@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f6b45">
+<title>دروس ثلاثة الأصول</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="../icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ثلاثة الأصول">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Kufi+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f4ec; --surface: #fff; --surface-2: #f1ede2; --text: #1f2a24; --muted: #6b7570;
+    --accent: #0f6b45; --on-accent: #fff; --accent-soft: #dcefe4; --gold: #b08a2e; --gold-soft: #f6ecd2;
+    --ok: #2e9d63; --ok-soft: #dff3e7; --bad: #c0392b; --bad-soft: #fbe3e0; --border: #e3ddcf;
+    --shadow: 0 2px 10px rgba(0,0,0,.06); --fs: 17px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101613; --surface: #18201c; --surface-2: #1f2924; --text: #e9efe9; --muted: #94a19a;
+      --accent: #4cc38a; --on-accent: #0c1410; --accent-soft: #1d3a2c; --gold: #d8b45a; --gold-soft: #3a3418;
+      --ok: #4cc38a; --ok-soft: #1d3a2c; --bad: #ef7a6c; --bad-soft: #3d1f1b; --border: #2a3530; --shadow: 0 2px 10px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101613; --surface: #18201c; --surface-2: #1f2924; --text: #e9efe9; --muted: #94a19a;
+    --accent: #4cc38a; --on-accent: #0c1410; --accent-soft: #1d3a2c; --gold: #d8b45a; --gold-soft: #3a3418;
+    --ok: #4cc38a; --ok-soft: #1d3a2c; --bad: #ef7a6c; --bad-soft: #3d1f1b; --border: #2a3530; --shadow: 0 2px 10px rgba(0,0,0,.4);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--bg); color: var(--text); font-family: "Noto Kufi Arabic", system-ui, sans-serif; font-size: var(--fs); line-height: 1.9; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  header {
+    position: sticky; top: 0; z-index: 10; background: var(--accent); color: var(--on-accent);
+    padding: 10px 16px; padding-top: max(10px, env(safe-area-inset-top)); display: flex; align-items: center; gap: 8px;
+  }
+  header h1 { margin: 0; font-size: 18px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .hbtn { background: rgba(255,255,255,.16); border: 0; border-radius: 10px; min-width: 40px; height: 40px; padding: 0 10px; font-size: 16px; color: inherit; }
+  main { max-width: 720px; margin: 0 auto; padding: 16px 16px 110px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; box-shadow: var(--shadow); margin-bottom: 14px; }
+  .muted { color: var(--muted); font-size: .85em; }
+  .hero { text-align: center; padding: 22px 16px; }
+  .hero h2 { margin: 0 0 4px; font-family: Amiri, serif; font-size: 1.8em; color: var(--accent); }
+  .bar { height: 10px; background: var(--surface-2); border-radius: 99px; overflow: hidden; margin: 10px 0 4px; }
+  .bar > i { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width .4s; }
+  .quick { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+  .btn { border: 0; border-radius: 12px; padding: 12px 14px; background: var(--accent); color: var(--on-accent); font-weight: 600; font-size: .95em; }
+  .btn.ghost { background: var(--accent-soft); color: var(--text); }
+  .btn.wide { width: 100%; }
+  .part { margin: 22px 4px 8px; font-weight: 700; color: var(--gold); font-size: .9em; }
+  .lesson { display: flex; align-items: center; gap: 12px; width: 100%; text-align: right; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; box-shadow: var(--shadow); }
+  .num { flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-2); font-weight: 700; font-size: .9em; }
+  .lesson.done .num { background: var(--ok); color: var(--on-accent); }
+  .lesson .t { flex: 1; min-width: 0; }
+  .lesson .t b { display: block; font-size: .98em; }
+  .tabs { display: flex; gap: 6px; background: var(--surface-2); padding: 5px; border-radius: 14px; margin-bottom: 14px; position: sticky; top: 64px; z-index: 5; }
+  .tabs button { flex: 1; border: 0; background: none; border-radius: 10px; padding: 8px 4px; font-size: .88em; font-weight: 600; color: var(--muted); }
+  .tabs button.on { background: var(--surface); color: var(--accent); box-shadow: var(--shadow); }
+  .goal { background: var(--gold-soft); border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; font-size: .92em; }
+  ul.points { list-style: none; margin: 0; padding: 0; }
+  ul.points li { padding: 8px 30px 8px 0; position: relative; border-bottom: 1px dashed var(--border); }
+  ul.points li:last-child { border-bottom: 0; }
+  ul.points li::before { content: "◆"; position: absolute; right: 4px; color: var(--gold); font-size: .7em; top: 14px; }
+  b { color: var(--accent); }
+  .matn { font-family: Amiri, serif; font-size: 1.3em; line-height: 2.1; }
+  .ayah { font-family: Amiri, serif; font-size: 1.35em; line-height: 2.1; background: var(--accent-soft); border-radius: 12px; padding: 12px 14px; margin: 10px 0 4px; }
+  .ayah::before { content: "﴿ "; color: var(--gold); } .ayah::after { content: " ﴾"; color: var(--gold); }
+  .ref { font-size: .8em; color: var(--muted); margin-bottom: 8px; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .row .btn { flex: 1; }
+  .q { font-weight: 700; margin-bottom: 10px; }
+  .opt { display: block; width: 100%; text-align: right; border: 2px solid var(--border); background: var(--surface); border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; }
+  .opt.ok { border-color: var(--ok); background: var(--ok-soft); }
+  .opt.bad { border-color: var(--bad); background: var(--bad-soft); }
+  .opt:disabled { cursor: default; }
+  .result { text-align: center; }
+  .result .big { font-size: 2.6em; font-weight: 700; color: var(--accent); }
+  .flash { min-height: 230px; display: flex; flex-direction: column; justify-content: center; text-align: center; cursor: pointer; user-select: none; }
+  .flash .front { font-size: 1.3em; font-weight: 700; }
+  .flash .back { font-family: Amiri, serif; font-size: 1.3em; white-space: pre-line; }
+  .tip { text-align: center; color: var(--muted); font-size: .8em; margin-top: 6px; }
+  nav.bottom { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); display: flex; padding-bottom: env(safe-area-inset-bottom); z-index: 10; }
+  nav.bottom button { flex: 1; border: 0; background: none; padding: 8px 0 10px; font-size: .78em; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  nav.bottom button span { font-size: 1.5em; line-height: 1.2; }
+  nav.bottom button.on { color: var(--accent); font-weight: 700; }
+  .note { font-size: .8em; color: var(--muted); text-align: center; margin-top: 18px; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<header>
+  <button class="hbtn hidden" id="back" aria-label="رجوع">→</button>
+  <h1 id="title">دروس ثلاثة الأصول</h1>
+  <button class="hbtn" id="fontDown" aria-label="تصغير الخط">ص-</button>
+  <button class="hbtn" id="fontUp" aria-label="تكبير الخط">ك+</button>
+  <button class="hbtn" id="theme" aria-label="الوضع الليلي">🌙</button>
+</header>
+<main id="app"></main>
+<nav class="bottom">
+  <button data-go="home"><span>📚</span>الدروس</button>
+  <button data-go="cards"><span>🗂️</span>المراجعة</button>
+  <button data-go="exam"><span>📝</span>اختبار شامل</button>
+</nav>
+
+<script src="lessons.js"></script>
+<script>
+const L = window.LESSONS, CARDS = window.CARDS;
+const $ = (s) => document.querySelector(s);
+const app = $("#app");
+const AR = (n) => String(n).replace(/\d/g, (d) => "٠١٢٣٤٥٦٧٨٩"[d]);
+
+// ---- حفظ التقدم في المتصفح ----
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("usul:" + k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem("usul:" + k, JSON.stringify(v)); } catch {} }
+};
+let progress = store.get("progress", {}); // { lessonId: bestScorePercent }
+let fs = store.get("fs", 17);
+let theme = store.get("theme", null);
+const applyPrefs = () => {
+  document.documentElement.style.setProperty("--fs", fs + "px");
+  if (theme) document.documentElement.dataset.theme = theme; else delete document.documentElement.dataset.theme;
+};
+applyPrefs();
+$("#fontUp").onclick = () => { fs = Math.min(24, fs + 1); store.set("fs", fs); applyPrefs(); };
+$("#fontDown").onclick = () => { fs = Math.max(14, fs - 1); store.set("fs", fs); applyPrefs(); };
+$("#theme").onclick = () => {
+  const dark = theme ? theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  theme = dark ? "light" : "dark"; store.set("theme", theme); applyPrefs();
+};
+const isDone = (id) => (progress[id] || 0) >= 70;
+
+// ---- التنقل ----
+function go(view, arg) { location.hash = arg != null ? view + "/" + arg : view; }
+window.addEventListener("hashchange", route);
+document.querySelectorAll("nav.bottom button").forEach((b) => (b.onclick = () => go(b.dataset.go)));
+$("#back").onclick = () => go("home");
+
+function route() {
+  const [view, arg] = location.hash.slice(1).split("/");
+  document.querySelectorAll("nav.bottom button").forEach((b) => b.classList.toggle("on", b.dataset.go === (view || "home")));
+  $("#back").classList.toggle("hidden", !view || view === "home");
+  scrollTo(0, 0);
+  if (view === "lesson") return lessonView(+arg || 0, "explain");
+  if (view === "cards") return cardsView();
+  if (view === "exam") return quizView(null);
+  homeView();
+}
+
+// ---- الصفحة الرئيسية ----
+function homeView() {
+  $("#title").textContent = "دروس ثلاثة الأصول";
+  const done = L.filter((l) => isDone(l.id)).length;
+  const next = L.findIndex((l) => !isDone(l.id));
+  let html = `
+    <div class="card hero">
+      <h2>ثلاثة الأصول وأدلتها</h2>
+      <div class="muted">للشيخ محمد بن عبد الوهاب رحمه الله — ${AR(L.length)} درسًا قصيرًا</div>
+      <div class="bar"><i style="width:${(done / L.length) * 100}%"></i></div>
+      <div class="muted">أتممت ${AR(done)} من ${AR(L.length)} دروس</div>
+    </div>
+    <div class="quick">
+      <button class="btn" onclick="go('lesson', ${next < 0 ? 0 : next})">${done === 0 ? "▶ ابدأ التعلم" : next < 0 ? "↺ راجع من البداية" : "▶ تابع: الدرس " + AR(next + 1)}</button>
+      <button class="btn ghost" onclick="go('cards')">🗂️ بطاقات المراجعة</button>
+    </div>`;
+  let part = "";
+  L.forEach((l, i) => {
+    if (l.part !== part) { part = l.part; html += `<div class="part">${part}</div>`; }
+    const s = progress[l.id];
+    html += `<button class="lesson ${isDone(l.id) ? "done" : ""}" onclick="go('lesson', ${i})">
+      <span class="num">${isDone(l.id) ? "✓" : AR(i + 1)}</span>
+      <span class="t"><b>${l.title}</b><span class="muted">${s != null ? "أفضل نتيجة: " + AR(s) + "٪" : l.goal}</span></span>
+      <span class="muted">‹</span></button>`;
+  });
+  html += `<p class="note">طريقة التعلم المقترحة: اقرأ الشرح ← اقرأ المتن والدليل ← اختبر نفسك. يُكتمل الدرس عند الحصول على ٧٠٪ فأكثر.<br>هذا التطبيق وسيلة مساعدة، ويُستحسن قراءة المتن على طالب علم وسماع شروح أهل العلم.</p>`;
+  app.innerHTML = html;
+}
+
+// ---- صفحة الدرس ----
+function lessonView(i, tab) {
+  const l = L[i]; if (!l) return go("home");
+  $("#title").textContent = `الدرس ${AR(i + 1)}: ${l.title}`;
+  const tabs = [["explain", "💡 الشرح"], ["matn", "📜 المتن"], ["quiz", "✅ اختبار"]];
+  const head = `<div class="tabs">${tabs.map(([k, t]) => `<button class="${k === tab ? "on" : ""}" data-tab="${k}">${t}</button>`).join("")}</div>`;
+  let body = "";
+  if (tab === "explain") {
+    body = `<div class="goal">🎯 <b>هدف الدرس:</b> ${l.goal}</div>
+      <div class="card"><ul class="points">${l.points.map((p) => `<li>${p}</li>`).join("")}</ul></div>
+      <div class="row"><button class="btn" data-tab="matn">التالي: المتن والدليل ←</button></div>`;
+  } else if (tab === "matn") {
+    body = `<div class="card"><div class="muted">من المتن:</div><div class="matn">${l.matn}</div>
+        <div class="row"><button class="btn ghost" id="speak">🔊 استمع للمتن</button></div></div>
+      ${l.evidence.length ? `<div class="card"><div class="muted">الدليل:</div>${l.evidence.map((e) => `<div class="ayah">${e.text}</div><div class="ref">[${e.ref}]</div>`).join("")}</div>` : ""}
+      <div class="row"><button class="btn" data-tab="quiz">التالي: اختبر نفسك ←</button></div>`;
+  }
+  if (tab === "quiz") { app.innerHTML = head + `<div id="qz"></div>`; quizView(i, $("#qz")); }
+  else app.innerHTML = head + body;
+  app.querySelectorAll("[data-tab]").forEach((b) => (b.onclick = () => { scrollTo(0, 0); lessonView(i, b.dataset.tab); }));
+  const sp = $("#speak");
+  if (sp) {
+    if (!("speechSynthesis" in window)) sp.remove();
+    else sp.onclick = () => {
+      if (speechSynthesis.speaking) { speechSynthesis.cancel(); sp.textContent = "🔊 استمع للمتن"; return; }
+      const u = new SpeechSynthesisUtterance(l.matn); u.lang = "ar-SA"; u.rate = 0.85;
+      u.onend = () => (sp.textContent = "🔊 استمع للمتن");
+      speechSynthesis.speak(u); sp.textContent = "⏹ إيقاف";
+    };
+  }
+}
+
+// ---- الاختبار (لدرس واحد أو اختبار شامل) ----
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function quizView(i, root) {
+  const exam = i == null;
+  root = root || app;
+  if (exam) $("#title").textContent = "اختبار شامل";
+  const qs = exam ? shuffle(L.flatMap((l) => l.quiz.map((q) => ({ ...q, from: l.title })))).slice(0, 15) : L[i].quiz;
+  let k = 0, score = 0;
+  const show = () => {
+    if (k >= qs.length) return finish();
+    const q = qs[k];
+    const order = shuffle(q.options.map((_, n) => n));
+    root.innerHTML = `<div class="card">
+      <div class="muted">سؤال ${AR(k + 1)} من ${AR(qs.length)}${exam ? " — " + q.from : ""}</div>
+      <div class="bar"><i style="width:${(k / qs.length) * 100}%"></i></div>
+      <div class="q">${q.q}</div>
+      ${order.map((n) => `<button class="opt" data-n="${n}">${q.options[n]}</button>`).join("")}
+      <div id="fb"></div></div>`;
+    root.querySelectorAll(".opt").forEach((b) => (b.onclick = () => {
+      const n = +b.dataset.n, right = n === q.answer;
+      if (right) score++;
+      root.querySelectorAll(".opt").forEach((o) => { o.disabled = true; if (+o.dataset.n === q.answer) o.classList.add("ok"); });
+      if (!right) b.classList.add("bad");
+      $("#fb").innerHTML = `<p>${right ? "✅ أحسنت! إجابة صحيحة" : "❌ الإجابة الصحيحة مظلّلة بالأخضر"}</p>
+        <button class="btn wide" id="nx">${k + 1 < qs.length ? "السؤال التالي" : "عرض النتيجة"}</button>`;
+      $("#nx").onclick = () => { k++; show(); };
+    }));
+  };
+  const finish = () => {
+    const pct = Math.round((score / qs.length) * 100);
+    if (!exam && pct > (progress[L[i].id] || 0)) { progress[L[i].id] = pct; store.set("progress", progress); }
+    const pass = pct >= 70;
+    root.innerHTML = `<div class="card result">
+      <div class="big">${AR(pct)}٪</div>
+      <p>${AR(score)} إجابات صحيحة من ${AR(qs.length)}</p>
+      <p>${pass ? "🌟 بارك الله فيك! " + (exam ? "" : "أتممت هذا الدرس.") : "📖 راجع الدرس وحاول مرة أخرى، فالتكرار طريق الحفظ."}</p>
+      <div class="row">
+        <button class="btn ghost" id="again">↺ أعد الاختبار</button>
+        ${!exam && i + 1 < L.length ? `<button class="btn" onclick="go('lesson', ${i + 1})">الدرس التالي ←</button>` : `<button class="btn" onclick="go('home')">الرئيسية</button>`}
+      </div></div>`;
+    $("#again").onclick = () => quizView(i, root);
+  };
+  show();
+}
+
+// ---- بطاقات المراجعة ----
+function cardsView() {
+  $("#title").textContent = "بطاقات المراجعة";
+  let deck = CARDS.slice(), k = 0, flipped = false;
+  const show = () => {
+    const c = deck[k];
+    app.innerHTML = `<div class="muted" style="text-align:center">بطاقة ${AR(k + 1)} من ${AR(deck.length)}</div>
+      <div class="bar"><i style="width:${((k + 1) / deck.length) * 100}%"></i></div>
+      <div class="card flash" id="fl">${flipped ? `<div class="muted">${c.q}</div><div class="back">${c.a}</div>` : `<div class="front">${c.q}</div>`}</div>
+      <div class="tip">${flipped ? "" : "فكّر في الجواب، ثم اضغط على البطاقة لكشفه"}</div>
+      <div class="row">
+        <button class="btn ghost" id="prev" ${k === 0 ? "disabled" : ""}>→ السابقة</button>
+        <button class="btn" id="next">${k + 1 < deck.length ? "التالية ←" : "↺ من البداية"}</button>
+      </div>
+      <div class="row"><button class="btn ghost wide" id="mix">🔀 خلط البطاقات</button></div>`;
+    $("#fl").onclick = () => { flipped = !flipped; show(); };
+    $("#prev").onclick = () => { if (k > 0) { k--; flipped = false; show(); } };
+    $("#next").onclick = () => { k = (k + 1) % deck.length; flipped = false; show(); };
+    $("#mix").onclick = () => { deck = shuffle(deck); k = 0; flipped = false; show(); };
+  };
+  show();
+}
+
+route();
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
+</script>
+</body>
+</html>
