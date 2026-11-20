@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f6b45">
+<title>دروس ثلاثة الأصول</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="../icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ثلاثة الأصول">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Kufi+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f4ec; --surface: #fff; --surface-2: #f1ede2; --text: #1f2a24; --muted: #6b7570;
+    --accent: #0f6b45; --on-accent: #fff; --accent-soft: #dcefe4; --gold: #b08a2e; --gold-soft: #f6ecd2;
+    --ok: #2e9d63; --ok-soft: #dff3e7; --bad: #c0392b; --bad-soft: #fbe3e0; --border: #e3ddcf;
+    --shadow: 0 2px 10px rgba(0,0,0,.06); --fs: 17px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101613; --surface: #18201c; --surface-2: #1f2924; --text: #e9efe9; --muted: #94a19a;
+      --accent: #4cc38a; --on-accent: #0c1410; --accent-soft: #1d3a2c; --gold: #d8b45a; --gold-soft: #3a3418;
+      --ok: #4cc38a; --ok-soft: #1d3a2c; --bad: #ef7a6c; --bad-soft: #3d1f1b; --border: #2a3530; --shadow: 0 2px 10px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101613; --surface: #18201c; --surface-2: #1f2924; --text: #e9efe9; --muted: #94a19a;
+    --accent: #4cc38a; --on-accent: #0c1410; --accent-soft: #1d3a2c; --gold: #d8b45a; --gold-soft: #3a3418;
+    --ok: #4cc38a; --ok-soft: #1d3a2c; --bad: #ef7a6c; --bad-soft: #3d1f1b; --border: #2a3530; --shadow: 0 2px 10px rgba(0,0,0,.4);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--bg); color: var(--text); font-family: "Noto Kufi Arabic", system-ui, sans-serif; font-size: var(--fs); line-height: 1.9; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  button:disabled { opacity: .5; cursor: default; }
+  header {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: var(--accent); color: var(--on-accent);
+    padding: 10px 16px; padding-top: max(10px, env(safe-area-inset-top)); display: flex; align-items: center; gap: 8px;
+  }
+  header h1 { margin: 0; font-size: 18px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .hbtn { background: rgba(255,255,255,.16); border: 0; border-radius: 10px; min-width: 40px; height: 40px; padding: 0 8px; font-size: 16px; color: inherit; }
+  main { max-width: 720px; margin: 0 auto; padding: 16px 16px 110px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; box-shadow: var(--shadow); margin-bottom: 14px; }
+  .muted { color: var(--muted); font-size: .85em; }
+  .hero { text-align: center; padding: 22px 16px; }
+  .hero h2 { margin: 0 0 4px; font-family: Amiri, serif; font-size: 1.8em; color: var(--accent); }
+  .stats { display: flex; justify-content: center; gap: 18px; margin-top: 8px; font-size: .85em; }
+  .bar { height: 10px; background: var(--surface-2); border-radius: 99px; overflow: hidden; margin: 10px 0 4px; }
+  .bar > i { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width .4s; }
+  .quick { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+  .btn { border: 0; border-radius: 12px; padding: 12px 14px; background: var(--accent); color: var(--on-accent); font-weight: 600; font-size: .95em; }
+  .btn.ghost { background: var(--accent-soft); color: var(--text); }
+  .btn.small { padding: 6px 12px; font-size: .82em; }
+  .btn.wide { width: 100%; }
+  .part { margin: 22px 4px 8px; font-weight: 700; color: var(--gold); font-size: .9em; }
+  .lesson { display: flex; align-items: center; gap: 12px; width: 100%; text-align: right; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; box-shadow: var(--shadow); }
+  .lesson.next { border: 2px solid var(--accent); }
+  .num { flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-2); font-weight: 700; font-size: .9em; }
+  .lesson.done .num { background: var(--ok); color: var(--on-accent); }
+  .lesson .t { flex: 1; min-width: 0; }
+  .lesson .t b { display: block; font-size: .98em; }
+  .tabs { display: flex; gap: 4px; background: var(--surface-2); padding: 5px; border-radius: 14px; margin-bottom: 14px; position: sticky; top: calc(64px + env(safe-area-inset-top, 0px)); z-index: 5; }
+  .tabs button { flex: 1; border: 0; background: none; border-radius: 10px; padding: 8px 2px; font-size: .8em; font-weight: 600; color: var(--muted); }
+  .tabs button.on { background: var(--surface); color: var(--accent); box-shadow: var(--shadow); }
+  .steps { text-align: center; font-size: .78em; color: var(--muted); margin: -6px 0 12px; }
+  .goal { background: var(--gold-soft); border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; font-size: .92em; }
+  .sum { background: var(--accent); color: var(--on-accent); border-radius: 14px; padding: 14px 16px; margin-bottom: 14px; font-weight: 700; text-align: center; }
+  .sum small { display: block; font-weight: 400; opacity: .85; font-size: .78em; }
+  ul.points { list-style: none; margin: 0; padding: 0; }
+  ul.points li { padding: 8px 30px 8px 0; position: relative; border-bottom: 1px dashed var(--border); }
+  ul.points li:last-child { border-bottom: 0; }
+  ul.points li::before { content: "◆"; position: absolute; right: 4px; color: var(--gold); font-size: .7em; top: 14px; }
+  b { color: var(--accent); }
+  .sum b { color: inherit; }
+  dl.words { margin: 0; display: grid; gap: 8px; }
+  dl.words div { background: var(--surface-2); border-radius: 10px; padding: 6px 12px; }
+  dl.words dt { display: inline; font-weight: 700; color: var(--gold); }
+  dl.words dt::after { content: ": "; }
+  dl.words dd { display: inline; margin: 0; }
+  .matn { font-family: Amiri, serif; font-size: 1.3em; line-height: 2.1; }
+  .ayah { font-family: Amiri, serif; font-size: 1.35em; line-height: 2.1; background: var(--accent-soft); border-radius: 12px; padding: 12px 14px; margin: 10px 0 4px; }
+  .ayah::before { content: "﴿ "; color: var(--gold); } .ayah::after { content: " ﴾"; color: var(--gold); }
+  .ref { font-size: .8em; color: var(--muted); margin-bottom: 8px; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .row .btn { flex: 1; }
+  .seg { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+  .seg button { flex: 1; border: 1px solid var(--border); background: var(--surface); border-radius: 99px; padding: 6px 8px; font-size: .8em; white-space: nowrap; }
+  .seg button.on { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+  .chunk { display: flex; gap: 10px; align-items: flex-start; }
+  .chunk .n { flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--gold-soft); display: grid; place-items: center; font-size: .8em; margin-top: 10px; }
+  .chunk.got .n { background: var(--ok); color: var(--on-accent); }
+  .chunk .txt { flex: 1; font-family: Amiri, serif; font-size: 1.35em; line-height: 2.2; }
+  .w { border-radius: 6px; padding: 0 2px; }
+  .w.hid { background: var(--surface-2); cursor: pointer; border-bottom: 2px dashed var(--gold); }
+  .w.hid .f { color: var(--muted); }
+  .w.hid .ghost { visibility: hidden; }
+  .q { font-weight: 700; margin-bottom: 10px; }
+  .opt { display: block; width: 100%; text-align: right; border: 2px solid var(--border); background: var(--surface); border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; }
+  .opt.ok { border-color: var(--ok); background: var(--ok-soft); }
+  .opt.bad { border-color: var(--bad); background: var(--bad-soft); }
+  .opt:disabled { cursor: default; opacity: 1; }
+  .why { background: var(--gold-soft); border-radius: 12px; padding: 10px 14px; margin: 6px 0 10px; font-size: .92em; }
+  .result { text-align: center; }
+  .result .big { font-size: 2.6em; font-weight: 700; color: var(--accent); }
+  .flash { min-height: 230px; display: flex; flex-direction: column; justify-content: center; text-align: center; cursor: pointer; user-select: none; }
+  .flash .front { font-size: 1.3em; font-weight: 700; }
+  .flash .back { font-family: Amiri, serif; font-size: 1.3em; white-space: pre-line; }
+  .tip { text-align: center; color: var(--muted); font-size: .8em; margin-top: 6px; }
+  .map { position: relative; }
+  .map .root { text-align: center; background: var(--accent); color: var(--on-accent); border-radius: 14px; padding: 12px; font-weight: 700; font-family: Amiri, serif; font-size: 1.3em; }
+  .map .branch { border-right: 3px solid var(--gold); margin: 0 14px 0 0; padding: 12px 14px 2px 0; }
+  .map .node { background: var(--gold-soft); border-radius: 12px; padding: 8px 12px; font-weight: 700; position: relative; }
+  .map .node::before { content: ""; position: absolute; right: -17px; top: 50%; width: 14px; border-top: 3px solid var(--gold); }
+  .map ul { margin: 6px 0 0; padding: 0 18px 0 0; list-style: none; }
+  .map li { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 4px 10px; margin-bottom: 6px; font-size: .9em; }
+  nav.bottom { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); display: flex; padding-bottom: env(safe-area-inset-bottom); z-index: 10; }
+  nav.bottom button { flex: 1; border: 0; background: none; padding: 8px 0 10px; font-size: .75em; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 2px; position: relative; }
+  nav.bottom button span { font-size: 1.5em; line-height: 1.2; }
+  nav.bottom button.on { color: var(--accent); font-weight: 700; }
+  .badge { position: absolute; top: 4px; left: calc(50% - 22px); background: var(--bad); color: #fff; border-radius: 99px; font-size: .75em; min-width: 18px; padding: 0 4px; line-height: 18px; }
+  .welcome h3 { margin: 0 0 6px; color: var(--accent); }
+  .welcome ol { margin: 0; padding-right: 20px; }
+  .note { font-size: .8em; color: var(--muted); text-align: center; margin-top: 18px; }
+  .hidden { display: none !important; }
+  .player { position: sticky; top: calc(64px + env(safe-area-inset-top, 0px)); z-index: 5; }
+  .now { font-family: Amiri, serif; font-size: 1.3em; line-height: 2; min-height: 4.2em; background: var(--surface-2); border-radius: 12px; padding: 10px 14px; margin: 8px 0; }
+  .now.quran { background: var(--accent-soft); }
+  .ctrls { display: flex; gap: 8px; justify-content: center; align-items: center; }
+  .ctrls .btn { min-width: 52px; font-size: 1.1em; }
+  .ctrls .play { min-width: 76px; font-size: 1.4em; border-radius: 99px; }
+  .opts { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 10px; font-size: .85em; }
+  .opts label { display: flex; align-items: center; gap: 4px; }
+  .lesson.playing { border: 2px solid var(--gold); }
+  .mini { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(68px + env(safe-area-inset-bottom, 0px)); z-index: 11;
+    background: var(--accent); color: var(--on-accent); border: 0; border-radius: 99px; padding: 8px 16px; font-weight: 600; box-shadow: var(--shadow); max-width: calc(100% - 32px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+</style>
+</head>
+<body>
+<header>
+  <button class="hbtn hidden" id="back" aria-label="رجوع">→</button>
+  <a class="hbtn" href="../" aria-label="رفيق الحفظ" title="تطبيق حفظ القرآن" style="display:grid;place-items:center;text-decoration:none">📖</a>
+  <h1 id="title">دروس ثلاثة الأصول</h1>
+  <button class="hbtn" id="fontDown" aria-label="تصغير الخط">أ−</button>
+  <button class="hbtn" id="fontUp" aria-label="تكبير الخط">أ+</button>
+  <button class="hbtn" id="theme" aria-label="الوضع الليلي">🌙</button>
+</header>
+<main id="app"></main>
+<button class="mini hidden" id="mini"></button>
+<nav class="bottom">
+  <button data-go="home"><span>📚</span>الدروس</button>
+  <button data-go="audio"><span>🎧</span>مسموع</button>
+  <button data-go="map"><span>🗺️</span>الخريطة</button>
+  <button data-go="review"><span>🗂️</span>المراجعة<i class="badge hidden" id="mbadge"></i></button>
+  <button data-go="exam"><span>📝</span>اختبار شامل</button>
+</nav>
+
+<script src="lessons.js"></script>
+<script src="extras.js"></script>
+<script src="audio.js"></script>
+<script>
+const L = window.LESSONS, CARDS = window.CARDS, X = window.EXTRAS || {}, MAP = window.MAP || [];
+const $ = (s) => document.querySelector(s);
+const app = $("#app");
+const AR = (n) => String(n).replace(/\d/g, (d) => "٠١٢٣٤٥٦٧٨٩"[d]);
+const strip = (h) => h.replace(/<[^>]+>/g, "");
+const ex = (l) => X[l.id] || { words: [], why: [] };
+
+// ---- حفظ التقدم في المتصفح ----
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("usul:" + k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem("usul:" + k, JSON.stringify(v)); } catch {} }
+};
+let progress = store.get("progress", {});   // { lessonId: أفضل نسبة }
+let mistakes = store.get("mistakes", {});   // { "lessonIdx:qIdx": true }
+let memorized = store.get("memorized", {}); // { "lessonId:chunkIdx": true }
+let days = store.get("days", []);           // أيام الدراسة
+let fs = store.get("fs", 17);
+let theme = store.get("theme", null);
+const applyPrefs = () => {
+  document.documentElement.style.setProperty("--fs", fs + "px");
+  if (theme) document.documentElement.dataset.theme = theme; else delete document.documentElement.dataset.theme;
+};
+applyPrefs();
+$("#fontUp").onclick = () => { fs = Math.min(26, fs + 1); store.set("fs", fs); applyPrefs(); };
+$("#fontDown").onclick = () => { fs = Math.max(14, fs - 1); store.set("fs", fs); applyPrefs(); };
+$("#theme").onclick = () => {
+  const dark = theme ? theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  theme = dark ? "light" : "dark"; store.set("theme", theme); applyPrefs();
+};
+const isDone = (id) => (progress[id] || 0) >= 70;
+const today = () => new Date().toISOString().slice(0, 10);
+function markStudied() { const t = today(); if (!days.includes(t)) { days.push(t); days = days.slice(-60); store.set("days", days); } }
+function streak() {
+  let n = 0, d = new Date();
+  if (!days.includes(d.toISOString().slice(0, 10))) d.setDate(d.getDate() - 1);
+  while (days.includes(d.toISOString().slice(0, 10))) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+function updateBadge() {
+  const n = Object.keys(mistakes).length, b = $("#mbadge");
+  b.textContent = AR(n); b.classList.toggle("hidden", !n);
+}
+
+// ---- القراءة بالصوت ----
+const canSpeak = "speechSynthesis" in window;
+let speakingBtn = null;
+function speak(text, btn, times = 1) {
+  if (!canSpeak) return;
+  player.stop();
+  const label = btn ? btn.dataset.label || (btn.dataset.label = btn.textContent) : "";
+  const wasMe = speakingBtn === btn;
+  speechSynthesis.cancel();
+  if (speakingBtn) speakingBtn.textContent = speakingBtn.dataset.label;
+  speakingBtn = null;
+  if (wasMe) return;
+  speakingBtn = btn;
+  if (btn) btn.textContent = "⏹ إيقاف";
+  for (let i = 0; i < times; i++) {
+    const u = new SpeechSynthesisUtterance(text); u.lang = "ar-SA"; u.rate = 0.8;
+    if (i === times - 1) u.onend = () => { if (btn) btn.textContent = label; if (speakingBtn === btn) speakingBtn = null; };
+    speechSynthesis.speak(u);
+  }
+}
+const speakBtn = (label = "🔊 استمع") => canSpeak ? `<button class="btn ghost small" data-speak>${label}</button>` : "";
+
+// ---- التنقل ----
+function go(view, arg) { location.hash = arg != null ? view + "-" + arg : view; }
+window.addEventListener("hashchange", route);
+document.querySelectorAll("nav.bottom button").forEach((b) => (b.onclick = () => go(b.dataset.go)));
+$("#back").onclick = () => history.length > 1 ? history.back() : go("home");
+
+function route() {
+  if (speakingBtn) { speechSynthesis.cancel(); speakingBtn.textContent = speakingBtn.dataset.label; speakingBtn = null; }
+  const [view, arg, tab] = location.hash.slice(1).split("-");
+  document.querySelectorAll("nav.bottom button").forEach((b) => b.classList.toggle("on", b.dataset.go === (view || "home")));
+  $("#back").classList.toggle("hidden", !view || view === "home");
+  updateBadge();
+  if (typeof player !== "undefined") player.ui();
+  scrollTo(0, 0);
+  if (view === "lesson") return lessonView(+arg || 0, tab || "explain");
+  if (view === "review") return reviewView(arg || "cards");
+  if (view === "map") return mapView();
+  if (view === "audio") return arg === "video" ? videoView() : audioView();
+  if (view === "exam") return quizView(null);
+  homeView();
+}
+
+// ---- الصفحة الرئيسية ----
+function homeView() {
+  $("#title").textContent = "دروس ثلاثة الأصول";
+  const done = L.filter((l) => isDone(l.id)).length;
+  const next = L.findIndex((l) => !isDone(l.id));
+  const st = streak();
+  let html = "";
+  if (!store.get("welcomed", false)) html += `
+    <div class="card welcome">
+      <h3>👋 أهلًا بك! كيف تتعلم هنا؟</h3>
+      <ol>
+        <li><b>💡 الشرح:</b> اقرأ الخلاصة والنقاط ومعاني الكلمات.</li>
+        <li><b>📜 المتن:</b> اقرأ كلام الشيخ والآيات، أو استمع لها.</li>
+        <li><b>🧠 احفظ:</b> احفظ المتن جملة جملة، ثم أخفِ الكلمات وسمّع لنفسك.</li>
+        <li><b>✅ اختبار:</b> أجب عن أسئلة قصيرة، وستعرف سبب كل إجابة.</li>
+      </ol>
+      <p class="muted">نصيحة: درس واحد في اليوم يكفي، والمراجعة أهم من السرعة. وللتكبير اضغط «أ+» في الأعلى.</p>
+      <button class="btn wide" id="gotit">فهمت، لنبدأ ✓</button>
+    </div>`;
+  html += `
+    <div class="card hero">
+      <h2>ثلاثة الأصول وأدلتها</h2>
+      <div class="muted">للشيخ محمد بن عبد الوهاب رحمه الله — ${AR(L.length)} درسًا قصيرًا</div>
+      <div class="bar"><i style="width:${(done / L.length) * 100}%"></i></div>
+      <div class="stats"><span>✅ أتممت ${AR(done)} من ${AR(L.length)}</span><span>🔥 ${AR(st)} ${st === 1 ? "يوم" : "أيام"} متتالية</span></div>
+    </div>
+    <div class="quick">
+      <button class="btn" onclick="go('lesson', ${next < 0 ? 0 : next})">${done === 0 ? "▶ ابدأ الدرس الأول" : next < 0 ? "↺ راجع من البداية" : "▶ تابع: الدرس " + AR(next + 1)}</button>
+      <button class="btn ghost" onclick="go('review')">🗂️ راجع ما تعلّمت</button>
+    </div>`;
+  let part = "";
+  L.forEach((l, i) => {
+    if (l.part !== part) { part = l.part; html += `<div class="part">${part}</div>`; }
+    const s = progress[l.id];
+    html += `<button class="lesson ${isDone(l.id) ? "done" : ""} ${i === next ? "next" : ""}" onclick="go('lesson', ${i})">
+      <span class="num">${isDone(l.id) ? "✓" : AR(i + 1)}</span>
+      <span class="t"><b>${l.title}</b><span class="muted">${i === next ? "👈 درسك التالي — " : ""}${s != null ? "أفضل نتيجة: " + AR(s) + "٪" : ex(l).summary || l.goal}</span></span>
+      <span class="muted">‹</span></button>`;
+  });
+  html += `<p class="note">يُكتمل الدرس عند الحصول على ٧٠٪ فأكثر في اختباره.<br>هذا التطبيق وسيلة مساعدة، ويُستحسن قراءة المتن على طالب علم وسماع شروح أهل العلم.</p>`;
+  app.innerHTML = html;
+  const g = $("#gotit"); if (g) g.onclick = () => { store.set("welcomed", true); homeView(); };
+}
+
+// ---- تقسيم المتن إلى جمل قصيرة للحفظ ----
+function chunks(text) {
+  const out = [];
+  text.split(/(?<=[.:؟])\s+/).forEach((s) => {
+    const parts = s.split(/(?<=،)\s+/);
+    let cur = "";
+    parts.forEach((p) => {
+      if (cur && (cur + " " + p).split(/\s+/).length > 12) { out.push(cur); cur = p; }
+      else cur = cur ? cur + " " + p : p;
+    });
+    if (cur) out.push(cur);
+  });
+  // ضمّ العبارات القصيرة جدًا (مثل «الأولى:») إلى ما بعدها
+  const merged = [];
+  out.forEach((c) => {
+    const prev = merged[merged.length - 1];
+    if (prev && prev.split(/\s+/).length < 4) merged[merged.length - 1] = prev + " " + c; else merged.push(c);
+  });
+  return merged;
+}
+
+// ---- صفحة الدرس ----
+const TABS = [["explain", "💡 الشرح"], ["matn", "📜 المتن"], ["memo", "🧠 احفظ"], ["quiz", "✅ اختبار"]];
+function lessonView(i, tab) {
+  const l = L[i]; if (!l) return go("home");
+  const e = ex(l);
+  markStudied();
+  $("#title").textContent = `الدرس ${AR(i + 1)}: ${l.title}`;
+  const ti = TABS.findIndex(([k]) => k === tab);
+  const head = `<div class="tabs">${TABS.map(([k, t]) => `<button class="${k === tab ? "on" : ""}" data-tab="${k}">${t}</button>`).join("")}</div>
+    <div class="steps">الخطوة ${AR(ti + 1)} من ${AR(TABS.length)}</div>`;
+  const nextBtn = ti < TABS.length - 1 ? `<div class="row"><button class="btn" data-tab="${TABS[ti + 1][0]}">التالي: ${TABS[ti + 1][1]} ←</button></div>` : "";
+  let body = "";
+  if (tab === "explain") {
+    body = `${e.summary ? `<div class="sum"><small>✨ الدرس في جملة واحدة</small>${e.summary}</div>` : ""}
+      <div class="goal">🎯 <b>هدف الدرس:</b> ${l.goal}</div>
+      <div class="row" style="margin:0 0 14px">
+        <button class="btn" id="listenAll">🎧 استمع للدرس كاملًا</button>
+        <button class="btn ghost" onclick="go('audio','video')">📺 شاهد الشرح المسجّل</button>
+      </div>
+      <div class="card"><div class="row" style="margin:0 0 6px">${speakBtn("🔊 استمع للشرح")}</div>
+        <ul class="points">${l.points.map((p) => `<li>${p}</li>`).join("")}</ul></div>
+      ${e.words.length ? `<div class="card"><div class="muted" style="margin-bottom:8px">📖 معاني الكلمات</div>
+        <dl class="words">${e.words.map(([w, m]) => `<div><dt>${w}</dt><dd>${m}</dd></div>`).join("")}</dl></div>` : ""}
+      ${nextBtn}`;
+  } else if (tab === "matn") {
+    body = `<div class="card"><div class="muted">من المتن:</div><div class="matn">${l.matn}</div>
+        <div class="row">${speakBtn("🔊 استمع للمتن")}</div></div>
+      ${l.evidence.length ? `<div class="card"><div class="muted">الدليل:</div>${l.evidence.map((v) => `<div class="ayah">${v.text}</div><div class="ref">[${v.ref}]</div>`).join("")}</div>` : ""}
+      ${nextBtn}`;
+  }
+  if (tab === "quiz") { app.innerHTML = head + `<div id="qz"></div>`; quizView(i, $("#qz")); }
+  else if (tab === "memo") { app.innerHTML = head + `<div id="mm"></div>` + nextBtn; memoView(l, $("#mm"), "read"); }
+  else app.innerHTML = head + body;
+  app.querySelectorAll("[data-tab]").forEach((b) => (b.onclick = () => { history.replaceState(null, "", `#lesson-${i}-${b.dataset.tab}`); route(); }));
+  const la = $("#listenAll");
+  if (la) la.onclick = () => { player.start(i); go("audio"); };
+  const sp = app.querySelector("[data-speak]");
+  if (sp) sp.onclick = () => speak(tab === "explain" ? (e.summary ? e.summary + ". " : "") + l.points.map(strip).join(". ") : l.matn, sp);
+}
+
+// ---- الحفظ جملة جملة مع التسميع ----
+function memoView(l, root, mode) {
+  const cs = chunks(l.matn);
+  const got = cs.filter((_, k) => memorized[l.id + ":" + k]).length;
+  const word = (w) => {
+    if (mode === "read") return `<span class="w">${w}</span>`;
+    const hide = mode === "all" || (mode === "half" && Math.random() < 0.5) || (mode === "first");
+    if (!hide) return `<span class="w">${w}</span>`;
+    const inner = mode === "first" ? `<span class="f">${w[0]}ـ</span><span class="ghost">${w.slice(1)}</span>` : `<span class="ghost">${w}</span>`;
+    return `<span class="w hid" data-w="${w.replace(/"/g, "&quot;")}">${inner}</span>`;
+  };
+  root.innerHTML = `
+    <div class="goal">🧠 احفظ جملة واحدة في كل مرة: استمع إليها ٣ مرات ثم رددها. بعد ذلك جرّب إخفاء الكلمات وسمّع لنفسك، واضغط على أي كلمة مخفية لتظهر.</div>
+    <div class="seg">
+      ${[["read", "👁️ اقرأ"], ["first", "🔤 أول حرف"], ["half", "🌗 أخفِ نصفها"], ["all", "🙈 أخفِ الكل"]].map(([k, t]) => `<button data-mode="${k}" class="${k === mode ? "on" : ""}">${t}</button>`).join("")}
+    </div>
+    <div class="muted" style="margin-bottom:8px">حفظت ${AR(got)} من ${AR(cs.length)} جمل</div>
+    <div class="bar"><i style="width:${(got / cs.length) * 100}%"></i></div>
+    ${cs.map((c, k) => `<div class="card chunk ${memorized[l.id + ":" + k] ? "got" : ""}">
+      <span class="n">${memorized[l.id + ":" + k] ? "✓" : AR(k + 1)}</span>
+      <div style="flex:1"><div class="txt">${c.split(/\s+/).map(word).join(" ")}</div>
+        <div class="row" style="margin-top:6px">
+          ${canSpeak ? `<button class="btn ghost small" data-say="${k}">🔊 ×٣</button>` : ""}
+          <button class="btn ${memorized[l.id + ":" + k] ? "ghost" : ""} small" data-got="${k}">${memorized[l.id + ":" + k] ? "↺ أعد الحفظ" : "✓ حفظتها"}</button>
+        </div></div></div>`).join("")}`;
+  root.querySelectorAll("[data-mode]").forEach((b) => (b.onclick = () => memoView(l, root, b.dataset.mode)));
+  root.querySelectorAll(".w.hid").forEach((s) => (s.onclick = () => { s.classList.remove("hid"); s.textContent = s.dataset.w; }));
+  root.querySelectorAll("[data-say]").forEach((b) => (b.onclick = () => speak(cs[+b.dataset.say], b, 3)));
+  root.querySelectorAll("[data-got]").forEach((b) => (b.onclick = () => {
+    const key = l.id + ":" + b.dataset.got;
+    if (memorized[key]) delete memorized[key]; else memorized[key] = true;
+    store.set("memorized", memorized); memoView(l, root, mode);
+  }));
+}
+
+// ---- الاختبار (لدرس واحد، أو شامل، أو لمراجعة الأخطاء) ----
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+const allQs = () => L.flatMap((l, li) => l.quiz.map((q, qi) => ({ ...q, li, qi, from: l.title, why: ex(l).why[qi] })));
+function quizView(i, root, onlyMistakes) {
+  const exam = i == null;
+  root = root || app;
+  if (exam && !onlyMistakes) $("#title").textContent = "اختبار شامل";
+  let qs;
+  if (onlyMistakes) qs = shuffle(allQs().filter((q) => mistakes[q.li + ":" + q.qi]));
+  else if (exam) qs = shuffle(allQs()).slice(0, 15);
+  else qs = allQs().filter((q) => q.li === i);
+  if (!qs.length) { root.innerHTML = `<div class="card result"><div class="big">🎉</div><p>لا توجد أخطاء للمراجعة. أحسنت!</p></div>`; return; }
+  let k = 0, score = 0;
+  const show = () => {
+    if (k >= qs.length) return finish();
+    const q = qs[k];
+    const order = shuffle(q.options.map((_, n) => n));
+    root.innerHTML = `<div class="card">
+      <div class="muted">سؤال ${AR(k + 1)} من ${AR(qs.length)}${exam ? " — " + q.from : ""}</div>
+      <div class="bar"><i style="width:${(k / qs.length) * 100}%"></i></div>
+      <div class="q">${q.q}</div>
+      ${order.map((n) => `<button class="opt" data-n="${n}">${q.options[n]}</button>`).join("")}
+      <div id="fb"></div></div>`;
+    root.querySelectorAll(".opt").forEach((b) => (b.onclick = () => {
+      const n = +b.dataset.n, right = n === q.answer, key = q.li + ":" + q.qi;
+      if (right) { score++; delete mistakes[key]; } else mistakes[key] = true;
+      store.set("mistakes", mistakes); updateBadge();
+      root.querySelectorAll(".opt").forEach((o) => { o.disabled = true; if (+o.dataset.n === q.answer) o.classList.add("ok"); });
+      if (!right) b.classList.add("bad");
+      root.querySelector("#fb").innerHTML = `<p style="margin:8px 0 4px">${right ? "✅ أحسنت! إجابة صحيحة" : "❌ ليست صحيحة — الصحيحة باللون الأخضر"}</p>
+        ${q.why ? `<div class="why">💡 ${q.why}</div>` : ""}
+        <button class="btn wide" id="nx">${k + 1 < qs.length ? "السؤال التالي" : "عرض النتيجة"}</button>`;
+      root.querySelector("#nx").onclick = () => { k++; show(); };
+    }));
+  };
+  const finish = () => {
+    const pct = Math.round((score / qs.length) * 100);
+    const first = !exam && !isDone(L[i].id);
+    if (!exam && pct > (progress[L[i].id] || 0)) { progress[L[i].id] = pct; store.set("progress", progress); }
+    const pass = pct >= 70;
+    const wrong = Object.keys(mistakes).length;
+    root.innerHTML = `<div class="card result">
+      <div class="big">${pass ? "🌟" : "📖"} ${AR(pct)}٪</div>
+      <p>${AR(score)} إجابات صحيحة من ${AR(qs.length)}</p>
+      <p>${pass ? "بارك الله فيك! " + (!exam && first ? "أتممت هذا الدرس 🎉" : "") : "لا بأس، راجع الشرح وحاول مرة أخرى؛ فالتكرار طريق الحفظ."}</p>
+      <div class="row">
+        <button class="btn ghost" id="again">↺ أعد الاختبار</button>
+        ${!exam && i + 1 < L.length && pass ? `<button class="btn" onclick="go('lesson', ${i + 1})">الدرس التالي ←</button>`
+          : !exam && !pass ? `<button class="btn" onclick="go('lesson', ${i})">💡 راجع الشرح</button>`
+          : `<button class="btn" onclick="go('home')">الرئيسية</button>`}
+      </div>
+      ${wrong ? `<div class="row"><button class="btn ghost wide" onclick="go('review','mistakes')">🔁 راجع أخطائي (${AR(wrong)})</button></div>` : ""}
+      </div>`;
+    root.querySelector("#again").onclick = () => quizView(i, root, onlyMistakes);
+  };
+  show();
+}
+
+// ---- المراجعة: بطاقات + أخطائي ----
+function reviewView(sub) {
+  $("#title").textContent = "المراجعة";
+  const n = Object.keys(mistakes).length;
+  app.innerHTML = `<div class="seg">
+      <button data-sub="cards" class="${sub === "cards" ? "on" : ""}">🗂️ بطاقات سؤال وجواب</button>
+      <button data-sub="mistakes" class="${sub === "mistakes" ? "on" : ""}">🔁 أخطائي (${AR(n)})</button>
+    </div><div id="rv"></div>`;
+  app.querySelectorAll("[data-sub]").forEach((b) => (b.onclick = () => history.replaceState(null, "", "#review-" + b.dataset.sub) || route()));
+  if (sub === "mistakes") {
+    const rv = $("#rv");
+    if (n) rv.innerHTML = `<div class="goal">هنا الأسئلة التي أخطأت فيها. إذا أجبت عن السؤال إجابة صحيحة يختفي من القائمة.</div><div id="mq"></div>`;
+    quizView(null, n ? $("#mq") : rv, true);
+    return;
+  }
+  cardsView($("#rv"));
+}
+function cardsView(root) {
+  let deck = CARDS.slice(), k = 0, flipped = false;
+  const show = () => {
+    const c = deck[k];
+    root.innerHTML = `<div class="muted" style="text-align:center">بطاقة ${AR(k + 1)} من ${AR(deck.length)}</div>
+      <div class="bar"><i style="width:${((k + 1) / deck.length) * 100}%"></i></div>
+      <div class="card flash" id="fl">${flipped ? `<div class="muted">${c.q}</div><div class="back">${c.a}</div>` : `<div class="front">${c.q}</div>`}</div>
+      <div class="tip">${flipped ? "هل تذكّرت الجواب؟ انتقل للبطاقة التالية" : "فكّر في الجواب، ثم اضغط على البطاقة لكشفه"}</div>
+      <div class="row">
+        <button class="btn ghost" id="prev" ${k === 0 ? "disabled" : ""}>→ السابقة</button>
+        <button class="btn" id="next">${k + 1 < deck.length ? "التالية ←" : "↺ من البداية"}</button>
+      </div>
+      <div class="row">${speakBtn("🔊 استمع")}<button class="btn ghost small" id="mix">🔀 خلط البطاقات</button></div>`;
+    root.querySelector("#fl").onclick = () => { flipped = !flipped; show(); };
+    root.querySelector("#prev").onclick = () => { if (k > 0) { k--; flipped = false; show(); } };
+    root.querySelector("#next").onclick = () => { k = (k + 1) % deck.length; flipped = false; show(); };
+    root.querySelector("#mix").onclick = () => { deck = shuffle(deck); k = 0; flipped = false; show(); };
+    const sp = root.querySelector("[data-speak]");
+    if (sp) sp.onclick = () => speak(flipped ? c.q + ". " + c.a : c.q, sp);
+  };
+  show();
+}
+
+// ---- خريطة المتن ----
+function mapView() {
+  $("#title").textContent = "خريطة المتن";
+  app.innerHTML = `<div class="goal">🗺️ المتن كله في صفحة واحدة. انظر إليها قبل أن تبدأ وبعد أن تنتهي، فهي تساعدك على تذكّر الترتيب.</div>
+    <div class="card map"><div class="root">ثلاثة الأصول وأدلتها</div>
+      <div class="branch">${MAP.map((m) => `<div style="margin-bottom:12px"><div class="node">${m.t}</div><ul>${m.c.map((c) => `<li>${c}</li>`).join("")}</ul></div>`).join("")}</div>
+    </div>
+    <div class="row"><button class="btn wide" onclick="go('home')">📚 اذهب إلى الدروس</button></div>`;
+}
+
+// ---- الدروس المسموعة ----
+function lessonSegments(i) {
+  const l = L[i], e = ex(l), segs = [];
+  const add = (label, text, extra = {}) => segs.push({ label, text, ...extra });
+  const rec = (window.RECORDINGS || {})[l.id];
+  if (rec) { add("تسجيل الدرس", `الدرس ${AR(i + 1)}: ${l.title}`, { file: rec }); return segs; }
+  add("العنوان", `الدرس ${["الأول","الثاني","الثالث","الرابع","الخامس","السادس","السابع","الثامن","التاسع","العاشر","الحادي عشر","الثاني عشر","الثالث عشر","الرابع عشر"][i] || AR(i + 1)}: ${l.title}`);
+  if (e.summary) add("الخلاصة", "خلاصة الدرس: " + e.summary);
+  l.points.forEach((p) => add("الشرح", strip(p)));
+  (e.words || []).forEach(([w, m], k) => add("معاني الكلمات", (k === 0 ? "معاني الكلمات. " : "") + w + ": " + m));
+  add("المتن", "ونقرأ الآن كلام الشيخ رحمه الله.");
+  chunks(l.matn).forEach((c) => add("المتن", c));
+  l.evidence.forEach((v, k) => {
+    add("الدليل", k === 0 ? "والدليل قوله تعالى:" : "وقوله تعالى:");
+    add("الدليل", v.text, { urls: window.ayahUrls ? window.ayahUrls(v.ref) : [], quran: true, ref: v.ref });
+  });
+  add("الختام", "انتهى الدرس. ثبّت ما تعلمته بالحفظ والاختبار.");
+  return segs;
+}
+const player = {
+  li: null, segs: [], k: 0, playing: false, speed: store.get("speed", 1), cont: store.get("cont", true), audio: new Audio(), token: 0,
+  start(i, k = 0) { this.stop(); this.li = i; this.segs = lessonSegments(i); this.k = k; this.playing = true; this.run(); },
+  stop() { this.token++; this.playing = false; try { speechSynthesis.cancel(); } catch {} this.audio.pause(); this.ui(); },
+  toggle() { if (this.li == null) return this.start(0); if (this.playing) this.stop(); else { this.playing = true; this.run(); } },
+  jump(d) { if (this.li == null) return; this.err = ""; this.k = Math.max(0, Math.min(this.segs.length - 1, this.k + d)); if (this.playing) { this.stop(); this.playing = true; this.run(); } else this.ui(); },
+  next() {
+    if (this.k + 1 < this.segs.length) { this.k++; return this.run(); }
+    if (this.cont && this.li + 1 < L.length) { this.li++; this.segs = lessonSegments(this.li); this.k = 0; return this.run(); }
+    this.playing = false; this.ui();
+  },
+  tts(text, t) {
+    if (!canSpeak) return setTimeout(() => t === this.token && this.next(), 1500);
+    const u = new SpeechSynthesisUtterance(text); u.lang = "ar-SA"; u.rate = 0.85 * this.speed;
+    u.onend = () => { if (t === this.token && this.playing) this.next(); };
+    u.onerror = (ev) => {
+      if (t !== this.token || !this.playing || ev.error === "interrupted" || ev.error === "canceled") return;
+      this.playing = false; this.err = "تعذّر تشغيل الصوت الآلي على هذا الجهاز. ثبّت الصوت العربي من إعدادات الجوال (تحويل النص إلى كلام) ثم حاول مرة أخرى.";
+      this.ui();
+    };
+    speechSynthesis.speak(u);
+  },
+  playFiles(urls, fallback, t) {
+    let j = 0;
+    const a = this.audio;
+    const step = () => {
+      if (t !== this.token) return;
+      if (j >= urls.length) return this.next();
+      a.src = urls[j++]; a.playbackRate = this.speed;
+      a.onended = step;
+      a.onerror = () => { if (t === this.token) { a.onerror = null; fallback ? this.tts(fallback, t) : this.next(); } };
+      a.play().catch(() => { if (t === this.token && this.playing) { a.onerror = null; fallback ? this.tts(fallback, t) : this.next(); } });
+    };
+    step();
+  },
+  run() {
+    this.err = "";
+    const t = ++this.token;
+    try { speechSynthesis.cancel(); } catch {}
+    this.audio.pause();
+    const s = this.segs[this.k];
+    this.ui();
+    if (s.file) return this.playFiles([s.file], null, t);
+    if (s.urls && s.urls.length) return this.playFiles(s.urls, s.text, t);
+    this.tts(s.text, t);
+  },
+  ui() {
+    const m = $("#mini");
+    if (m) {
+      const show = this.playing && !location.hash.startsWith("#audio");
+      m.classList.toggle("hidden", !show);
+      if (show) m.textContent = `⏸ ${L[this.li].title} — إيقاف`;
+    }
+    if (location.hash.startsWith("#audio") && $("#pl")) renderPlayer();
+  }
+};
+$("#mini").onclick = () => player.stop();
+
+function renderPlayer() {
+  const p = player, pl = $("#pl");
+  if (!pl) return;
+  if (p.li == null) {
+    pl.innerHTML = `<div class="muted" style="text-align:center">اختر درسًا من القائمة ليبدأ التشغيل</div>
+      <div class="row"><button class="btn wide" id="pStart">▶ ابدأ من الدرس الأول</button></div>`;
+    $("#pStart").onclick = () => p.start(0);
+  } else {
+    const s = p.segs[p.k];
+    pl.innerHTML = `
+      <div class="muted">الدرس ${AR(p.li + 1)}: <b>${L[p.li].title}</b> — ${s.label}${s.ref ? " [" + s.ref + "]" : ""}</div>
+      <div class="bar"><i style="width:${((p.k + 1) / p.segs.length) * 100}%"></i></div>
+      <div class="now ${s.quran ? "quran" : ""}">${s.text}</div>
+      <div class="ctrls">
+        <button class="btn ghost" id="pPrev" aria-label="السابق">⏮</button>
+        <button class="btn play" id="pPlay" aria-label="${p.playing ? "إيقاف" : "تشغيل"}">${p.playing ? "⏸" : "▶"}</button>
+        <button class="btn ghost" id="pNext" aria-label="التالي">⏭</button>
+      </div>${p.err ? `<p class="why">⚠️ ${p.err}</p>` : ""}`;
+    $("#pPrev").onclick = () => p.jump(-1);
+    $("#pNext").onclick = () => p.jump(1);
+    $("#pPlay").onclick = () => p.toggle();
+  }
+  document.querySelectorAll(".lesson[data-li]").forEach((b) => b.classList.toggle("playing", +b.dataset.li === p.li));
+}
+
+const audioTabs = (on) => `<div class="seg">
+    <button class="${on === "tts" ? "on" : ""}" onclick="go('audio')">🎧 استماع للدروس</button>
+    <button class="${on === "video" ? "on" : ""}" onclick="go('audio','video')">📺 الشرح المسجّل</button>
+  </div>`;
+
+function videoView() {
+  $("#title").textContent = "الشرح المسجّل";
+  player.stop();
+  const V = window.VIDEO || {};
+  const link = "https://www.youtube.com/playlist?list=" + V.playlist;
+  app.innerHTML = audioTabs("video") + `
+    <div class="goal">📺 ${V.title || "سلسلة دروس في شرح ثلاثة الأصول"}. شاهد الدرس المسجّل أو استمع إليه، ثم ارجع إلى التطبيق لتحفظ وتختبر نفسك.<br>
+      <span class="muted">لاختيار درس معيّن: اضغط على أيقونة القائمة ☰ في أعلى الفيديو.</span></div>
+    ${window.NO_EMBED ? "" : `<div class="card" style="padding:0;overflow:hidden">
+      <div style="position:relative;aspect-ratio:16/9;max-width:100%">
+        <iframe src="https://www.youtube-nocookie.com/embed/videoseries?list=${V.playlist}&rel=0" title="${V.title || "شرح ثلاثة الأصول"}"
+          style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe>
+      </div></div>`}
+    <a class="btn wide" style="display:block;text-align:center;text-decoration:none" href="${link}" target="_blank" rel="noopener">▶ افتح السلسلة في يوتيوب</a>
+    <p class="note">${window.NO_EMBED ? "" : "إذا لم يظهر الفيديو، فافتح السلسلة في يوتيوب من الزر أعلاه. "}مشاهدة الفيديو تحتاج اتصالًا بالإنترنت.</p>`;
+}
+
+function audioView() {
+  $("#title").textContent = "الدروس المسموعة";
+  const p = player;
+  app.innerHTML = audioTabs("tts") + `
+    <div class="goal">🎧 استمع للدروس وأنت في السيارة أو قبل النوم. يقرأ التطبيق الشرح والمتن، وتُتلى الآيات بصوت الشيخ مشاري العفاسي.</div>
+    <div class="card player" id="pl"></div>
+    <div class="opts">
+      <label>السرعة:
+        <select id="pSpeed">${[0.75, 1, 1.25, 1.5].map((v) => `<option value="${v}" ${v === p.speed ? "selected" : ""}>${AR(v)}×</option>`).join("")}</select></label>
+      <label><input type="checkbox" id="pCont" ${p.cont ? "checked" : ""}> تشغيل الدروس متتالية</label>
+    </div>
+    ${!canSpeak ? `<p class="why">⚠️ متصفحك لا يدعم القراءة الآلية، فستُتلى الآيات فقط. جرّب متصفح Chrome أو Safari.</p>` : ""}
+    <div class="part">قائمة الدروس</div>
+    ${L.map((l, i) => `<button class="lesson" data-li="${i}">
+      <span class="num">${(window.RECORDINGS || {})[l.id] ? "🎙️" : "🎧"}</span>
+      <span class="t"><b>${AR(i + 1)}. ${l.title}</b><span class="muted">${(window.RECORDINGS || {})[l.id] ? "تسجيل صوتي" : (ex(l).summary || l.goal)}</span></span>
+      <span class="muted">▶</span></button>`).join("")}
+    <p class="note">جودة الصوت الآلي تختلف من جهاز لآخر. لأفضل نتيجة ثبّت الصوت العربي من إعدادات الجوال (تحويل النص إلى كلام).<br>تحتاج تلاوة الآيات اتصالًا بالإنترنت؛ ودونه تُقرأ الآية بالصوت الآلي.</p>`;
+  $("#pSpeed").onchange = (e) => { p.speed = +e.target.value; store.set("speed", p.speed); p.audio.playbackRate = p.speed; };
+  $("#pCont").onchange = (e) => { p.cont = e.target.checked; store.set("cont", p.cont); };
+  app.querySelectorAll(".lesson[data-li]").forEach((b) => (b.onclick = () => { p.start(+b.dataset.li); scrollTo(0, 0); }));
+  renderPlayer();
+  p.ui();
+}
+
+route();
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
+</script>
+</body>
+</html>

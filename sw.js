@@ -1,6 +1,6 @@
 // رفيق الحفظ — service worker: keeps the app itself and its fonts available offline.
 // Quran text and recitations are cached by the page (Cache API: hifz-data / hifz-audio).
-const SHELL = "hifz-shell-v1";
+const SHELL = "hifz-shell-v2";
 const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", (e) => {
