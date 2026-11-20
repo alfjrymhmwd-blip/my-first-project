@@ -130,6 +130,8 @@
   dl.words { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; }
   dl.words dt { font-family: var(--font-text); font-size: 1.15rem; font-weight: 700; color: var(--plum); }
   dl.words dd { margin: 0; }
+  .verify { display: flex; flex-direction: column; gap: 2px; text-decoration: none; color: var(--ink); border-color: var(--teal); background: var(--teal-soft); padding: 12px 16px; }
+  .verify-t { font-weight: 700; color: var(--teal); }
   .amal { background: var(--gold-soft); border-radius: 12px; padding: 12px 14px; }
   .amal h3 { color: var(--gold); }
 
@@ -586,6 +588,11 @@ function matnHTML(t) {
   // تلوين كلام النبي ﷺ الوارد بين «»
   return esc(t).replace(/«([^»]*)»/g, '<span class="q">«$1»</span>');
 }
+// رابط البحث عن الحديث في موسوعة الدرر السنية للتحقق من صحته ولفظه
+function dorarURL(h) {
+  const t = quoted(h.text).replace(/[ً-ْٰ«»،:؟.]/g, "").split(/\s+/).filter(Boolean).slice(0, 7).join(" ");
+  return "https://dorar.net/hadith/search?q=" + encodeURIComponent(t);
+}
 function srcBadge(h) { const [l, c] = SRC[h.src]; return `<span class="badge ${c}">${l}</span>`; }
 
 /* ---------- العرض ---------- */
@@ -637,7 +644,7 @@ function viewHome() {
       <li>راجع باختبار قصير من عشرة أسئلة كل بضعة أيام.</li>
     </ol>
   </section>
-  <p class="foot">${ar(H.length)} حديثًا مختارًا من الصحيحين، مع ذكر رقم الحديث في كل كتاب.</p>`;
+  <p class="foot">${ar(H.length)} حديثًا مختارًا من الصحيحين، مع ذكر رقم الحديث في كل كتاب.<br>تحقّق من لفظ أي حديث وحكمه عبر زر «تحقّق من صحة الحديث» في صفحته، أو مباشرة في <a href="https://dorar.net/hadith" target="_blank" rel="noopener">الدرر السنية</a>.</p>`;
 }
 
 function viewList() {
@@ -676,6 +683,11 @@ function viewHadith(h) {
     <button class="btn star ${S.fav[h.id] ? "on" : ""}" data-act="fav" data-id="${h.id}" type="button">★ ${S.fav[h.id] ? "في المفضلة" : "مفضلة"}</button>
     <button class="btn" data-act="copy" data-id="${h.id}" type="button">نسخ</button>
   </div>
+
+  <a class="panel verify" href="${dorarURL(h)}" target="_blank" rel="noopener">
+    <span class="verify-t">تحقّق من صحة الحديث</span>
+    <span class="muted small">افتح الحديث في موسوعة الدرر السنية لترى لفظه في المصادر وحكم العلماء عليه ←</span>
+  </a>
 
   <section class="panel sec">
     <div class="sec-block"><h3>المعنى بإيجاز</h3><p>${esc(h.sharh)}</p></div>
@@ -807,7 +819,7 @@ function viewQuiz() {
     if (answered) { if (o === q.ans) cls = "right"; else if (i === Q.picked) cls = "wrong"; }
     return `<button class="opt ${q.txt ? "txt" : ""} ${cls}" data-opt="${i}" type="button" ${answered ? "disabled" : ""}>${esc(o)}</button>`;
   }).join("")}</div>
-  ${answered ? `<div class="row"><a class="btn" href="#h-${q.h.id}">اقرأ الشرح</a><span class="spacer"></span>
+  ${answered ? `<div class="row"><a class="btn" href="#h-${q.h.id}">اقرأ الشرح</a><a class="btn" href="${dorarURL(q.h)}" target="_blank" rel="noopener">الدرر السنية</a><span class="spacer"></span>
     <button class="btn primary" data-act="quiz-next" type="button">${Q.i + 1 < Q.items.length ? "السؤال التالي" : "عرض النتيجة"}</button></div>` : ""}`;
 }
 
