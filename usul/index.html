@@ -246,7 +246,7 @@ function route() {
   if (view === "lesson") return lessonView(+arg || 0, tab || "explain");
   if (view === "review") return reviewView(arg || "cards");
   if (view === "map") return mapView();
-  if (view === "audio") return audioView();
+  if (view === "audio") return arg === "video" ? videoView() : audioView();
   if (view === "exam") return quizView(null);
   homeView();
 }
@@ -331,7 +331,10 @@ function lessonView(i, tab) {
   if (tab === "explain") {
     body = `${e.summary ? `<div class="sum"><small>✨ الدرس في جملة واحدة</small>${e.summary}</div>` : ""}
       <div class="goal">🎯 <b>هدف الدرس:</b> ${l.goal}</div>
-      <button class="btn wide" id="listenAll" style="margin-bottom:14px">🎧 استمع للدرس كاملًا (الشرح والمتن والأدلة)</button>
+      <div class="row" style="margin:0 0 14px">
+        <button class="btn" id="listenAll">🎧 استمع للدرس كاملًا</button>
+        <button class="btn ghost" onclick="go('audio','video')">📺 شاهد الشرح المسجّل</button>
+      </div>
       <div class="card"><div class="row" style="margin:0 0 6px">${speakBtn("🔊 استمع للشرح")}</div>
         <ul class="points">${l.points.map((p) => `<li>${p}</li>`).join("")}</ul></div>
       ${e.words.length ? `<div class="card"><div class="muted" style="margin-bottom:8px">📖 معاني الكلمات</div>
@@ -598,10 +601,32 @@ function renderPlayer() {
   document.querySelectorAll(".lesson[data-li]").forEach((b) => b.classList.toggle("playing", +b.dataset.li === p.li));
 }
 
+const audioTabs = (on) => `<div class="seg">
+    <button class="${on === "tts" ? "on" : ""}" onclick="go('audio')">🎧 استماع للدروس</button>
+    <button class="${on === "video" ? "on" : ""}" onclick="go('audio','video')">📺 الشرح المسجّل</button>
+  </div>`;
+
+function videoView() {
+  $("#title").textContent = "الشرح المسجّل";
+  player.stop();
+  const V = window.VIDEO || {};
+  const link = "https://www.youtube.com/playlist?list=" + V.playlist;
+  app.innerHTML = audioTabs("video") + `
+    <div class="goal">📺 ${V.title || "سلسلة دروس في شرح ثلاثة الأصول"}. شاهد الدرس المسجّل أو استمع إليه، ثم ارجع إلى التطبيق لتحفظ وتختبر نفسك.<br>
+      <span class="muted">لاختيار درس معيّن: اضغط على أيقونة القائمة ☰ في أعلى الفيديو.</span></div>
+    ${window.NO_EMBED ? "" : `<div class="card" style="padding:0;overflow:hidden">
+      <div style="position:relative;aspect-ratio:16/9;max-width:100%">
+        <iframe src="https://www.youtube-nocookie.com/embed/videoseries?list=${V.playlist}&rel=0" title="${V.title || "شرح ثلاثة الأصول"}"
+          style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe>
+      </div></div>`}
+    <a class="btn wide" style="display:block;text-align:center;text-decoration:none" href="${link}" target="_blank" rel="noopener">▶ افتح السلسلة في يوتيوب</a>
+    <p class="note">${window.NO_EMBED ? "" : "إذا لم يظهر الفيديو، فافتح السلسلة في يوتيوب من الزر أعلاه. "}مشاهدة الفيديو تحتاج اتصالًا بالإنترنت.</p>`;
+}
+
 function audioView() {
   $("#title").textContent = "الدروس المسموعة";
   const p = player;
-  app.innerHTML = `
+  app.innerHTML = audioTabs("tts") + `
     <div class="goal">🎧 استمع للدروس وأنت في السيارة أو قبل النوم. يقرأ التطبيق الشرح والمتن، وتُتلى الآيات بصوت الشيخ مشاري العفاسي.</div>
     <div class="card player" id="pl"></div>
     <div class="opts">
