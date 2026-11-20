@@ -39,7 +39,7 @@
   button { font: inherit; color: inherit; cursor: pointer; }
   button:disabled { opacity: .5; cursor: default; }
   header {
-    position: sticky; top: 0; z-index: 10; background: var(--accent); color: var(--on-accent);
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: var(--accent); color: var(--on-accent);
     padding: 10px 16px; padding-top: max(10px, env(safe-area-inset-top)); display: flex; align-items: center; gap: 8px;
   }
   header h1 { margin: 0; font-size: 18px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -65,7 +65,7 @@
   .lesson.done .num { background: var(--ok); color: var(--on-accent); }
   .lesson .t { flex: 1; min-width: 0; }
   .lesson .t b { display: block; font-size: .98em; }
-  .tabs { display: flex; gap: 4px; background: var(--surface-2); padding: 5px; border-radius: 14px; margin-bottom: 14px; position: sticky; top: 64px; z-index: 5; }
+  .tabs { display: flex; gap: 4px; background: var(--surface-2); padding: 5px; border-radius: 14px; margin-bottom: 14px; position: sticky; top: calc(64px + env(safe-area-inset-top, 0px)); z-index: 5; }
   .tabs button { flex: 1; border: 0; background: none; border-radius: 10px; padding: 8px 2px; font-size: .8em; font-weight: 600; color: var(--muted); }
   .tabs button.on { background: var(--surface); color: var(--accent); box-shadow: var(--shadow); }
   .steps { text-align: center; font-size: .78em; color: var(--muted); margin: -6px 0 12px; }
@@ -214,14 +214,14 @@ function speak(text, btn, times = 1) {
 const speakBtn = (label = "🔊 استمع") => canSpeak ? `<button class="btn ghost small" data-speak>${label}</button>` : "";
 
 // ---- التنقل ----
-function go(view, arg) { location.hash = arg != null ? view + "/" + arg : view; }
+function go(view, arg) { location.hash = arg != null ? view + "-" + arg : view; }
 window.addEventListener("hashchange", route);
 document.querySelectorAll("nav.bottom button").forEach((b) => (b.onclick = () => go(b.dataset.go)));
 $("#back").onclick = () => history.length > 1 ? history.back() : go("home");
 
 function route() {
   if (canSpeak) speechSynthesis.cancel(); speakingBtn = null;
-  const [view, arg, tab] = location.hash.slice(1).split("/");
+  const [view, arg, tab] = location.hash.slice(1).split("-");
   document.querySelectorAll("nav.bottom button").forEach((b) => b.classList.toggle("on", b.dataset.go === (view || "home")));
   $("#back").classList.toggle("hidden", !view || view === "home");
   updateBadge();
@@ -327,7 +327,7 @@ function lessonView(i, tab) {
   if (tab === "quiz") { app.innerHTML = head + `<div id="qz"></div>`; quizView(i, $("#qz")); }
   else if (tab === "memo") { app.innerHTML = head + `<div id="mm"></div>` + nextBtn; memoView(l, $("#mm"), "read"); }
   else app.innerHTML = head + body;
-  app.querySelectorAll("[data-tab]").forEach((b) => (b.onclick = () => { history.replaceState(null, "", `#lesson/${i}/${b.dataset.tab}`); route(); }));
+  app.querySelectorAll("[data-tab]").forEach((b) => (b.onclick = () => { history.replaceState(null, "", `#lesson-${i}-${b.dataset.tab}`); route(); }));
   const sp = app.querySelector("[data-speak]");
   if (sp) sp.onclick = () => speak(tab === "explain" ? (e.summary ? e.summary + ". " : "") + l.points.map(strip).join(". ") : l.matn, sp);
 }
@@ -433,7 +433,7 @@ function reviewView(sub) {
       <button data-sub="cards" class="${sub === "cards" ? "on" : ""}">🗂️ بطاقات سؤال وجواب</button>
       <button data-sub="mistakes" class="${sub === "mistakes" ? "on" : ""}">🔁 أخطائي (${AR(n)})</button>
     </div><div id="rv"></div>`;
-  app.querySelectorAll("[data-sub]").forEach((b) => (b.onclick = () => history.replaceState(null, "", "#review/" + b.dataset.sub) || route()));
+  app.querySelectorAll("[data-sub]").forEach((b) => (b.onclick = () => history.replaceState(null, "", "#review-" + b.dataset.sub) || route()));
   if (sub === "mistakes") {
     const rv = $("#rv");
     if (n) rv.innerHTML = `<div class="goal">هنا الأسئلة التي أخطأت فيها. إذا أجبت عن السؤال إجابة صحيحة يختفي من القائمة.</div><div id="mq"></div>`;
