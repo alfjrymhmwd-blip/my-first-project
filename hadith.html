@@ -4,6 +4,10 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#0d5c55">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="رفيق الحفظ">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Kufi+Arabic:wght@400;600;700&family=Reem+Kufi:wght@500;700&display=swap" rel="stylesheet">
@@ -69,6 +73,10 @@
   .head-in { max-width: 760px; margin: 0 auto; display: flex; align-items: center; gap: 10px; }
   .head-in h1 { font-family: var(--font-display); font-weight: 700; font-size: 21px; margin: 0; flex: 1; letter-spacing: 0; }
   .head-in h1 small { font-family: var(--font-ui); font-weight: 400; font-size: 11px; opacity: .8; display: block; line-height: 1.2; }
+  .appswitch { display: inline-flex; background: rgba(255,255,255,.16); border-radius: 999px; padding: 3px; gap: 2px; }
+  .appswitch a { color: inherit; text-decoration: none; font-size: 13px; padding: 3px 12px; border-radius: 999px; opacity: .85; white-space: nowrap; }
+  .appswitch a.on { background: var(--on-teal); color: var(--teal); opacity: 1; font-weight: 700; }
+  @media (max-width: 420px) { .head-in h1 small { display: none; } .appswitch a { padding: 3px 9px; } }
   .icon-btn { background: transparent; border: 1px solid color-mix(in srgb, var(--on-teal) 35%, transparent); color: var(--on-teal); border-radius: 10px; padding: 4px 10px; font-size: 13px; text-decoration: none; }
 
   main {
@@ -224,7 +232,7 @@
 <header>
   <div class="head-in">
     <h1>رياض الصحيحين<small>أحاديث مختارة من صحيحَي البخاري ومسلم</small></h1>
-    <a class="icon-btn" id="quranLink" href="index.html" hidden>رفيق الحفظ</a>
+    <nav class="appswitch" id="appSwitch" aria-label="التبديل بين التطبيقين" hidden><a href="index.html">القرآن</a><a class="on" href="hadith.html" aria-current="page">الأحاديث</a></nav>
     <button class="icon-btn" id="themeBtn" type="button" aria-label="تبديل الوضع الليلي">الوضع</button>
   </div>
 </header>
@@ -901,11 +909,13 @@ document.getElementById("themeBtn").addEventListener("click", () => {
   try { localStorage.setItem(KEY + "-theme", root.dataset.theme); } catch (e) {}
 });
 
-/* داخل المشروع (GitHub Pages): رابط لتطبيق القرآن وتفعيل العمل دون إنترنت */
-if (/github\.io$|^localhost$|^127\./.test(location.hostname)) {
-  document.getElementById("quranLink").hidden = false;
-  if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+/* داخل مشروع «رفيق الحفظ»: أظهر زر التبديل إلى القرآن وفعّل العمل دون إنترنت */
+function joinQuranApp() {
+  document.getElementById("appSwitch").hidden = false;
+  if ("serviceWorker" in navigator && location.protocol.startsWith("http")) navigator.serviceWorker.register("sw.js").catch(() => {});
 }
+if (location.protocol === "file:") joinQuranApp();
+else fetch("index.html", { method: "HEAD", cache: "no-store" }).then((r) => { if (r.ok) joinQuranApp(); }).catch(() => {});
 
 route();
 </script>

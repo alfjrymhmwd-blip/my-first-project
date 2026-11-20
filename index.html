@@ -148,6 +148,12 @@
   .stats b { color: var(--text); }
   .surah-list { max-height: 320px; overflow: auto; margin-top: 8px; }
   .surah-list div { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px dashed var(--border); font-size: 13px; }
+  .appswitch { display: inline-flex; background: rgba(255,255,255,.16); border-radius: 999px; padding: 3px; gap: 2px; }
+  .appswitch a { color: inherit; text-decoration: none; font-size: 13px; padding: 3px 12px; border-radius: 999px; opacity: .85; white-space: nowrap; }
+  .appswitch a.on { background: rgba(255,255,255,.95); color: var(--accent); opacity: 1; font-weight: 700; }
+  :root[data-theme="dark"] .appswitch a.on { background: #0c1410; color: #4cc38a; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .appswitch a.on { background: #0c1410; color: #4cc38a; } }
+  @media (max-width: 420px) { header h1 { font-size: 16px; } .appswitch a { padding: 3px 9px; } }
   .netbadge { font-size: 11px; background: rgba(255,255,255,.2); padding: 3px 10px; border-radius: 99px; }
   .act {
     border: 0; background: var(--accent); color: #fff; padding: 9px 14px; border-radius: 10px;
@@ -169,7 +175,7 @@
 <header>
   <h1>📖 رفيق الحفظ</h1>
   <span class="netbadge" id="netBadge" hidden>⚡ دون اتصال</span>
-  <a href="hadith.html" title="رياض الصحيحين: أحاديث البخاري ومسلم" style="color:inherit;text-decoration:none;font-size:13px;border:1px solid currentColor;border-radius:10px;padding:2px 10px;opacity:.9">الأحاديث</a>
+  <nav class="appswitch" aria-label="التبديل بين التطبيقين"><a class="on" href="index.html" aria-current="page">القرآن</a><a href="hadith.html">الأحاديث</a></nav>
   <button id="themeBtn" title="الوضع الليلي">🌓</button>
 </header>
 
