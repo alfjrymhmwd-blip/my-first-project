@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0f5132">
 <title>رفيق الحفظ</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="رفيق الحفظ">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Noto+Kufi+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
@@ -141,12 +147,28 @@
   .stats { font-size: 13px; color: var(--muted); }
   .stats b { color: var(--text); }
   .surah-list { max-height: 320px; overflow: auto; margin-top: 8px; }
-  .surah-list div { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed var(--border); font-size: 13px; }
+  .surah-list div { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px dashed var(--border); font-size: 13px; }
+  .netbadge { font-size: 11px; background: rgba(255,255,255,.2); padding: 3px 10px; border-radius: 99px; }
+  .act {
+    border: 0; background: var(--accent); color: #fff; padding: 9px 14px; border-radius: 10px;
+    font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  :root[data-theme="dark"] .act { color: #0c1410; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .act { color: #0c1410; } }
+  .act.ghost { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
+  .act.danger { background: transparent; color: #c0392b; border: 1px solid #c0392b55; }
+  .act:disabled { opacity: .5; cursor: default; }
+  .off-status { margin: 0 0 10px; font-size: 14px; }
+  .off-status.ok { color: var(--done); font-weight: 600; }
+  .row select { width: auto; flex: 1; min-width: 110px; }
+  .del { background: none; border: 0; cursor: pointer; font-size: 14px; color: var(--muted); }
+  .check { display: flex; gap: 8px; align-items: center; font-size: 13px; margin-top: 10px; color: var(--text); }
 </style>
 </head>
 <body>
 <header>
   <h1>📖 رفيق الحفظ</h1>
+  <span class="netbadge" id="netBadge" hidden>⚡ دون اتصال</span>
   <button id="themeBtn" title="الوضع الليلي">🌓</button>
 </header>
 
@@ -249,6 +271,36 @@
   </section>
 
   <section class="card">
+    <h3 style="margin:0 0 8px;font-size:16px">📥 الاستماع دون إنترنت</h3>
+    <p class="off-status" id="offStatus"></p>
+    <div class="row">
+      <button class="act" id="dlSurah">⬇ تنزيل تلاوة هذه السورة</button>
+      <button class="act ghost" id="dlCancel" hidden>إلغاء</button>
+    </div>
+    <div class="progress" id="dlProg" hidden><div id="dlBar"></div></div>
+    <p class="hint" id="dlText"></p>
+    <details style="margin-top:8px">
+      <summary>تنزيل عدة سور وإدارة التنزيلات</summary>
+      <div class="chips" style="margin-bottom:10px">
+        <button class="chip" data-range="78-114">جزء عمّ</button>
+        <button class="chip" data-range="67-77">جزء تبارك</button>
+        <button class="chip" data-range="1-1">الفاتحة</button>
+        <button class="chip" data-range="1-114">القرآن كاملًا</button>
+      </div>
+      <div class="row">
+        <span>من</span><select id="dlFrom"></select>
+        <span>إلى</span><select id="dlTo"></select>
+        <button class="act" id="dlRange">⬇ تنزيل</button>
+      </div>
+      <label class="check"><input type="checkbox" id="autoCache"> احفظ تلقائيًا على الجهاز كل آية أستمع إليها</label>
+      <p class="hint">نص المصحف كاملًا يُحفظ على جهازك تلقائيًا عند أول تشغيل، فتستطيع التسميع بالإخفاء دون إنترنت حتى لو لم تنزّل التلاوة. التلاوة تُنزَّل لكل قارئ على حدة.</p>
+      <div class="surah-list" id="dlList"></div>
+      <p class="hint" id="storageInfo"></p>
+      <button class="act danger" id="clearAudio">🗑 حذف كل التلاوات المنزّلة</button>
+    </details>
+  </section>
+
+  <section class="card">
     <details>
       <summary>إحصائيات الحفظ</summary>
       <div class="stats" id="stats"></div>
@@ -310,6 +362,10 @@
     basmala: $("basmala"), playBtn: $("playBtn"), prevBtn: $("prevBtn"), nextBtn: $("nextBtn"),
     stopBtn: $("stopBtn"), nowText: $("nowText"), repText: $("repText"), pbar: $("pbar"),
     stats: $("stats"), surahStats: $("surahStats"),
+    netBadge: $("netBadge"), offStatus: $("offStatus"), dlSurah: $("dlSurah"), dlCancel: $("dlCancel"),
+    dlProg: $("dlProg"), dlBar: $("dlBar"), dlText: $("dlText"), dlFrom: $("dlFrom"), dlTo: $("dlTo"),
+    dlRange: $("dlRange"), autoCache: $("autoCache"), dlList: $("dlList"), storageInfo: $("storageInfo"),
+    clearAudio: $("clearAudio"),
   };
 
   // fill selects
@@ -320,7 +376,7 @@
 
   // ---------- settings ----------
   const defaults = { surah: 1, reciter: "ar.alafasy", from: 1, to: 7, ayahRep: 3, rangeRep: 2,
-    mode: "normal", gap: "0", speed: "1", fontSize: "28", hide: "show", theme: "auto" };
+    mode: "normal", gap: "0", speed: "1", fontSize: "28", hide: "show", theme: "auto", autoCache: true };
   const S = Object.assign({}, defaults, store.get("settings", {}));
   const save = () => store.set("settings", S);
 
@@ -345,17 +401,91 @@
   };
   applyTheme();
 
+  // ---------- offline storage (Cache API) ----------
+  const hasCache = "caches" in window && window.isSecureContext !== false;
+  const DATA_CACHE = "hifz-data", AUDIO_CACHE = "hifz-audio";
+  const openCache = (name) => caches.open(name);
+  // dl[reciter] = [surah numbers fully downloaded]
+  const dl = store.get("dl", {});
+  const isDownloaded = (rec, n) => (dl[rec] || []).includes(n);
+  function markDownloaded(rec, n, on) {
+    const list = dl[rec] || (dl[rec] = []);
+    const i = list.indexOf(n);
+    if (on && i < 0) list.push(n);
+    if (!on && i >= 0) list.splice(i, 1);
+    store.set("dl", dl);
+  }
+
+  // Quran data never changes → cache-first, network on miss.
+  async function fetchJSON(url) {
+    if (hasCache) {
+      try {
+        const hit = await (await openCache(DATA_CACHE)).match(url);
+        if (hit) { const j = await hit.json(); if (j.code === 200) return j.data; }
+      } catch {}
+    }
+    const r = await fetch(url);
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const j = await r.clone().json();
+    if (j.code !== 200) throw new Error(j.status || "API error");
+    if (hasCache) { try { await (await openCache(DATA_CACHE)).put(url, r); } catch {} }
+    return j.data;
+  }
+
+  const textURL = (n) => `${API}/surah/${n}/quran-uthmani`;
+  const audioURL = (n, rec) => `${API}/surah/${n}/${rec}`;
+
+  // Save the whole mushaf text once, split into per-surah cache entries.
+  async function cacheFullText() {
+    if (!hasCache || store.get("fullText", false) || !navigator.onLine) return;
+    try {
+      const r = await fetch(`${API}/quran/quran-uthmani`);
+      const j = await r.json();
+      if (j.code !== 200) return;
+      const c = await openCache(DATA_CACHE);
+      await Promise.all(j.data.surahs.map(s => c.put(textURL(s.number),
+        new Response(JSON.stringify({ code: 200, status: "OK", data: s }), { headers: { "Content-Type": "application/json" } }))));
+      store.set("fullText", true);
+      renderOffline();
+    } catch {}
+  }
+
+  const inflight = new Map();
+  function cacheAudio(url) {
+    if (!hasCache || !url) return Promise.resolve(false);
+    if (inflight.has(url)) return inflight.get(url);
+    const p = (async () => {
+      const c = await openCache(AUDIO_CACHE);
+      if (await c.match(url)) return true;
+      let r;
+      try { r = await fetch(url, { mode: "cors" }); if (!r.ok) throw new Error(); }
+      catch { r = await fetch(url, { mode: "no-cors" }); }
+      if (r.type !== "opaque" && !r.ok) return false;
+      await c.put(url, r);
+      return true;
+    })().catch(() => false).finally(() => inflight.delete(url));
+    inflight.set(url, p);
+    return p;
+  }
+
+  // Return a blob: URL for cached audio (works offline everywhere, incl. Safari), else the network URL.
+  async function resolveAudio(url) {
+    if (!hasCache) return url;
+    try {
+      const r = await (await openCache(AUDIO_CACHE)).match(url);
+      if (r && r.type !== "opaque") {
+        const b = await r.blob();
+        if (b.size) return URL.createObjectURL(b);
+      }
+    } catch {}
+    return url;
+  }
+
   // ---------- data ----------
   let surahs = store.get("surahList", null);
   let current = null; // { number, name, ayahs: [{n, text, words, audio, audio2}] }
 
-  async function fetchJSON(url) {
-    const r = await fetch(url);
-    if (!r.ok) throw new Error("HTTP " + r.status);
-    const j = await r.json();
-    if (j.code !== 200) throw new Error(j.status || "API error");
-    return j.data;
-  }
+  const surahLabel = (s) => `${s.n}. ${s.name.replace(/^سُورَةُ\s*/, "")}`;
 
   async function loadSurahList() {
     if (!surahs) {
@@ -364,15 +494,31 @@
       store.set("surahList", surahs);
     }
     el.surah.innerHTML = "";
-    surahs.forEach(s => el.surah.add(new Option(`${s.n}. ${s.name.replace(/^سُورَةُ\s*/, "")}`, s.n)));
+    surahs.forEach(s => {
+      el.surah.add(new Option(surahLabel(s), s.n));
+      el.dlFrom.add(new Option(surahLabel(s), s.n));
+      el.dlTo.add(new Option(surahLabel(s), s.n));
+    });
+    el.dlTo.value = 114; el.dlFrom.value = 78;
+    refreshSurahOptions();
+  }
+
+  function refreshSurahOptions() {
+    if (!surahs) return;
+    [...el.surah.options].forEach(o => {
+      const s = surahs[+o.value - 1];
+      o.textContent = surahLabel(s) + (isDownloaded(S.reciter, s.n) ? "  ✓" : "");
+    });
   }
 
   const BASMALA_RE = /^بِسْمِ\s+[ٱا]للَّهِ\s+[ٱا]لرَّحْمَ[^\s]*\s+[ٱا]لرَّحِيمِ\s*/;
 
   async function loadSurah(n, reciter) {
     el.quran.innerHTML = '<div class="loading">جارٍ تحميل السورة…</div>';
-    const data = await fetchJSON(`${API}/surah/${n}/editions/quran-uthmani,${reciter}`);
-    const [textEd, audioEd] = data;
+    const [tRes, aRes] = await Promise.allSettled([fetchJSON(textURL(n)), fetchJSON(audioURL(n, reciter))]);
+    if (tRes.status !== "fulfilled") throw tRes.reason;
+    const textEd = tRes.value;
+    const audioEd = aRes.status === "fulfilled" ? aRes.value : null;
     const ayahs = textEd.ayahs.map((a, i) => {
       let text = a.text;
       if (n !== 1 && n !== 9 && i === 0) {
@@ -384,12 +530,12 @@
           if (w[0].startsWith("بِسْمِ")) text = w.slice(4).join(" ");
         }
       }
-      const au = audioEd.ayahs[i];
+      const au = audioEd?.ayahs?.[i];
       return { n: a.numberInSurah, text, words: text.split(/\s+/).filter(Boolean),
-        audio: au.audio, audio2: (au.audioSecondary || [])[0] };
+        audio: au?.audio, audio2: (au?.audioSecondary || [])[0] };
     });
     const meta = surahs.find(s => s.n === n);
-    current = { number: n, name: textEd.name, ayahs, meta, reciter };
+    current = { number: n, name: textEd.name, ayahs, meta, reciter, hasAudio: !!audioEd };
   }
 
   // ---------- render ----------
@@ -480,9 +626,27 @@
   audio.preload = "auto";
   const preloader = new Audio();
   preloader.preload = "auto";
+  let curBlob = null;
+
+  // A tiny silent clip played synchronously inside the tap, so iOS allows later async plays.
+  let unlocked = false;
+  function silentWav() {
+    const n = 400, b = new Uint8Array(44 + n), v = new DataView(b.buffer);
+    const w = (o, s) => [...s].forEach((c, i) => b[o + i] = c.charCodeAt(0));
+    w(0, "RIFF"); v.setUint32(4, 36 + n, true); w(8, "WAVEfmt "); v.setUint32(16, 16, true);
+    v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, 8000, true); v.setUint32(28, 8000, true);
+    v.setUint16(32, 1, true); v.setUint16(34, 8, true); w(36, "data"); v.setUint32(40, n, true); b.fill(128, 44);
+    return "data:audio/wav;base64," + btoa(String.fromCharCode(...b));
+  }
+  function unlockAudio() {
+    if (unlocked) return;
+    unlocked = true;
+    audio.src = silentWav(); audio.dataset.key = "unlock";
+    audio.play().catch(() => {});
+  }
 
   const player = {
-    active: false, playing: false, list: [], pos: 0, gapTimer: null, inGap: false, loops: 0,
+    active: false, playing: false, list: [], pos: 0, gapTimer: null, inGap: false, loops: 0, token: 0,
 
     currentAyah() { return this.list[this.pos]?.n ?? null; },
 
@@ -512,33 +676,49 @@
       this.pos = Math.max(0, this.list.findIndex(x => x.n === startAt));
       this.loops = 0;
       this.active = true;
+      unlockAudio();
       this.playCurrent();
       requestWakeLock();
     },
 
-    playCurrent() {
+    async playCurrent() {
       const item = this.list[this.pos];
       if (!item) return this.finish();
       const a = current.ayahs[item.n - 1];
       this.stopGap();
-      if (audio.dataset.src !== a.audio) {
-        audio.src = a.audio; audio.dataset.src = a.audio; audio.dataset.fallback = "";
+      this.ui();
+      refreshAyahStates();
+      scrollToAyah(item.n);
+      if (!a.audio) {
+        this.stop();
+        el.nowText.textContent = "التلاوة غير متاحة دون إنترنت لهذه السورة. نزّلها أولًا عند توفر الاتصال.";
+        return;
+      }
+      const token = ++this.token;
+      if (audio.dataset.key !== a.audio) {
+        const src = await resolveAudio(a.audio);
+        const isBlob = src.startsWith("blob:");
+        if (token !== this.token || !this.active) { if (isBlob) URL.revokeObjectURL(src); return; }
+        const old = curBlob;
+        audio.src = src; audio.dataset.key = a.audio; audio.dataset.fallback = "";
+        curBlob = isBlob ? src : null;
+        if (old) URL.revokeObjectURL(old);
+        if (!isBlob && S.autoCache) cacheAudio(a.audio);
       } else {
         audio.currentTime = 0;
       }
       audio.playbackRate = +S.speed;
       audio.play().then(() => { this.playing = true; this.ui(); })
         .catch(err => { if (err.name !== "AbortError") { this.playing = false; this.ui(); } });
-      // preload next distinct ayah
+      // fetch the next distinct ayah ahead of time
       const next = this.list.slice(this.pos + 1).find(x => x.n !== item.n);
-      if (next) preloader.src = current.ayahs[next.n - 1].audio;
-      this.ui();
-      refreshAyahStates();
-      scrollToAyah(item.n);
+      const nextUrl = next && current.ayahs[next.n - 1].audio;
+      if (nextUrl) { if (S.autoCache) cacheAudio(nextUrl); else if (navigator.onLine) preloader.src = nextUrl; }
       setMediaSession(a.n);
     },
 
     onEnded() {
+      if (audio.dataset.key === "unlock") return;
       const item = this.list[this.pos];
       let wait = 0;
       if (S.gap === "ayah") wait = (audio.duration || 0) / (+S.speed);
@@ -587,7 +767,7 @@
     stopGap() { clearTimeout(this.gapTimer); this.gapTimer = null; this.inGap = false; },
 
     stop() {
-      this.stopGap(); audio.pause(); this.active = false; this.playing = false;
+      this.token++; this.stopGap(); audio.pause(); this.active = false; this.playing = false;
       this.ui(); refreshAyahStates(); releaseWakeLock();
     },
 
@@ -610,12 +790,16 @@
   audio.addEventListener("pause", () => player.ui());
   audio.addEventListener("play", () => player.ui());
   audio.addEventListener("error", () => {
-    if (!player.active) return;
+    if (!player.active || audio.dataset.key === "unlock" || !audio.getAttribute("src")) return;
     const a = current.ayahs[player.currentAyah() - 1];
-    if (a.audio2 && audio.dataset.fallback !== "1") {
+    if (a.audio2 && audio.dataset.fallback !== "1" && navigator.onLine) {
       audio.dataset.fallback = "1"; audio.src = a.audio2; audio.playbackRate = +S.speed; audio.play().catch(() => {});
     } else {
-      el.nowText.textContent = "تعذّر تحميل الصوت. تحقق من اتصالك بالإنترنت.";
+      audio.dataset.key = "";
+      player.stop();
+      el.nowText.textContent = navigator.onLine
+        ? "تعذّر تحميل الصوت. تحقق من اتصالك بالإنترنت."
+        : "هذه الآية غير منزّلة على جهازك. نزّل السورة عند توفر الإنترنت.";
     }
   });
 
@@ -753,8 +937,9 @@
       clampRangeTo(current.ayahs.length);
       save(); syncInputs(); render();
     } catch (err) {
-      el.quran.innerHTML = `<div class="error">تعذّر تحميل السورة (${err.message}). تحقق من الاتصال ثم أعد المحاولة.</div>`;
+      el.quran.innerHTML = `<div class="error">تعذّر تحميل السورة (${err.message}). ${navigator.onLine ? "تحقق من الاتصال ثم أعد المحاولة." : "أنت دون اتصال ولم تُحفظ هذه السورة على جهازك بعد."}</div>`;
     }
+    renderOffline();
   }
   function clampRangeTo(max) {
     S.from = Math.min(Math.max(1, +S.from), max);
@@ -763,11 +948,145 @@
 
   el.surah.addEventListener("change", () => changeSurah(+el.surah.value));
   el.reciter.addEventListener("change", async () => {
-    S.reciter = el.reciter.value; save();
+    S.reciter = el.reciter.value; save(); refreshSurahOptions();
     const wasActive = player.active, at = player.currentAyah();
     await changeSurah(S.surah, true);
     if (wasActive) player.start(+S.from, +S.to, at);
   });
+
+  // ---------- downloads ----------
+  const reciterName = (id) => RECITERS.find(r => r[0] === id)?.[1] || id;
+  let dlBusy = false, dlAbort = false;
+
+  async function pool(items, k, fn) {
+    let i = 0;
+    await Promise.all(Array.from({ length: k }, async () => {
+      while (i < items.length && !dlAbort) await fn(items[i++]);
+    }));
+  }
+
+  async function downloadSurahs(nums) {
+    if (!hasCache) { alert("التنزيل يتطلب فتح التطبيق من رابط https (مثل GitHub Pages) وليس من ملف محلي."); return; }
+    if (!navigator.onLine) { alert("أنت غير متصل بالإنترنت الآن."); return; }
+    if (dlBusy) return;
+    dlBusy = true; dlAbort = false;
+    try { await navigator.storage?.persist?.(); } catch {}
+    const rec = S.reciter;
+    const total = nums.reduce((t, n) => t + (surahs[n - 1]?.count || 0), 0);
+    let done = 0, failed = 0;
+    setDlUI(true);
+    const tick = (name) => {
+      el.dlBar.style.width = (100 * done / total) + "%";
+      el.dlText.textContent = `جارٍ تنزيل ${name} بصوت ${reciterName(rec)}… ${done} / ${total} آية`;
+    };
+    for (const n of nums) {
+      if (dlAbort) break;
+      const s = surahs[n - 1];
+      tick(s.name);
+      try {
+        const [, aud] = await Promise.all([fetchJSON(textURL(n)), fetchJSON(audioURL(n, rec))]);
+        let ok = 0;
+        await pool(aud.ayahs.map(a => a.audio), 6, async (url) => {
+          if (await cacheAudio(url)) ok++; else failed++;
+          done++; tick(s.name);
+        });
+        if (ok === aud.ayahs.length) markDownloaded(rec, n, true);
+      } catch { failed += s.count; done += s.count; }
+    }
+    dlBusy = false;
+    setDlUI(false);
+    el.dlText.textContent = dlAbort ? "أُلغي التنزيل. ما نُزِّل يبقى محفوظًا."
+      : failed ? `اكتمل مع تعذّر ${failed} آية. أعد المحاولة لإكمالها.` : "✓ اكتمل التنزيل. تستطيع الآن الاستماع دون إنترنت.";
+    refreshSurahOptions();
+    renderOffline();
+    if (current && nums.includes(current.number) && !current.hasAudio) changeSurah(S.surah, true);
+  }
+
+  function setDlUI(busy) {
+    el.dlProg.hidden = !busy; el.dlCancel.hidden = !busy;
+    el.dlSurah.disabled = el.dlRange.disabled = busy;
+    if (!busy) el.dlBar.style.width = "0";
+  }
+
+  async function deleteSurahAudio(rec, n) {
+    try {
+      const aud = await fetchJSON(audioURL(n, rec));
+      const c = await openCache(AUDIO_CACHE);
+      await Promise.all(aud.ayahs.map(a => c.delete(a.audio)));
+    } catch {}
+    markDownloaded(rec, n, false);
+    refreshSurahOptions(); renderOffline();
+  }
+
+  async function renderOffline() {
+    el.netBadge.hidden = navigator.onLine;
+    if (!surahs) return;
+    const rec = S.reciter;
+    if (!hasCache) {
+      el.offStatus.className = "off-status";
+      el.offStatus.textContent = "للاستخدام دون إنترنت افتح التطبيق من رابطه على الإنترنت (GitHub Pages) ثم أضفه إلى الشاشة الرئيسية.";
+      el.dlSurah.disabled = true;
+    } else if (current) {
+      const s = surahs[current.number - 1];
+      if (isDownloaded(rec, current.number)) {
+        el.offStatus.className = "off-status ok";
+        el.offStatus.textContent = `✓ تلاوة ${s.name} بصوت ${reciterName(rec)} محفوظة على جهازك.`;
+      } else {
+        el.offStatus.className = "off-status";
+        el.offStatus.textContent = navigator.onLine
+          ? `نزّل تلاوة ${s.name} (${s.count} آية، تقريبًا ${Math.max(1, Math.round(s.count * 0.2))} ميغابايت) لتستمع إليها دون إنترنت.`
+          : "أنت دون اتصال. النص متاح للتسميع، والتلاوة متاحة فقط للسور المنزّلة (عليها ✓).";
+      }
+    }
+    // list of downloaded surahs, grouped by reciter
+    const rows = [];
+    Object.entries(dl).forEach(([r, list]) => list.slice().sort((a, b) => a - b).forEach(n => {
+      rows.push(`<div><span>${surahs[n - 1].name} <small style="color:var(--muted)">— ${reciterName(r)}</small></span>
+        <button class="del" data-r="${r}" data-n="${n}" title="حذف">🗑</button></div>`);
+    }));
+    el.dlList.innerHTML = rows.length ? rows.join("") : '<p class="hint">لا توجد سور منزّلة بعد.</p>';
+    if (navigator.storage?.estimate) {
+      try {
+        const { usage, quota } = await navigator.storage.estimate();
+        el.storageInfo.textContent = `المساحة المستخدمة: ${(usage / 1048576).toFixed(1)} ميغابايت من ${(quota / 1073741824).toFixed(1)} غيغابايت متاحة.`;
+      } catch {}
+    }
+  }
+
+  el.dlSurah.onclick = () => current && downloadSurahs([current.number]);
+  el.dlCancel.onclick = () => { dlAbort = true; };
+  el.dlRange.onclick = () => {
+    const a = +el.dlFrom.value, b = +el.dlTo.value;
+    const nums = []; for (let n = Math.min(a, b); n <= Math.max(a, b); n++) nums.push(n);
+    if (nums.length > 20 && !confirm(`ستنزّل ${nums.length} سورة، وقد يستهلك ذلك مساحة وبيانات كبيرة (القرآن كاملًا قرابة 1 غيغابايت). متابعة؟`)) return;
+    downloadSurahs(nums);
+  };
+  document.querySelectorAll("[data-range]").forEach(c => c.onclick = () => {
+    const [a, b] = c.dataset.range.split("-"); el.dlFrom.value = a; el.dlTo.value = b;
+  });
+  el.dlList.addEventListener("click", e => {
+    const b = e.target.closest(".del"); if (!b) return;
+    deleteSurahAudio(b.dataset.r, +b.dataset.n);
+  });
+  el.clearAudio.onclick = async () => {
+    if (!confirm("حذف كل التلاوات المنزّلة من جهازك؟ (نص المصحف وتقدّم حفظك لن يُحذفا)")) return;
+    try { await caches.delete(AUDIO_CACHE); } catch {}
+    Object.keys(dl).forEach(k => delete dl[k]); store.set("dl", dl);
+    refreshSurahOptions(); renderOffline();
+  };
+  el.autoCache.checked = !!S.autoCache;
+  el.autoCache.onchange = () => { S.autoCache = el.autoCache.checked; save(); };
+
+  addEventListener("online", () => {
+    renderOffline();
+    if (current && !current.hasAudio) changeSurah(S.surah, true);
+    cacheFullText();
+  });
+  addEventListener("offline", renderOffline);
+
+  if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  }
 
   // ---------- boot ----------
   (async () => {
@@ -775,9 +1094,11 @@
       await loadSurahList();
       syncInputs();
       await changeSurah(+S.surah, true);
+      cacheFullText();
     } catch (err) {
-      el.quran.innerHTML = `<div class="error">تعذّر الاتصال بالخادم (${err.message}). يحتاج التطبيق إلى الإنترنت لجلب النص والتلاوة.</div>`;
+      el.quran.innerHTML = `<div class="error">تعذّر الاتصال بالخادم (${err.message}). عند أول تشغيل يحتاج التطبيق إلى الإنترنت ليحفظ المصحف على جهازك.</div>`;
     }
+    renderOffline();
   })();
 })();
 </script>
