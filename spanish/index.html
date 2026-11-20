@@ -3,6 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1f4fd1">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="¡Vamos!">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>Vamos Español</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -172,6 +180,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 </style>
 </head>
 <body style="margin:0">
+
 
 <div id="app" dir="rtl" lang="ar"></div>
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -581,6 +590,30 @@ function dict(){showNav();
 }
 
 go("learn");
+</script>
+<script>
+/* ===== Install as an app on the home screen + offline ===== */
+if("serviceWorker" in navigator&&location.protocol==="https:"){navigator.serviceWorker.register("sw.js").catch(()=>{})}
+let installEvt=null;
+const isStandalone=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+let installHidden=false;try{installHidden=localStorage.getItem("vamos-install-hide")==="1"}catch(e){}
+addEventListener("beforeinstallprompt",e=>{e.preventDefault();installEvt=e;if(tab==="learn"&&!SS)home()});
+addEventListener("appinstalled",()=>{installEvt=null;installHidden=true;if(tab==="learn")home()});
+function installCard(){
+  if(isStandalone()||installHidden)return;
+  const el=document.createElement("div");el.className="panel";el.style.borderColor="var(--azul)";
+  const how=installEvt?`<button class="btn wide" id="instBtn">📲 ثبّت التطبيق الآن</button>`
+    :isIOS?`<ol style="margin:0;padding-inline-start:22px"><li>اضغط زر المشاركة <b>⬆️</b> أسفل Safari.</li><li>اختر <b>«إضافة إلى الشاشة الرئيسية»</b>.</li><li>اضغط <b>«إضافة»</b>.</li></ol>`
+    :`<ol style="margin:0;padding-inline-start:22px"><li>افتح قائمة المتصفح <b>⋮</b> في الأعلى.</li><li>اختر <b>«تثبيت التطبيق»</b> أو <b>«إضافة إلى الشاشة الرئيسية»</b>.</li></ol>`;
+  el.innerHTML=`<div class="row"><b>📲 ضع ¡Vamos! على شاشة جوالك</b><button class="x" id="instX" aria-label="إخفاء" style="font-size:1.3rem">×</button></div>
+    <span class="small muted">يفتح بلمسة واحدة مثل أي تطبيق، ويعمل بدون إنترنت.</span>${how}`;
+  const anchor=app.querySelector(".btn.sol.big");anchor?anchor.after(el):app.appendChild(el);
+  el.querySelector("#instX").onclick=()=>{installHidden=true;try{localStorage.setItem("vamos-install-hide","1")}catch(e){}el.remove()};
+  const b=el.querySelector("#instBtn");if(b)b.onclick=async()=>{installEvt.prompt();try{await installEvt.userChoice}catch(e){}installEvt=null;home()};
+}
+const _home=home;home=function(){_home();installCard()};
+if(tab==="learn")home();
 </script>
 </body>
 </html>
