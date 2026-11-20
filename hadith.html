@@ -590,7 +590,8 @@ function matnHTML(t) {
 }
 // رابط البحث عن الحديث في موسوعة الدرر السنية للتحقق من صحته ولفظه
 function dorarURL(h) {
-  const t = quoted(h.text).replace(/[ً-ْٰ«»،:؟.]/g, "").split(/\s+/).filter(Boolean).slice(0, 7).join(" ");
+  const base = quoted(h.text).split(/\s+/).length >= 4 ? quoted(h.text) : h.text;
+  const t = base.replace(/[ً-ْٰ«»،:؟.]/g, "").split(/\s+/).filter(Boolean).slice(0, 7).join(" ");
   return "https://dorar.net/hadith/search?q=" + encodeURIComponent(t);
 }
 function srcBadge(h) { const [l, c] = SRC[h.src]; return `<span class="badge ${c}">${l}</span>`; }
