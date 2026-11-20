@@ -3,11 +3,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#1d3557">
-<link rel="manifest" href="manifest.webmanifest">
+<link rel="manifest" href="../manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="الصحيحان">
+<meta name="apple-mobile-web-app-title" content="رفيق الحفظ">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Kufi+Arabic:wght@400;600;700&family=Reem+Kufi:wght@500;700&display=swap" rel="stylesheet">
@@ -68,6 +68,9 @@
   .head-in { max-width: 780px; margin: 0 auto; display: flex; align-items: center; gap: 10px; }
   .head-in h1 { font-family: var(--font-display); font-size: 21px; margin: 0; flex: 1; line-height: 1.3; }
   .head-in h1 small { display: block; font-family: var(--font-ui); font-size: 11px; font-weight: 400; opacity: .8; }
+  .appswitch { display: inline-flex; background: color-mix(in srgb, var(--on-navy) 16%, transparent); border-radius: 999px; padding: 3px; gap: 2px; }
+  .appswitch a { color: inherit; text-decoration: none; font-size: 13px; padding: 3px 12px; border-radius: 999px; opacity: .85; white-space: nowrap; }
+  .appswitch a.on { background: var(--on-navy); color: var(--navy); opacity: 1; font-weight: 700; }
   .hbtn { background: transparent; border: 1px solid color-mix(in srgb, var(--on-navy) 40%, transparent); color: var(--on-navy); border-radius: 10px; padding: 3px 10px; font-size: 13px; }
 
   main {
@@ -152,18 +155,37 @@
   mark { background: var(--gold-soft); color: inherit; border-radius: 4px; padding: 0 2px; }
   .empty { text-align: center; padding: 26px 10px; color: var(--muted); }
 
+  .levels { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .lv { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 6px 4px; font-size: 13px; }
+  .lv.on { background: var(--navy); border-color: var(--navy); color: var(--on-navy); }
+  .w { border-radius: 6px; transition: background .2s, color .2s; }
+  .w.hid { color: transparent; background: var(--surface-2); cursor: pointer; box-shadow: inset 0 -2px 0 var(--line); }
+  .w.rev { background: var(--gold-soft); }
+  .btn.done { background: var(--sea-soft); border-color: var(--sea); color: var(--sea); font-weight: 600; }
+  .steps { margin: 0; padding: 0 20px 0 0; color: var(--muted); font-size: 13.5px; }
+  .opts { display: flex; flex-direction: column; gap: 8px; }
+  .opt { text-align: right; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 10px 14px; }
+  .opt.txt { font-family: var(--font-text); font-size: 1.15rem; line-height: 1.9; }
+  .opt.right { border-color: var(--sea); background: var(--sea-soft); color: var(--sea); }
+  .opt.wrong { border-color: var(--rose); background: var(--rose-soft); color: var(--rose); }
+  .opt:disabled { cursor: default; }
+  .score { font-family: var(--font-display); font-size: 46px; color: var(--navy); text-align: center; line-height: 1.2; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; }
+  .stats b { display: block; font-family: var(--font-display); font-size: 24px; color: var(--navy); line-height: 1.3; }
+  .stats span { font-size: 12px; color: var(--muted); }
+  @media (max-width: 420px) { .levels { grid-template-columns: repeat(2, 1fr); } .tab { font-size: 11px; } }
   nav.tabs {
     position: fixed; bottom: 0; left: 0; right: 0; z-index: 20; background: var(--surface); border-top: 1px solid var(--line);
     padding-top: 6px; padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
     padding-left: max(8px, env(safe-area-inset-left, 0px)); padding-right: max(8px, env(safe-area-inset-right, 0px));
   }
-  .tabs-in { max-width: 520px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+  .tabs-in { max-width: 560px; margin: 0 auto; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
   .tab { background: transparent; border: 0; border-radius: 12px; padding: 4px 2px; display: flex; flex-direction: column; align-items: center; font-size: 12px; color: var(--muted); }
   .tab svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   .tab.on { color: var(--navy); background: var(--navy-soft); font-weight: 700; }
   .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(84px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--paper); padding: 8px 16px; border-radius: 999px; font-size: 13px; z-index: 40; opacity: 0; transition: opacity .25s; pointer-events: none; }
   .toast.show { opacity: 1; }
-  @media (max-width: 420px) { :root { --matn-size: 1.3rem; } .head-in h1 small { display: none; } }
+  @media (max-width: 420px) { :root { --matn-size: 1.3rem; } .head-in h1 small { display: none; } .head-in h1 { font-size: 17px; } .appswitch a { padding: 3px 9px; } }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 
@@ -171,6 +193,7 @@
 <header>
   <div class="head-in">
     <h1>موسوعة الصحيحين<small>كل أحاديث صحيح البخاري وصحيح مسلم مع الشرح</small></h1>
+    <nav class="appswitch" id="appSwitch" aria-label="التبديل بين القرآن والأحاديث" hidden><a href="../index.html">القرآن</a><a class="on" href="./" aria-current="page">الأحاديث</a></nav>
     <button class="hbtn" id="themeBtn" type="button" aria-label="تبديل الوضع الليلي">الوضع</button>
   </div>
 </header>
@@ -180,6 +203,7 @@
     <button class="tab" data-go="home" type="button"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>الرئيسية</button>
     <button class="tab" data-go="c-b" type="button"><svg viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/></svg>البخاري</button>
     <button class="tab" data-go="c-m" type="button"><svg viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/></svg>مسلم</button>
+    <button class="tab" data-go="hifz" type="button"><svg viewBox="0 0 24 24"><path d="M12 6c-2-1.5-5-2-8-1v14c3-1 6-.5 8 1 2-1.5 5-2 8-1V5c-3-1-6-.5-8 1z"/><path d="M12 6v14"/></svg>الحفظ</button>
     <button class="tab" data-go="search" type="button"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>البحث</button>
   </div>
 </nav>
@@ -195,7 +219,7 @@ const ar = (n) => String(n).replace(/\d/g, (d) => "٠١٢٣٤٥٦٧٨٩"[d]);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const strip = (t) => t.replace(/[ؐ-ًؚ-ٰٟۖ-ۭـ]/g, "").replace(/[أإآٱ]/g, "ا").replace(/ى/g, "ي").replace(/ة/g, "ه");
 const KEY = "sahihain-v1";
-let S = { read: {}, fav: {}, last: null, size: 0 };
+let S = { read: {}, fav: {}, memo: {}, last: null, size: 0, best: 0, quizzes: 0 };
 try { Object.assign(S, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) {}
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 const store = { get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
@@ -218,7 +242,7 @@ function dorarURL(t) { const base = snippet(t); return "https://dorar.net/hadith
 
 /* ---------- الشرح عبر Claude ---------- */
 let sample = null;
-(async () => { try { sample = window.claude ? await window.claude.use("sample") : null; } catch (e) { sample = null; } if (location.hash.startsWith("#h-")) route(); })();
+(async () => { try { sample = window.claude ? await window.claude.use("sample") : null; } catch (e) { sample = null; } if (INDEX && location.hash.startsWith("#h-")) route(); })();
 
 /* ---------- الشاشات ---------- */
 async function viewHome() {
@@ -303,6 +327,7 @@ async function viewHadith(c, id, key) {
   </article>
   <div class="row">
     ${sample ? `<button class="btn primary" data-act="explain" type="button">اشرح لي</button>` : ""}
+    <a class="btn" href="#${"m" + hkey(c, id, key).slice(1)}">${S.memo[fk] ? "✓ محفوظ" : "احفظه"}</a>
     <a class="btn" href="${dorarURL(row[2])}" target="_blank" rel="noopener">الدرر السنية</a>
     <button class="btn ${isFav ? "on" : ""}" data-act="fav" type="button">${isFav ? "★ في المفضلة" : "☆ مفضلة"}</button>
     <button class="btn" data-act="copy" type="button">نسخ</button>
@@ -401,6 +426,97 @@ async function runSearch() {
   }).join("")}</div>${hits.length > sq.lim ? `<button class="btn" data-act="moreResults" type="button" style="align-self:center;margin-top:8px">عرض المزيد</button>` : ""}`;
 }
 
+/* ---------- الحفظ ---------- */
+// الجزء الذي يُحفظ: كلام النبي ﷺ إن وُجد، وإلا النص بعد الإسناد تقريبًا
+function memoText(t) { const q = quoted(t); if (q.split(" ").length >= 4) return q; return snippet(t); }
+let hifzLevel = 0;
+function hiddenSet(words, level) {
+  return words.map((w, i) => {
+    if (level === 0 || /^[«»"':،.؟!]+$/.test(w)) return false;
+    if (level === 1) return i % 3 === 2;
+    if (level === 2) return i % 3 !== 0;
+    return i !== 0;
+  });
+}
+async function viewMemorize(c, id, key) {
+  const b = bookMeta(c, id); if (!b) return viewCollection(c);
+  const row = (await loadBook(c, id)).find((r) => r[0] === key); if (!row) return viewBook(c, id);
+  S.last = [c, id, key]; save();
+  const words = memoText(row[2]).split(/\s+/), hid = hiddenSet(words, hifzLevel), fk = c + ":" + key;
+  const labels = ["اقرأ كاملًا", "إخفاء قليل", "إخفاء أكثر", "من الذاكرة"];
+  return `<div class="crumbs"><a href="#hifz">الحفظ</a> ‹ <a href="#${hkey(c, id, key)}">${COL[c].short} ${dispNo(c, row)}</a></div>
+  <div class="row"><h2>${esc(CURATED[fk] ? CURATED[fk].ttl : "احفظ الحديث")}</h2><span class="spacer"></span><span class="badge ${COL[c].cls}">${COL[c].short} ${dispNo(c, row)}</span></div>
+  <div class="levels" role="group" aria-label="مستوى الإخفاء">${labels.map((l, i) => `<button class="lv ${hifzLevel === i ? "on" : ""}" data-level="${i}" type="button">${ar(i + 1)}. ${l}</button>`).join("")}</div>
+  <article class="folio"><p class="matn" id="memoText">${words.map((w, i) => `<span class="w ${hid[i] ? "hid" : ""}" data-w="${i}">${esc(w)}</span>`).join(" ")}</p>
+    <p class="muted small">${esc(refText(c, row))} · كتاب ${esc(b.name)}</p></article>
+  <div class="row"><button class="btn" data-act="reveal" type="button">أظهر الكل</button><button class="btn" data-act="rehide" type="button">أعد الإخفاء</button><span class="spacer"></span>
+    <button class="btn ${S.memo[fk] ? "done" : "primary"}" data-act="memo" type="button">${S.memo[fk] ? "✓ حفظته" : "حفظته"}</button></div>
+  <section class="panel small"><h3>طريقة الحفظ</h3><ol class="steps">
+    <li>اقرأ الحديث بصوت مسموع ثلاث مرات، وافهم معناه من صفحة الحديث.</li>
+    <li>انتقل إلى المستوى التالي وسمّع الكلمات المخفية. اضغط على أي كلمة نسيتها لتظهر.</li>
+    <li>حين تسمّعه في مستوى «من الذاكرة» دون أن تكشف كلمة، اضغط «حفظته».</li></ol></section>`;
+}
+
+async function viewHifz() {
+  const memo = Object.values(S.memo);
+  const items = [];
+  for (const [c, id, key] of memo) { const row = (await loadBook(c, id)).find((r) => r[0] === key); if (row) items.push([c, id, row]); }
+  const start = Object.keys(CURATED).filter((k) => !S.memo[k]).slice(0, 12);
+  const startRows = [];
+  for (const k of start) { const [c, key] = k.split(":"); const loc = await findCurated(c, key); if (loc) startRows.push([c, loc.id, loc.row, CURATED[k].ttl]); }
+  return `<h2>الحفظ</h2>
+  <section class="panel"><div class="stats">
+    <div><b>${ar(items.length)}</b><span>حديثًا حفظته</span></div>
+    <div><b>${ar(S.best)}/${ar(10)}</b><span>أفضل اختبار</span></div>
+    <div><b>${ar(S.quizzes)}</b><span>اختبارًا</span></div></div>
+    <div class="row"><a class="btn primary" href="#quiz">اختبر نفسك</a><span class="muted small">اختر أي حديث من الكتابين واضغط «احفظه»، أو ابدأ بالمقترحات أدناه.</span></div></section>
+  ${items.length ? `<section class="sec"><h2>محفوظاتي</h2><div class="list">${items.map(([c, id, r]) => `<a class="item" href="#${"m" + hkey(c, id, r[0]).slice(1)}"><span class="no read">✓</span><span class="tx">${esc(memoText(r[2]))}</span><span class="meta">${esc(refText(c, r))}</span></a>`).join("")}</div></section>` : ""}
+  ${startRows.length ? `<section class="sec"><h2>ابدأ بهذه الأحاديث المشهورة</h2><div class="list">${startRows.map(([c, id, r, t]) => `<a class="item" href="#${"m" + hkey(c, id, r[0]).slice(1)}"><span class="no">${dispNo(c, r)}</span><span class="tx">${esc(memoText(r[2]))}</span><span class="meta">${esc(t)} · ${COL[c].short}</span></a>`).join("")}</div></section>` : ""}`;
+}
+
+/* ---------- الاختبار ---------- */
+let Q = null;
+const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+async function quizPool() {
+  const pool = [], seen = {};
+  for (const [c, id, key] of Object.values(S.memo)) { const row = (await loadBook(c, id)).find((r) => r[0] === key); if (row) { pool.push({ c, id, row }); seen[c + ":" + key] = 1; } }
+  for (const k of Object.keys(CURATED)) { if (seen[k]) continue; const [c, key] = k.split(":"); const loc = await findCurated(c, key); if (loc) pool.push({ c, id: loc.id, row: loc.row }); }
+  return pool;
+}
+function halves(t) { const w = memoText(t).split(/\s+/); const cut = Math.ceil(w.length / 2); return [w.slice(0, cut).join(" "), w.slice(cut).join(" ")]; }
+function makeQ(item, pool) {
+  const { c, id, row } = item; const [a, b2] = halves(row[2]);
+  const type = b2.split(" ").length >= 3 && Math.random() < 0.65 ? "complete" : "book";
+  if (type === "complete") {
+    const others = shuffle(pool.filter((p) => p !== item)).map((p) => halves(p.row[2])[1]).filter((x) => x && x !== b2).slice(0, 3);
+    return { item, label: "أكمل الحديث", prompt: a + " …", opts: shuffle([b2, ...others]), ans: b2, txt: true };
+  }
+  const text = memoText(row[2]);
+  {
+    const name = "كتاب " + bookMeta(c, id).name;
+    const others = shuffle(INDEX[c].books.filter((b) => b.id !== +id)).slice(0, 3).map((b) => "كتاب " + b.name);
+    return { item, label: `في أي كتاب من ${COL[c].name} ورد هذا الحديث؟`, prompt: text, opts: shuffle([name, ...others]), ans: name };
+  }
+  return null;
+}
+async function viewQuiz() {
+  if (!Q) return `<h2>اختبر نفسك</h2><section class="panel"><p>عشرة أسئلة من محفوظاتك ومن الأحاديث المشهورة: أكمل الحديث، وفي أي كتاب ورد.</p>
+    <div class="row"><button class="btn primary" data-act="quizStart" type="button">ابدأ الاختبار</button><a class="btn" href="#hifz">رجوع</a></div></section>`;
+  if (Q.i >= Q.items.length) {
+    const wrong = Q.items.filter((q) => !q.ok);
+    return `<section class="panel" style="text-align:center"><div class="score">${ar(Q.score)} / ${ar(Q.items.length)}</div>
+      <p>${Q.score === Q.items.length ? "ممتاز! بارك الله فيك." : Q.score >= 7 ? "أحسنت، استمر في المراجعة." : "راجع الأحاديث التي أخطأت فيها ثم أعد المحاولة."}</p>
+      <div class="row" style="justify-content:center"><button class="btn primary" data-act="quizStart" type="button">اختبار جديد</button><a class="btn" href="#hifz">الحفظ</a></div></section>
+    ${wrong.length ? `<h2>راجع هذه الأحاديث</h2><div class="list">${wrong.map((q) => { const { c, id, row } = q.item; return `<a class="item" href="#${"m" + hkey(c, id, row[0]).slice(1)}"><span class="no">${dispNo(c, row)}</span><span class="tx">${esc(memoText(row[2]))}</span></a>`; }).join("")}</div>` : ""}`;
+  }
+  const q = Q.items[Q.i], done = Q.picked !== null;
+  return `<div class="row"><span class="muted small">السؤال ${ar(Q.i + 1)} من ${ar(Q.items.length)}</span><span class="spacer"></span><span class="muted small">النتيجة: ${ar(Q.score)}</span></div>
+  <div class="bar"><i style="width:${(Q.i / Q.items.length) * 100}%"></i></div>
+  <section class="folio"><span class="badge b-g" style="align-self:flex-start">${esc(q.label)}</span><p class="matn">${esc(q.prompt)}</p></section>
+  <div class="opts">${q.opts.map((o, i) => `<button class="opt ${q.txt ? "txt" : ""} ${done ? (o === q.ans ? "right" : i === Q.picked ? "wrong" : "") : ""}" data-opt="${i}" type="button" ${done ? "disabled" : ""}>${esc(o)}</button>`).join("")}</div>
+  ${done ? `<div class="row"><a class="btn" href="#${hkey(q.item.c, q.item.id, q.item.row[0])}">اقرأ الحديث</a><span class="spacer"></span><button class="btn primary" data-act="quizNext" type="button">${Q.i + 1 < Q.items.length ? "السؤال التالي" : "النتيجة"}</button></div>` : ""}`;
+}
+
 /* ---------- المفضلة ---------- */
 async function viewFav() {
   const keys = Object.keys(S.fav);
@@ -442,6 +558,9 @@ async function route() {
     else if ((m = h.match(/^h-(b|m)-(\d+)-(.+)$/))) { tab = "c-" + m[1]; html = await viewHadith(m[1], +m[2], m[3]); }
     else if (h === "search") { tab = "search"; html = viewSearch(); }
     else if (h === "fav") { html = await viewFav(); }
+    else if ((m = h.match(/^m-(b|m)-(\d+)-(.+)$/))) { tab = "hifz"; html = await viewMemorize(m[1], +m[2], m[3]); }
+    else if (h === "hifz") { tab = "hifz"; html = await viewHifz(); }
+    else if (h === "quiz") { tab = "hifz"; html = await viewQuiz(); }
     else html = await viewHome();
   } catch (e) { html = `<div class="panel"><p>تعذّر تحميل البيانات. تحقق من الاتصال ثم حدّث الصفحة.</p><p class="muted small">${esc(e.message || e)}</p></div>`; }
   if (my !== seq) return;
@@ -457,11 +576,14 @@ function toast(t) { const el = document.getElementById("toast"); el.textContent 
 function applySize() { document.documentElement.style.setProperty("--matn-size", S.size ? `${1.45 + S.size * 0.15}rem` : ""); }
 
 document.addEventListener("click", async (e) => {
-  const el = e.target.closest("[data-go],[data-more],[data-act],[data-scope],[data-size]"); if (!el) return;
+  const el = e.target.closest("[data-go],[data-more],[data-act],[data-scope],[data-size],[data-level],[data-w],[data-opt]"); if (!el) return;
   const d = el.dataset;
-  if (d.go) { go(d.go); window.scrollTo(0, 0); return; }
+  if (d.go) { if (d.go === "hifz" && Q && Q.i >= Q.items.length) Q = null; go(d.go); window.scrollTo(0, 0); return; }
   if (d.more) { listLimit[d.more] = (listLimit[d.more] || PAGE) + PAGE * 2; const y = scrollY; await route(); scrollTo(0, y); return; }
   if (d.scope) { sq.c = d.scope; sq.lim = 30; document.querySelectorAll("[data-scope]").forEach((b) => b.classList.toggle("on", b === el)); runSearch(); return; }
+  if (d.level) { hifzLevel = +d.level; route(); return; }
+  if (d.w !== undefined) { if (el.classList.contains("hid")) { el.classList.remove("hid"); el.classList.add("rev"); } return; }
+  if (d.opt !== undefined) { if (!Q || Q.picked !== null) return; const q = Q.items[Q.i]; Q.picked = +d.opt; q.ok = q.opts[Q.picked] === q.ans; if (q.ok) Q.score++; route(); return; }
   if (d.size) { S.size = Math.max(-2, Math.min(4, (S.size || 0) + +d.size)); save(); applySize(); return; }
   switch (d.act) {
     case "explain": if (sample) explain(); break;
@@ -475,6 +597,13 @@ document.addEventListener("click", async (e) => {
       break; }
     case "moreResults": sq.lim += 30; runSearch(); break;
     case "offline": el.disabled = true; saveAll(); break;
+    case "reveal": document.querySelectorAll("#memoText .w.hid").forEach((w) => { w.classList.remove("hid"); w.classList.add("rev"); }); break;
+    case "rehide": route(); break;
+    case "memo": { const [c, id, key] = S.last; const k = c + ":" + key; if (S.memo[k]) delete S.memo[k]; else S.memo[k] = [c, id, key]; save();
+      toast(S.memo[k] ? "بارك الله فيك! أُضيف إلى محفوظاتك" : "أُزيل من المحفوظات"); route(); break; }
+    case "quizStart": { el.disabled = true; el.textContent = "جارٍ التحضير…"; const pool = await quizPool();
+      Q = { items: shuffle(pool).slice(0, 10).map((it) => makeQ(it, pool)), i: 0, score: 0, picked: null }; route(); break; }
+    case "quizNext": Q.i++; Q.picked = null; if (Q.i >= Q.items.length) { S.quizzes++; S.best = Math.max(S.best, Q.score); save(); } route(); scrollTo(0, 0); break;
   }
 });
 document.addEventListener("input", (e) => { if (e.target.id === "q") { sq.q = e.target.value; sq.lim = 30; clearTimeout(searchTimer); searchTimer = setTimeout(runSearch, 450); } });
@@ -487,7 +616,14 @@ document.getElementById("themeBtn").addEventListener("click", () => {
   root.dataset.theme = dark ? "light" : "dark"; try { localStorage.setItem(KEY + "-theme", root.dataset.theme); } catch (e) {}
 });
 applySize();
-if (canOffline) navigator.serviceWorker.register("sw.js").catch(() => {});
+// داخل مشروع «رفيق الحفظ»: زر التبديل إلى القرآن وعامل العمل دون إنترنت المشترك
+fetch("../index.html", { method: "HEAD", cache: "no-store" }).then((r) => {
+  if (!r.ok) return;
+  document.getElementById("appSwitch").hidden = false;
+  if (!canOffline) return;
+  navigator.serviceWorker.getRegistrations().then((rs) => rs.forEach((x) => { if (/\/sahih\/$/.test(x.scope)) x.unregister(); })).catch(() => {});
+  navigator.serviceWorker.register("../sw.js", { scope: "../" }).catch(() => {});
+}).catch(() => {});
 (async () => {
   try { INDEX = await getJSON("data/index.json"); } catch (e) { app.innerHTML = `<div class="panel"><p>تعذّر تحميل فهرس الكتابين. تحقق من الاتصال ثم حدّث الصفحة.</p></div>`; return; }
   try { CURATED = await getJSON("data/curated.json"); } catch (e) { CURATED = {}; }

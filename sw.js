@@ -1,7 +1,7 @@
-// رفيق الحفظ — service worker: keeps the app itself and its fonts available offline.
+// رفيق الحفظ — service worker for the whole app (Quran + hadith): keeps it and its fonts available offline.
 // Quran text and recitations are cached by the page (Cache API: hifz-data / hifz-audio).
-const SHELL = "hifz-shell-v3";
-const ASSETS = ["./", "./index.html", "./hadith.html", "./manifest.webmanifest", "./icon.svg", "./icon-192.png", "./icon-512.png"];
+const SHELL = "hifz-shell-v4";
+const ASSETS = ["./", "./index.html", "./hadith.html", "./sahih/", "./sahih/index.html", "./sahih/icon.svg", "./sahih/icon-192.png", "./sahih/data/index.json", "./sahih/data/curated.json", "./manifest.webmanifest", "./icon.svg", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(SHELL).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting()));
@@ -20,12 +20,18 @@ self.addEventListener("fetch", (e) => {
   if (req.method !== "GET") return;
   const url = new URL(req.url);
 
+  // Hadith texts never change: cache first, kept in their own cache.
+  if (url.origin === self.location.origin && /\/sahih\/data\/(b|m|s-)[\w-]*\.json$/.test(url.pathname)) {
+    e.respondWith(caches.open("hifz-hadith").then(async (c) => (await c.match(req)) || fetch(req).then((r) => { if (r.ok) c.put(req, r.clone()); return r; })));
+    return;
+  }
+
   // App files: serve from cache, refresh in the background.
   if (url.origin === self.location.origin) {
     e.respondWith((async () => {
       const c = await caches.open(SHELL);
       const hit = (await c.match(req, { ignoreSearch: true })) ||
-        (req.mode === "navigate" ? await c.match("./index.html") : undefined);
+        (req.mode === "navigate" ? await c.match(url.pathname.includes("/sahih/") ? "./sahih/index.html" : "./index.html") : undefined);
       const net = fetch(req).then((r) => { if (r.ok) c.put(req, r.clone()); return r; }).catch(() => hit);
       return hit || net;
     })());
