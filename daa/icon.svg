@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#efe7d8"/>
+  <rect x="86" y="146" width="340" height="230" rx="22" fill="#fffaf0" stroke="#d8c9ad" stroke-width="8"/>
+  <path d="M96 160 L256 286 L416 160" fill="none" stroke="#d8c9ad" stroke-width="10" stroke-linejoin="round"/>
+  <circle cx="256" cy="286" r="66" fill="#8f2f2a"/>
+  <circle cx="256" cy="286" r="52" fill="none" stroke="#b4483f" stroke-width="6"/>
+  <text x="256" y="314" text-anchor="middle" font-family="Amiri, 'Noto Naskh Arabic', serif" font-size="84" font-weight="700" fill="#fff3e6">د</text>
+</svg>
