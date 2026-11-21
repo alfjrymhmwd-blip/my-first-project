@@ -155,12 +155,13 @@ h3 { font-size: 1rem; font-weight: 700; }
 .matn .h { color: var(--hadith); }
 .matn .head { text-align: center; font-weight: 700; color: var(--gold); }
 .matn .basmala { text-align: center; }
+.poem { text-align: start; }
 .poem .bayt { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 22px; margin-bottom: .45em; }
-.poem .bayt span:first-child { text-align: right; }
-.poem .bayt span:last-child { text-align: left; }
+.poem .bayt > span:first-child { text-align: right; }
+.poem .bayt > span:last-child { text-align: left; }
 @media (max-width: 520px) {
   .poem .bayt { grid-template-columns: 1fr; gap: 0; }
-  .poem .bayt span:last-child { text-align: left; padding-right: 1.2em; }
+  .poem .bayt > span:last-child { text-align: left; padding-right: 1.2em; }
 }
 .w { border-radius: 6px; transition: background .2s; }
 .w.hid { color: transparent; background: color-mix(in srgb, var(--muted) 22%, transparent); cursor: pointer; user-select: none; }

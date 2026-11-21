@@ -3,7 +3,8 @@ const SHELL = "mutoon-academy-v1";
 const ASSETS = [
   "./", "./index.html", "./style.css", "./app.js", "./app-data.js", "./manifest.webmanifest",
   "./icon.svg", "./icon-192.png", "./icon-512.png",
-  "./data/nawaqid.js", "./data/qawaid.js", "./data/usul.js", "./data/nawawi.js"
+  "./data/nawaqid.js", "./data/qawaid.js", "./data/usul.js", "./data/nawawi.js",
+  "./data/tuhfa.js", "./data/shurut.js", "./data/bayquniyya.js", "./data/unwan.js"
 ];
 
 self.addEventListener("install", (e) => {

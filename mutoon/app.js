@@ -166,8 +166,8 @@
         for (let i = 0; i < m.lessons.length; i++) if (!mastered(x.id, i)) return { type: "lesson", id: x.id, i };
         if (!matnDone(x.id)) return { type: "matnExam", id: x.id };
       }
-      const allHave = L.matns.every((x) => TEXTS[x.id]);
-      if (allHave && !levelDone(L.n) && L.matns.every((x) => matnDone(x.id))) return { type: "levelExam", n: L.n };
+      const avail = L.matns.filter((x) => TEXTS[x.id]);
+      if (avail.length && !levelDone(L.n) && avail.every((x) => matnDone(x.id))) return { type: "levelExam", n: L.n };
       if (!levelDone(L.n) && !S.settings.free) return null;
     }
     return null;
@@ -690,7 +690,8 @@
       const n = +arg, L = CUR[n - 1];
       if (!L) return go("#/");
       setTop("اختبار المستوى", true);
-      const ready = L.matns.every((x) => TEXTS[x.id] && matnDone(x.id));
+      const avail = L.matns.filter((x) => TEXTS[x.id]);
+      const ready = avail.length > 0 && avail.every((x) => matnDone(x.id));
       app.innerHTML = '<div class="stack fade-in"><section class="card stack"><div class="muted small">اختبار الانتقال</div><h1>' + L.name + "</h1>" +
         (ready ? "<p>اختبار شامل من " + ar(QCOUNT.level) + " سؤالاً من جميع متون المستوى. النجاح بنسبة " + pct(PASS.level) + ' فأكثر يفتح المستوى التالي.</p><button class="btn block" id="go">ابدأ اختبار المستوى</button>'
           : '<p class="muted">احصل على الإجازة في جميع متون المستوى أولاً.</p><a class="btn secondary" href="#/">عودة</a>') + "</section></div>";
