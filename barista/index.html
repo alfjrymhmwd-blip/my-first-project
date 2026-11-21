@@ -1,0 +1,1111 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="أكاديمية الباريستا">
+<title>أكاديمية الباريستا</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#1d5c4b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Readex+Pro:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: one-column mobile app, sticky header, fixed bottom tab bar; a dark "scale display" panel is the recurring signature. */
+:root {
+  --bg: #eceee9;          /* stone, slightly green */
+  --surface: #ffffff;
+  --surface-2: #f4f5f1;
+  --ink: #231a14;         /* espresso */
+  --muted: #6a645d;
+  --line: #dadcd5;
+  --leaf: #1d5c4b;        /* coffee-leaf green: actions */
+  --leaf-soft: #dbe9e3;
+  --crema: #b8741f;       /* crema amber: numbers & highlights */
+  --crema-soft: #f6e7d2;
+  --scale-bg: #1e1915;    /* the scale display */
+  --scale-ink: #f3c27a;
+  --scale-dim: #8d7b66;
+  --ok: #2c7a4b;
+  --bad: #b3412e;
+  --font-display: "Readex Pro", "IBM Plex Sans Arabic", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, system-ui, sans-serif;
+  --font-num: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --nav-h: 64px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15120f; --surface: #1f1a16; --surface-2: #29221d; --ink: #efe7de; --muted: #a89d91; --line: #3a312a;
+    --leaf: #6cc0a4; --leaf-soft: #1f3a32; --crema: #e6a552; --crema-soft: #3a2b18;
+    --scale-bg: #0c0a08; --scale-ink: #f3c27a; --scale-dim: #7b6a57; --ok: #6cc08a; --bad: #e57b66;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15120f; --surface: #1f1a16; --surface-2: #29221d; --ink: #efe7de; --muted: #a89d91; --line: #3a312a;
+  --leaf: #6cc0a4; --leaf-soft: #1f3a32; --crema: #e6a552; --crema-soft: #3a2b18;
+  --scale-bg: #0c0a08; --scale-ink: #f3c27a; --scale-dim: #7b6a57; --ok: #6cc08a; --bad: #e57b66;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.7; -webkit-tap-highlight-color: transparent; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg); }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--leaf); outline-offset: 2px; border-radius: 6px; }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.35; text-wrap: balance; margin: 0; }
+h1 { font-size: 1.6rem; font-weight: 700; }
+h2 { font-size: 1.2rem; font-weight: 600; }
+h3 { font-size: 1.02rem; font-weight: 600; }
+p { margin: 0; }
+.num { font-family: var(--font-num); font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
+
+.app { max-width: 720px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 calc(var(--nav-h) + 28px + env(safe-area-inset-bottom, 0px)); }
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bg); padding-block: 14px 10px; display: flex; align-items: center; gap: 12px; }
+.brand { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+.brand svg { flex: none; }
+.brand b { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; }
+.brand small { display: block; color: var(--muted); font-size: .78rem; line-height: 1.3; }
+.icon-btn { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; width: 40px; height: 40px; display: grid; place-items: center; }
+
+.view { display: grid; gap: 18px; padding-top: 6px; }
+.eyebrow { font-size: .78rem; letter-spacing: .04em; color: var(--crema); font-weight: 600; }
+.lead { color: var(--muted); max-width: 60ch; }
+
+/* Scale display */
+.scale { background: var(--scale-bg); color: var(--scale-ink); border-radius: 18px; padding: 16px; display: grid; gap: 12px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.04); }
+.scale-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.readout { background: rgba(255,255,255,.035); border-radius: 12px; padding: 10px 12px; min-width: 0; }
+.readout label { display: block; font-size: .78rem; color: var(--scale-dim); font-family: var(--font-body); }
+.readout .val { display: flex; align-items: baseline; gap: 6px; direction: ltr; justify-content: flex-end; }
+.readout input { width: 100%; min-width: 0; background: transparent; border: 0; color: var(--scale-ink); font-family: var(--font-num); font-size: 2rem; font-weight: 600; text-align: right; padding: 0; font-variant-numeric: tabular-nums; }
+.readout input:focus { outline: none; }
+.readout:focus-within { box-shadow: 0 0 0 2px var(--scale-ink); }
+.readout .unit { color: var(--scale-dim); font-family: var(--font-num); font-size: .95rem; }
+.ratio-line { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.ratio-big { font-family: var(--font-num); font-size: 1.5rem; font-weight: 600; direction: ltr; }
+.ratio-hint { color: var(--scale-dim); font-size: .85rem; }
+input[type=range] { width: 100%; accent-color: var(--scale-ink); direction: ltr; }
+.bar { height: 14px; border-radius: 999px; overflow: hidden; display: flex; direction: ltr; background: rgba(255,255,255,.06); }
+.bar i { display: block; height: 100%; }
+.bar .c { background: #8a5a2b; }
+.bar .w { background: #4f86a1; }
+.bar-legend { display: flex; justify-content: space-between; font-size: .78rem; color: var(--scale-dim); }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; display: grid; gap: 10px; min-width: 0; }
+.chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip { flex: none; border: 1px solid var(--line); background: var(--surface); padding: 6px 14px; border-radius: 999px; font-size: .9rem; white-space: nowrap; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+.fact { background: var(--surface-2); border-radius: 12px; padding: 10px 12px; }
+.fact span { display: block; font-size: .78rem; color: var(--muted); }
+.fact b { font-weight: 600; }
+.btn { border: 0; background: var(--leaf); color: var(--surface); padding: 12px 18px; border-radius: 12px; font-weight: 600; font-family: var(--font-display); display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+:root[data-theme="dark"] .btn { color: #0f1a16; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn { color: #0f1a16; } }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+.btn:disabled { opacity: .5; cursor: default; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.stepper { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); }
+.stepper button { border: 0; background: transparent; width: 40px; height: 40px; font-size: 1.2rem; }
+.stepper output { min-width: 34px; text-align: center; font-family: var(--font-num); }
+select { border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 8px 12px; }
+.note { font-size: .88rem; color: var(--muted); }
+
+/* Learn */
+.progress { display: grid; gap: 8px; }
+.progress .track { height: 8px; background: var(--line); border-radius: 999px; overflow: hidden; }
+.progress .fill { height: 100%; background: var(--leaf); border-radius: 999px; transition: width .4s; }
+.lessons { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.lessons li + li { border-top: 1px solid var(--line); }
+.lesson-link { width: 100%; display: grid; grid-template-columns: 34px 1fr auto; gap: 12px; align-items: center; padding: 14px 16px; background: none; border: 0; text-align: right; }
+.lesson-link:hover { background: var(--surface-2); }
+.lesson-link .n { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-num); font-size: .9rem; background: var(--surface-2); border: 1px solid var(--line); }
+.lesson-link.done .n { background: var(--leaf); color: var(--surface); border-color: var(--leaf); }
+.lesson-link small { display: block; color: var(--muted); font-size: .82rem; line-height: 1.5; }
+.lesson-link .t { font-weight: 600; }
+.stage { font-size: .78rem; color: var(--muted); font-weight: 600; padding: 14px 16px 4px; background: var(--surface-2); letter-spacing: .02em; }
+
+.prose { display: grid; gap: 12px; max-width: 64ch; }
+.prose ul, .prose ol { margin: 0; padding-inline-start: 1.3em; display: grid; gap: 4px; }
+.prose strong { color: var(--ink); }
+.key { background: var(--crema-soft); border-radius: 12px; padding: 12px 14px; }
+.key b { color: var(--crema); font-family: var(--font-display); }
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
+table { border-collapse: collapse; width: 100%; font-size: .9rem; min-width: 440px; }
+th, td { padding: 8px 10px; text-align: right; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { background: var(--surface-2); font-weight: 600; }
+tr:last-child td { border-bottom: 0; }
+.quiz { display: grid; gap: 10px; }
+.opt { text-align: right; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 10px 14px; }
+.opt.right { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, var(--surface)); }
+.opt.wrong { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 12%, var(--surface)); }
+.why { font-size: .9rem; color: var(--muted); }
+.back { background: none; border: 0; color: var(--leaf); font-weight: 600; padding: 0; justify-self: start; display: inline-flex; gap: 6px; align-items: center; }
+.gloss { display: grid; gap: 0; }
+.gloss div { padding: 10px 0; border-bottom: 1px solid var(--line); }
+.gloss div:last-child { border-bottom: 0; }
+.gloss dt { font-weight: 600; }
+.gloss dt .num { color: var(--muted); font-size: .8rem; font-weight: 500; margin-inline-start: 6px; font-family: var(--font-body); }
+.gloss dd { margin: 0; color: var(--muted); font-size: .92rem; }
+.search { width: 100%; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 10px 14px; }
+
+/* Recipes */
+.drinks { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); gap: 10px; }
+.drink { text-align: right; border: 1px solid var(--line); background: var(--surface); border-radius: 14px; padding: 12px 14px; display: grid; gap: 4px; align-content: start; position: relative; }
+.drink:hover { border-color: var(--leaf); }
+.drink .en { font-size: .78rem; color: var(--muted); direction: ltr; text-align: right; }
+.drink .name { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; }
+.drink .base { font-size: .85rem; color: var(--muted); line-height: 1.5; }
+.drink .meta { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+.tag { font-size: .74rem; padding: 2px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted); }
+.tag.lv1 { background: var(--leaf-soft); color: var(--leaf); }
+.tag.lv2 { background: var(--crema-soft); color: var(--crema); }
+.tag.lv3 { background: color-mix(in srgb, var(--bad) 14%, var(--surface)); color: var(--bad); }
+.fav-mark { position: absolute; top: 10px; left: 12px; color: var(--crema); }
+.cup { display: grid; grid-template-columns: 92px 1fr; gap: 16px; align-items: center; }
+.cup svg { width: 92px; height: auto; }
+.layers { display: grid; gap: 4px; font-size: .85rem; }
+.layers span { display: flex; align-items: center; gap: 8px; }
+.layers i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; flex: none; }
+ol.steps { list-style: none; counter-reset: s; margin: 0; padding: 0; display: grid; gap: 10px; }
+ol.steps li { counter-increment: s; display: grid; grid-template-columns: 30px 1fr; gap: 10px; }
+ol.steps li::before { content: counter(s); width: 28px; height: 28px; border-radius: 50%; background: var(--ink); color: var(--bg); display: grid; place-items: center; font-family: var(--font-num); font-size: .85rem; }
+ul.ings { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+ul.ings li { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px dashed var(--line); padding-bottom: 6px; }
+ul.ings li:last-child { border-bottom: 0; }
+ul.ings li b { font-weight: 600; white-space: nowrap; }
+.empty { text-align: center; color: var(--muted); padding: 30px 10px; }
+
+/* Timer */
+.clock { text-align: center; display: grid; gap: 6px; }
+.clock .time { font-family: var(--font-num); font-size: clamp(3.2rem, 16vw, 5rem); font-weight: 600; line-height: 1; direction: ltr; }
+.clock .target { font-size: 1rem; color: var(--scale-dim); }
+.clock .target b { color: var(--scale-ink); font-family: var(--font-num); font-size: 1.6rem; }
+.clock .now { font-family: var(--font-body); font-size: 1rem; color: #efe3d2; min-height: 3.4em; }
+.tprog { height: 6px; background: rgba(255,255,255,.08); border-radius: 999px; overflow: hidden; direction: ltr; }
+.tprog i { display: block; height: 100%; background: var(--scale-ink); width: 0; transition: width .25s linear; }
+.tsteps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.tsteps li { display: grid; grid-template-columns: 58px 1fr auto; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); align-items: baseline; }
+.tsteps li:last-child { border-bottom: 0; }
+.tsteps li.past { color: var(--muted); }
+.tsteps li.cur { color: var(--leaf); font-weight: 600; }
+.tsteps .num { color: var(--muted); }
+.tsteps .w { font-family: var(--font-num); color: var(--crema); direction: ltr; }
+
+/* Bottom nav */
+.nav { position: fixed; inset: auto 0 0 0; z-index: 25; background: var(--surface); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); padding-left: max(8px, env(safe-area-inset-left, 0px)); padding-right: max(8px, env(safe-area-inset-right, 0px)); }
+.nav-in { max-width: 720px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); height: var(--nav-h); }
+.nav a { display: grid; place-items: center; align-content: center; gap: 2px; text-decoration: none; color: var(--muted); font-size: .78rem; font-weight: 500; }
+.nav a[aria-current="page"] { color: var(--leaf); }
+.nav a svg { width: 24px; height: 24px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="app" id="app" dir="rtl" lang="ar">
+  <header class="top">
+    <div class="brand">
+      <svg width="38" height="38" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="var(--leaf)"/><ellipse cx="32" cy="32" rx="14" ry="19" fill="var(--surface)" transform="rotate(-28 32 32)"/><path d="M24 18 C36 26 28 38 40 46" stroke="var(--leaf)" stroke-width="3.2" fill="none" stroke-linecap="round"/></svg>
+      <div><b>أكاديمية الباريستا</b><small>من الريشيو حتى الكوب</small></div>
+    </div>
+    <button class="icon-btn" id="themeBtn" aria-label="تبديل الوضع الليلي" title="الوضع الليلي">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </header>
+  <main id="main"></main>
+</div>
+
+<nav class="nav" dir="rtl" aria-label="الأقسام">
+  <div class="nav-in">
+    <a href="#learn" data-tab="learn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7l10-4 10 4-10 4z"/><path d="M6 9v5c0 1.7 2.7 3 6 3s6-1.3 6-3V9"/></svg>تعلّم</a>
+    <a href="#ratio" data-tab="ratio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="10" width="18" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><path d="M9 15h6"/></svg>الريشيو</a>
+    <a href="#timer" data-tab="timer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2"/><path d="M9 2h6"/></svg>المؤقّت</a>
+    <a href="#recipes" data-tab="recipes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h13v5a6 6 0 0 1-6 6h-1a6 6 0 0 1-6-6z"/><path d="M17 11h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 3c0 2 2 2 2 4M12 3c0 2 2 2 2 4"/></svg>الوصفات</a>
+  </div>
+</nav>
+
+<script>
+"use strict";
+document.documentElement.lang = "ar";
+document.documentElement.dir = "rtl";
+
+/* ---------- storage ---------- */
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("barista:" + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem("barista:" + k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = (s, r = document) => r.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const fmtT = (s) => { s = Math.max(0, Math.round(s)); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
+const r1 = (n) => Math.round(n * 10) / 10;
+// escape, then keep number ranges (2:45–3:15, 92–96°) left-to-right inside Arabic text
+const escN = (v) => esc(v).replace(/\d[\d.:]*\s?[–-]\s?\d[\d.:]*°?/g, (m) => `<bdi dir="ltr">${m}</bdi>`);
+
+/* ---------- brew methods (shared by calculator & timer) ---------- */
+// w: fraction of total water on the scale at that step ("bloom" = 2.5x coffee weight)
+const METHODS = {
+  espresso: { name: "إسبريسو", en: "Espresso", ratio: 2, min: 1, max: 3, step: 0.1, dose: 18, kind: "espresso",
+    grind: "ناعم جدًا، أنعم من ملح الطعام", temp: "92–94°م", time: "25–32 ثانية",
+    note: "الرقم الثاني هنا هو وزن الإسبريسو الخارج في الكوب (Yield)، وليس ماء الخزان.",
+    steps: [
+      { at: 0, txt: "ركّب الحامل وشغّل الاستخلاص فورًا", w: 0 },
+      { at: 6, txt: "تظهر أول القطرات عادةً بين الثانية 5 و8", w: 0.05 },
+      { at: 20, txt: "راقب الميزان، اقتربت من الوزن المستهدف", w: 0.75 },
+      { at: 28, txt: "أوقف الاستخلاص عند الوزن المستهدف", w: 1 }
+    ], end: 32 },
+  v60: { name: "V60", en: "Hario V60", ratio: 16, min: 14, max: 18, step: 0.5, dose: 15, kind: "filter",
+    grind: "متوسط إلى ناعم قليلًا (مثل ملح الطعام)", temp: "92–96°م", time: "2:45–3:15",
+    steps: [
+      { at: 0, txt: "التفتّح: صب ببطء حتى يتشبع كل البن، ثم حرّك المخروط بلطف", w: "bloom" },
+      { at: 45, txt: "الصبة الثانية: دوائر من المنتصف إلى الخارج", w: 0.6 },
+      { at: 75, txt: "الصبة الأخيرة بالهدوء نفسه", w: 1 },
+      { at: 105, txt: "لفّ المخروط لفة خفيفة ليستوي سطح البن", w: 1 },
+      { at: 120, txt: "انتظر انتهاء التصفية، الهدف قبل 3:15", w: 1 }
+    ], end: 180 },
+  chemex: { name: "كيمكس", en: "Chemex", ratio: 16, min: 14, max: 17, step: 0.5, dose: 30, kind: "filter",
+    grind: "متوسط خشن (مثل الملح الخشن)", temp: "93–96°م", time: "4:00–4:30",
+    steps: [
+      { at: 0, txt: "التفتّح: صب ضعفي وزن البن تقريبًا وحرّك بلطف", w: "bloom" },
+      { at: 45, txt: "صب حتى نصف الكمية بدوائر بطيئة", w: 0.5 },
+      { at: 90, txt: "صب حتى ثلاثة أرباع الكمية", w: 0.75 },
+      { at: 135, txt: "الصبة الأخيرة", w: 1 },
+      { at: 180, txt: "انتظر انتهاء التصفية ثم ارفع الفلتر", w: 1 }
+    ], end: 255 },
+  kalita: { name: "كاليتا ويف", en: "Kalita Wave", ratio: 16, min: 15, max: 17, step: 0.5, dose: 20, kind: "filter",
+    grind: "متوسط", temp: "92–95°م", time: "3:00–3:30",
+    steps: [
+      { at: 0, txt: "التفتّح", w: "bloom" },
+      { at: 40, txt: "صبة نبضية: حتى 40% من الماء", w: 0.4 },
+      { at: 70, txt: "صبة نبضية: حتى 60%", w: 0.6 },
+      { at: 95, txt: "صبة نبضية: حتى 80%", w: 0.8 },
+      { at: 120, txt: "الصبة الأخيرة", w: 1 },
+      { at: 150, txt: "انتظر انتهاء التصفية", w: 1 }
+    ], end: 205 },
+  frenchpress: { name: "فرنش برس", en: "French Press", ratio: 15, min: 12, max: 17, step: 0.5, dose: 30, kind: "immersion",
+    grind: "خشن (مثل فتات الخبز)", temp: "94–96°م", time: "4 دقائق + 30 ثانية",
+    steps: [
+      { at: 0, txt: "صب كل الماء دفعة واحدة على البن", w: 1 },
+      { at: 10, txt: "ضع الغطاء دون أن تكبس", w: 1 },
+      { at: 240, txt: "اكسر القشرة وحرّك 3 مرات، ثم أزل الرغوة بملعقتين", w: 1 },
+      { at: 270, txt: "اكبس ببطء وصب القهوة كلها فورًا", w: 1 }
+    ], end: 285 },
+  aeropress: { name: "إيروبرس", en: "AeroPress", ratio: 15, min: 11, max: 17, step: 0.5, dose: 15, kind: "immersion",
+    grind: "متوسط ناعم", temp: "85–92°م", time: "2:00–2:30",
+    steps: [
+      { at: 0, txt: "صب كل الماء", w: 1 },
+      { at: 10, txt: "حرّك 10 مرات", w: 1 },
+      { at: 20, txt: "ركّب المكبس واسحبه قليلًا لأعلى لمنع التنقيط", w: 1 },
+      { at: 105, txt: "لفّ الإيروبرس لفة خفيفة ثم اكبس ببطء لمدة 30 ثانية", w: 1 }
+    ], end: 135 },
+  moka: { name: "موكا بوت", en: "Moka Pot", ratio: 7, min: 6, max: 10, step: 0.5, dose: 15, kind: "immersion",
+    grind: "ناعم متوسط (أخشن من الإسبريسو)", temp: "ماء ساخن قبل التسخين", time: "4–5 دقائق تقريبًا",
+    note: "في الموكا الكمية تحددها السلة: املأها بالبن دون كبس، والماء حتى الصمام.",
+    steps: [
+      { at: 0, txt: "ضعه على نار متوسطة والغطاء مفتوح", w: 1 },
+      { at: 150, txt: "حين تبدأ القهوة بالخروج بلون عسلي، اخفض النار", w: 1 },
+      { at: 210, txt: "عند سماع الغرغرة أو تحوّل اللون للأصفر الفاتح: ارفعه", w: 1 },
+      { at: 225, txt: "برّد القاعدة بقطعة قماش مبللة ليتوقف الاستخلاص", w: 1 }
+    ], end: 240 },
+  turkish: { name: "قهوة تركية", en: "Turkish", ratio: 10, min: 8, max: 12, step: 0.5, dose: 7, kind: "immersion",
+    grind: "ناعم جدًا كالدقيق", temp: "يبدأ بماء بارد", time: "2–3 دقائق",
+    steps: [
+      { at: 0, txt: "اخلط البن والماء البارد (والسكر إن أردت) جيدًا في الكنكة", w: 1 },
+      { at: 15, txt: "على نار هادئة جدًا، ولا تحرّك بعد الآن", w: 1 },
+      { at: 120, txt: "حين ترتفع الرغوة ارفع الكنكة قبل الغليان", w: 1 },
+      { at: 140, txt: "وزّع الرغوة في الفنجان أولًا ثم صب الباقي", w: 1 }
+    ], end: 160 },
+  arabic: { name: "قهوة عربية", en: "Arabic Coffee", ratio: 25, min: 18, max: 35, step: 1, dose: 30, kind: "immersion",
+    grind: "متوسط", temp: "غليان هادئ", time: "15–20 دقيقة",
+    note: "الريشيو هنا تقريبي، فالقهوة العربية تُقاس غالبًا بالملاعق حسب الذوق.",
+    steps: [
+      { at: 0, txt: "عند غليان الماء أضف البن وخفّف النار", w: 1 },
+      { at: 30, txt: "اتركها تغلي غليانًا هادئًا، وانتبه ألّا تفور", w: 1 },
+      { at: 600, txt: "أضف الهيل المطحون (والزعفران أو القرنفل إن رغبت)", w: 1 },
+      { at: 660, txt: "ارفعها عن النار واتركها 5 دقائق ليترسب البن", w: 1 },
+      { at: 960, txt: "صبّها في الدلة أو الترمس مع التصفية", w: 1 }
+    ], end: 980 },
+  coldbrew: { name: "كولد برو", en: "Cold Brew", ratio: 8, min: 5, max: 16, step: 0.5, dose: 100, kind: "cold",
+    grind: "خشن جدًا", temp: "ماء بارد أو بحرارة الغرفة", time: "12–18 ساعة في الثلاجة",
+    note: "عند 1:8 تحصل على مركّز: خففه 1:1 بالماء أو الحليب. عند 1:15 يصبح جاهزًا للشرب مباشرة.",
+    steps: null }
+};
+
+/* ---------- lessons ---------- */
+const LESSONS = [
+  { id: "ratio", stage: "الأساس", title: "ما هو الريشيو؟", sub: "النسبة بين البن والماء، أهم رقم في عملك",
+    body: `
+<p>الريشيو (Brew Ratio) هو النسبة بين <strong>وزن البن</strong> و<strong>وزن الماء</strong>. عندما نقول <span class="num">1:16</span> فنحن نعني: كل 1 غرام بن يقابله 16 غرامًا من الماء.</p>
+<div class="key"><b>القاعدة الذهبية:</b> الماء = البن × الرقم الثاني. مثال: 15 غ بن × 16 = 240 غ ماء.</div>
+<p>الريشيو يتحكم بقوة القهوة (التركيز). رقم ثانٍ أصغر يعني قهوة أثقل وأقوى، ورقم أكبر يعني قهوة أخف.</p>
+<div class="tbl-wrap"><table>
+<tr><th>الطريقة</th><th>الريشيو الشائع</th><th>مثال</th></tr>
+<tr><td>إسبريسو</td><td class="num">1:2</td><td>18 غ بن ← 36 غ إسبريسو</td></tr>
+<tr><td>ريستريتو</td><td class="num">1:1 – 1:1.5</td><td>18 غ ← 18–27 غ</td></tr>
+<tr><td>لونغو</td><td class="num">1:3 – 1:4</td><td>18 غ ← 54–72 غ</td></tr>
+<tr><td>التقطير (V60، كيمكس)</td><td class="num">1:15 – 1:17</td><td>15 غ ← 250 غ ماء</td></tr>
+<tr><td>فرنش برس</td><td class="num">1:14 – 1:16</td><td>30 غ ← 450 غ ماء</td></tr>
+<tr><td>كولد برو (مركّز)</td><td class="num">1:8</td><td>100 غ ← 800 غ ماء</td></tr>
+</table></div>
+<p>ابدأ دائمًا من الريشيو الموصى به، ثم عدّل حسب الذوق. لا تغيّر الريشيو والطحنة معًا في المرة نفسها.</p>`,
+    quiz: [
+      { q: "عندك 20 غ بن وتريد ريشيو 1:15، كم غرامًا من الماء تحتاج؟", opts: ["200 غ", "300 غ", "350 غ", "150 غ"], a: 1, why: "20 × 15 = 300 غ ماء." },
+      { q: "في الإسبريسو بريشيو 1:2 ووزن بن 18 غ، كم يكون وزن المشروب في الكوب؟", opts: ["18 غ", "27 غ", "36 غ", "54 غ"], a: 2, why: "18 × 2 = 36 غ إسبريسو (Yield)." }
+    ] },
+  { id: "scale", stage: "الأساس", title: "الميزان والقياس", sub: "لماذا نقيس بالغرام وليس بالملعقة",
+    body: `
+<p>الملعقة تخدعك: البن الغامق أخف من الفاتح، والطحنة الناعمة تتراص أكثر. لذلك يعمل الباريستا بـ<strong>الميزان</strong> دائمًا.</p>
+<ul>
+<li>استخدم ميزانًا بدقة <span class="num">0.1</span> غ للإسبريسو، و<span class="num">1</span> غ يكفي للتقطير.</li>
+<li>زر <strong>التصفير (Tare)</strong>: ضع الوعاء ثم صفّر، فيقيس الميزان المحتوى فقط.</li>
+<li>الماء: 1 مل ≈ 1 غ، لذلك نقيسه بالغرام على الميزان مباشرة أثناء الصب.</li>
+<li>ميزان مع مؤقّت مدمج يسهّل متابعة وقت الاستخلاص.</li>
+</ul>
+<div class="key"><b>عادة احترافية:</b> زن البن قبل الطحن، ثم زنه مرة أخرى في السلة. الفرق يدلك على كمية البن العالقة في المطحنة.</div>`,
+    quiz: [
+      { q: "لماذا نزن البن بدل استخدام الملعقة؟", opts: ["لأن الميزان أسرع", "لأن كثافة البن تختلف حسب التحميص والطحنة", "لأن الملعقة تغير الطعم", "لا فرق بينهما"], a: 1, why: "حجم الملعقة نفسه قد يحمل أوزانًا مختلفة من البن." }
+    ] },
+  { id: "beans", stage: "الأساس", title: "البن والتحميص والطزاجة", sub: "أرابيكا وروبوستا، ودرجات التحميص",
+    body: `
+<ul>
+<li><strong>أرابيكا</strong>: حموضة ونكهات فاكهية وزهرية، كافيين أقل. أساس القهوة المختصة.</li>
+<li><strong>روبوستا</strong>: مرارة أعلى، كافيين أكثر، كريما كثيفة. تُخلط أحيانًا في خلطات الإسبريسو.</li>
+</ul>
+<div class="tbl-wrap"><table>
+<tr><th>التحميص</th><th>الطعم</th><th>يناسب</th></tr>
+<tr><td>فاتح</td><td>حموضة عالية، فواكه وأزهار</td><td>التقطير اليدوي</td></tr>
+<tr><td>متوسط</td><td>توازن بين الحلاوة والحموضة، كراميل وشوكولاتة</td><td>الإسبريسو والتقطير</td></tr>
+<tr><td>غامق</td><td>مرارة، دخان، قوام ثقيل</td><td>المشروبات بالحليب</td></tr>
+</table></div>
+<p><strong>الطزاجة:</strong> بعد التحميص يخرج غاز ثاني أكسيد الكربون. اترك البن يرتاح تقريبًا 4–14 يومًا للتقطير، و7–21 يومًا للإسبريسو. أفضل استخدام خلال شهر إلى شهرين من تاريخ التحميص.</p>
+<p><strong>الحفظ:</strong> علبة محكمة بصمام، بعيدًا عن الضوء والحرارة والرطوبة. لا تضعه في الثلاجة يوميًا.</p>`,
+    quiz: [
+      { q: "أي تحميص يناسب أكثر مشروبًا مثل اللاتيه حيث يغطي الحليب على القهوة؟", opts: ["فاتح جدًا", "متوسط إلى غامق", "أخضر غير محمص", "لا يهم إطلاقًا"], a: 1, why: "التحميص المتوسط إلى الغامق يعطي نكهات شوكولاتة وكراميل تبرز مع الحليب." }
+    ] },
+  { id: "grind", stage: "الأساس", title: "الطحن", sub: "حجم الطحنة يتحكم في سرعة الاستخلاص",
+    body: `
+<p>كلما نعمت الطحنة زادت مساحة السطح المعرّض للماء، فيصبح الاستخلاص أسرع وأقوى، ويمر الماء أبطأ.</p>
+<div class="tbl-wrap"><table>
+<tr><th>الطحنة</th><th>تشبه</th><th>الطريقة</th></tr>
+<tr><td>ناعم جدًا</td><td>الدقيق</td><td>القهوة التركية</td></tr>
+<tr><td>ناعم</td><td>أنعم من ملح الطعام</td><td>الإسبريسو</td></tr>
+<tr><td>متوسط ناعم</td><td>ملح الطعام</td><td>V60، إيروبرس، موكا</td></tr>
+<tr><td>متوسط</td><td>الرمل</td><td>كاليتا، آلات التقطير</td></tr>
+<tr><td>متوسط خشن</td><td>الملح الخشن</td><td>كيمكس</td></tr>
+<tr><td>خشن</td><td>فتات الخبز</td><td>فرنش برس، كولد برو</td></tr>
+</table></div>
+<ul>
+<li>استخدم مطحنة <strong>بأقراص (Burr)</strong> وليس بشفرات، فالشفرات تعطي طحنة غير متساوية.</li>
+<li>اطحن قبل التحضير مباشرة؛ البن المطحون يفقد رائحته خلال دقائق.</li>
+<li>عند ضبط الطحنة غيّر خطوة صغيرة واحدة في كل مرة.</li>
+</ul>`,
+    quiz: [
+      { q: "القهوة في V60 تصفّت بسرعة كبيرة (دقيقة ونصف) وطعمها حامض وخفيف. ماذا تفعل؟", opts: ["اطحن أخشن", "اطحن أنعم", "استخدم ماء أبرد", "قلّل البن"], a: 1, why: "الطحنة الأنعم تبطئ مرور الماء وتزيد الاستخلاص." }
+    ] },
+  { id: "water", stage: "الأساس", title: "الماء والحرارة", sub: "98% من كوبك ماء",
+    body: `
+<ul>
+<li><strong>الحرارة:</strong> بين <span class="num">90</span> و<span class="num">96</span>°م لمعظم الطرق. التحميص الفاتح يحتاج حرارة أعلى، والغامق أقل.</li>
+<li>بدون ترمومتر: اترك الماء بعد الغليان 30–45 ثانية.</li>
+<li><strong>الجودة:</strong> ماء مفلتر بلا رائحة. مجموع الأملاح الذائبة (TDS) المثالي تقريبًا <span class="num">75–150</span> ppm.</li>
+<li>تجنب الماء المقطر (طعم مسطح) والماء العسر جدًا (يخفي النكهات ويسبب الترسبات في المكينة).</li>
+<li>للتقطير اليدوي استخدم إبريقًا برقبة رفيعة (Gooseneck) للتحكم بالصب.</li>
+</ul>
+<div class="key"><b>تذكّر:</b> ماء ساخن جدًا يعطي مرارة، وماء بارد يعطي حموضة وضعفًا.</div>`,
+    quiz: [
+      { q: "ما نطاق الحرارة المناسب لمعظم طرق التحضير الساخنة؟", opts: ["70–80°م", "80–85°م", "90–96°م", "100°م بالضبط"], a: 2, why: "90–96°م يستخلص النكهات دون حرق." }
+    ] },
+  { id: "extract", stage: "الاستخلاص", title: "فهم الاستخلاص", sub: "لماذا تكون القهوة حامضة أو مُرّة؟",
+    body: `
+<p>الاستخلاص هو إذابة النكهات من البن في الماء. تخرج الأحماض أولًا، ثم السكريات والحلاوة، ثم المرارة في النهاية.</p>
+<div class="tbl-wrap"><table>
+<tr><th></th><th>استخلاص ناقص (Under)</th><th>استخلاص زائد (Over)</th></tr>
+<tr><td>الطعم</td><td>حامض، مالح، خفيف، ينتهي بسرعة</td><td>مُر، قابض، جاف في الفم</td></tr>
+<tr><td>الطحنة</td><td>اطحن أنعم</td><td>اطحن أخشن</td></tr>
+<tr><td>الوقت</td><td>أطِل وقت التحضير</td><td>قصّر الوقت</td></tr>
+<tr><td>الحرارة</td><td>ارفع الحرارة</td><td>اخفض الحرارة</td></tr>
+<tr><td>الريشيو</td><td>زِد الماء (رقم أكبر)</td><td>قلّل الماء (رقم أصغر)</td></tr>
+</table></div>
+<div class="key"><b>الهدف:</b> طعم متوازن فيه حلاوة، وحموضة لطيفة، ونهاية نظيفة تبقى في الفم.</div>
+<p>المتغيرات الخمسة: الريشيو، الطحنة، الحرارة، الوقت، والتحريك. غيّر متغيرًا واحدًا فقط في كل تجربة وسجّل النتيجة.</p>`,
+    quiz: [
+      { q: "إسبريسو طعمه حامض ومالح وخرج في 18 ثانية فقط. ما المشكلة؟", opts: ["استخلاص زائد", "استخلاص ناقص", "البن طازج جدًا", "الحليب قليل"], a: 1, why: "الوقت القصير والطعم الحامض علامتا الاستخلاص الناقص: اطحن أنعم." },
+      { q: "قهوة مُرّة جدًا وتترك جفافًا في الفم. ما أول تعديل؟", opts: ["اطحن أخشن", "اطحن أنعم", "ارفع الحرارة", "أطِل الوقت"], a: 0, why: "المرارة والجفاف علامتا الاستخلاص الزائد." }
+    ] },
+  { id: "espresso", stage: "الاستخلاص", title: "الإسبريسو خطوة بخطوة", sub: "الوصفة الأساسية: 18 غ ← 36 غ في 25–32 ثانية",
+    body: `
+<div class="key"><b>الوصفة المرجعية:</b> بن <span class="num">18</span> غ ← إسبريسو <span class="num">36</span> غ، خلال <span class="num">25–32</span> ثانية، بحرارة <span class="num">93</span>°م وضغط <span class="num">9</span> بار.</div>
+<ol>
+<li><strong>اشطف رأس المكينة (Purge)</strong> 2–3 ثوانٍ لتنظيفه وضبط حرارته.</li>
+<li><strong>جفف السلة</strong> بقطعة قماش نظيفة.</li>
+<li><strong>اطحن وزن البن</strong> مباشرة في السلة، وتأكد من الوزن.</li>
+<li><strong>وزّع البن (Distribution)</strong> بالتساوي بنقرات خفيفة أو أداة توزيع.</li>
+<li><strong>اكبس (Tamp)</strong> بضغط ثابت ومستوٍ تمامًا. المهم الاستواء وليس القوة.</li>
+<li><strong>نظّف حافة السلة</strong> من البن ثم ركّب الحامل.</li>
+<li><strong>ابدأ فورًا</strong> وضع الكوب على الميزان وشغّل المؤقّت.</li>
+<li><strong>أوقف عند الوزن المستهدف</strong> وسجّل الوقت.</li>
+<li><strong>أخرج القرص واشطف الرأس</strong> بعد كل استخلاص.</li>
+</ol>
+<p>شكل التدفق الصحيح: يبدأ قطرات ثم خيط رفيع متصل يشبه ذيل الفأر، لونه بني محمر، ثم يفتح لونه في النهاية.</p>`,
+    quiz: [
+      { q: "ما أهم شيء في عملية الكبس (Tamp)؟", opts: ["أقصى قوة ممكنة", "أن يكون مستويًا وثابتًا", "الكبس مرتين", "النقر على الحامل بعد الكبس"], a: 1, why: "الكبس المائل يجعل الماء يمر من الجهة الأضعف (Channeling)." }
+    ] },
+  { id: "dialin", stage: "الاستخلاص", title: "ضبط الإسبريسو (Dial-in)", sub: "كيف تصل للطعم المثالي كل صباح",
+    body: `
+<p>كل يوم تتغير الرطوبة وعمر البن، لذلك يضبط الباريستا الإسبريسو قبل بدء العمل. ثبّت الوزن (18 غ) والناتج (36 غ)، وغيّر <strong>الطحنة</strong> فقط حتى يصبح الوقت ضمن النطاق.</p>
+<div class="tbl-wrap"><table>
+<tr><th>الملاحظة</th><th>السبب المحتمل</th><th>الحل</th></tr>
+<tr><td>أقل من 25 ثانية، حامض</td><td>طحنة خشنة</td><td>اطحن أنعم</td></tr>
+<tr><td>أكثر من 35 ثانية، مُر</td><td>طحنة ناعمة جدًا</td><td>اطحن أخشن</td></tr>
+<tr><td>رشات جانبية أو بقع فاتحة</td><td>تشقق القرص (Channeling)</td><td>حسّن التوزيع والكبس</td></tr>
+<tr><td>الوقت جيد والطعم حامض</td><td>استخلاص قليل</td><td>زِد الناتج إلى 40 غ</td></tr>
+<tr><td>الوقت جيد والطعم مُر</td><td>استخلاص كثير</td><td>قلّل الناتج إلى 32 غ</td></tr>
+<tr><td>قرص مبلل وطري</td><td>بن قليل أو حرارة منخفضة</td><td>زِد البن 0.5 غ</td></tr>
+<tr><td>كريما شاحبة ورقيقة</td><td>بن قديم أو استخلاص ناقص</td><td>تحقق من تاريخ التحميص</td></tr>
+</table></div>
+<div class="key"><b>طريقة التذوق:</b> اقلب الإسبريسو بملعقة قبل التذوق، فالكريما وحدها مُرّة والقاع حلو.</div>`,
+    quiz: [
+      { q: "عند ضبط الإسبريسو، ما المتغير الذي نغيّره عادةً أولًا؟", opts: ["حرارة المكينة", "حجم الطحنة", "نوع الحليب", "ضغط المضخة"], a: 1, why: "الطحنة هي أداة الضبط اليومية؛ الوزن والناتج ثابتان." }
+    ] },
+  { id: "milk", stage: "الحليب", title: "تبخير الحليب", sub: "رغوة ناعمة لامعة (Microfoam)",
+    body: `
+<ol>
+<li>استخدم حليبًا <strong>باردًا</strong> من الثلاجة وإبريقًا باردًا (Pitcher)، واملأه حتى بداية مجرى الصب تقريبًا.</li>
+<li><strong>اشطف عصا البخار</strong> ثانيتين لإخراج الماء.</li>
+<li>ضع طرف العصا تحت سطح الحليب بقليل، مائلًا قليلًا عن المنتصف.</li>
+<li><strong>مرحلة التهوية (Stretching):</strong> افتح البخار بالكامل، وارفع الإبريق ببطء حتى تسمع صوت «تمزق ورق» خفيف. هنا يدخل الهواء ويكبر الحجم.</li>
+<li><strong>مرحلة الدوران (Texturing):</strong> أدخل العصا قليلًا ليبدأ الحليب بالدوران كدوامة. الدوامة تكسر الفقاعات الكبيرة وتجعل الرغوة ناعمة.</li>
+<li>أغلق البخار عند <span class="num">55–65</span>°م (حين يصعب إمساك الإبريق 3 ثوانٍ). لا تتجاوز 70°م، فالحليب يفقد حلاوته.</li>
+<li>امسح العصا فورًا واشطفها، ثم انقر الإبريق على الطاولة وحرّكه دائريًا حتى يلمع كالطلاء.</li>
+</ol>
+<div class="tbl-wrap"><table>
+<tr><th>المشروب</th><th>وقت التهوية</th><th>سماكة الرغوة</th></tr>
+<tr><td>فلات وايت</td><td>1–2 ثانية</td><td>حوالي 0.5 سم</td></tr>
+<tr><td>لاتيه / كورتادو</td><td>2–4 ثوانٍ</td><td>حوالي 1 سم</td></tr>
+<tr><td>كابتشينو</td><td>4–6 ثوانٍ</td><td>1.5–2 سم</td></tr>
+</table></div>`,
+    quiz: [
+      { q: "ما الحرارة المناسبة للحليب المبخر؟", opts: ["40°م", "55–65°م", "80°م", "حتى الغليان"], a: 1, why: "فوق 70°م يحترق الحليب ويفقد حلاوته الطبيعية." },
+      { q: "ماذا يدل صوت «تمزق الورق» الخفيف؟", opts: ["أن الحليب احترق", "أن الهواء يدخل للحليب بشكل صحيح", "أن العصا مسدودة", "أن الحليب انتهى"], a: 1, why: "هذا صوت مرحلة التهوية الصحيحة." }
+    ] },
+  { id: "latteart", stage: "الحليب", title: "أساسيات اللاتيه آرت", sub: "الرسمة الأولى: القلب",
+    body: `
+<p>الرسم يحتاج رغوة لامعة ناعمة بلا فقاعات، وإسبريسو طازجًا بكريما جيدة.</p>
+<ol>
+<li>أمِل الكوب نحوك بزاوية تقريبًا 45°.</li>
+<li><strong>الأساس:</strong> صب من ارتفاع 5–8 سم بخيط رفيع في منتصف الإسبريسو حتى يمتلئ الكوب للنصف. الارتفاع يجعل الحليب يغوص تحت الكريما.</li>
+<li><strong>الرسم:</strong> أنزل الإبريق حتى يكاد يلمس السطح، واصبب أسرع قليلًا. ستظهر بقعة بيضاء تتسع.</li>
+<li>عدّل الكوب تدريجيًا إلى الوضع المستوي مع امتلائه.</li>
+<li><strong>الإنهاء:</strong> ارفع الإبريق قليلًا ومرّر خيط الحليب عبر الدائرة إلى الأمام، فيتشكل القلب.</li>
+</ol>
+<div class="key"><b>تدرّب بذكاء:</b> استخدم ماء مع قطرة صابون في الإبريق لتتدرّب على حركة الصب دون إهدار الحليب.</div>
+<p>بعد القلب: التوليب (عدة دفعات متراكبة)، ثم الروزيتا (هز الإبريق يمينًا ويسارًا أثناء التراجع).</p>`,
+    quiz: [
+      { q: "لماذا نصب من ارتفاع في بداية الرسم؟", opts: ["ليبرد الحليب", "ليغوص الحليب تحت الكريما ويكوّن قاعدة", "لنصنع رغوة أكثر", "لا سبب"], a: 1, why: "الصب من ارتفاع يحمي الكريما كسطح للرسم." }
+    ] },
+  { id: "pourover", stage: "التحضير اليدوي", title: "التقطير اليدوي", sub: "V60 وكيمكس وكاليتا",
+    body: `
+<ol>
+<li>سخّن الماء واشطف الفلتر الورقي بالماء الساخن (يزيل طعم الورق ويسخّن الأدوات)، ثم تخلّص من ماء الشطف.</li>
+<li>ضع البن المطحون وسوِّ سطحه، ثم صفّر الميزان.</li>
+<li><strong>التفتّح (Bloom):</strong> صب ضعفي إلى ثلاثة أضعاف وزن البن ماءً، وانتظر 30–45 ثانية. البن الطازج ينتفخ ويطلق الغاز.</li>
+<li>أكمل الصب على دفعات بحركة دائرية بطيئة، وتجنب الصب على جدار الفلتر مباشرة.</li>
+<li>الوقت الكلي لـ V60 بين 2:45 و3:15 تقريبًا. أسرع = اطحن أنعم، أبطأ = اطحن أخشن.</li>
+</ol>
+<div class="key"><b>جرّب الآن:</b> افتح قسم «المؤقّت» واختر V60، وسيرشدك خطوة بخطوة مع الوزن المطلوب في كل صبة.</div>`,
+    quiz: [
+      { q: "ما الهدف من مرحلة التفتّح (Bloom)؟", opts: ["تبريد البن", "إطلاق ثاني أكسيد الكربون ليتشبع البن بالتساوي", "زيادة المرارة", "تسريع التصفية"], a: 1, why: "الغاز يعيق وصول الماء للبن؛ التفتّح يخرجه أولًا." }
+    ] },
+  { id: "clean", stage: "العمل اليومي", title: "النظافة والصيانة", sub: "القهوة الجيدة تبدأ بمكينة نظيفة",
+    body: `
+<p><strong>بعد كل مشروب:</strong> اشطف الرأس، امسح عصا البخار واشطفها، ولا تترك الحامل خارج المكينة كي يبقى ساخنًا.</p>
+<p><strong>نهاية كل يوم:</strong></p>
+<ul>
+<li>الغسيل العكسي (Backflush) بسلة عمياء ومنظّف خاص.</li>
+<li>انقع الحوامل والسلال في محلول التنظيف.</li>
+<li>نظّف حلقة الرأس (Gasket) والدش بفرشاة.</li>
+<li>نظّف خزان المطحنة من الزيوت وافرغ البن المتبقي.</li>
+<li>انقع عصا البخار إن تجمّد عليها الحليب.</li>
+</ul>
+<p><strong>دوريًا:</strong> إزالة الترسبات حسب عسر الماء، تغيير الفلتر وحلقة الرأس، وتنظيف أقراص المطحنة.</p>
+<div class="key"><b>علامة الخطر:</b> طعم مُر زيتي ثابت مهما غيّرت الطحنة يعني غالبًا أن المكينة أو المطحنة بحاجة تنظيف.</div>`,
+    quiz: [
+      { q: "متى نمسح عصا البخار؟", opts: ["آخر اليوم فقط", "مرة في الأسبوع", "فورًا بعد كل استخدام", "عندما تتسخ بوضوح"], a: 2, why: "الحليب يجف ويلتصق خلال ثوانٍ ويصبح بيئة للبكتيريا." }
+    ] }
+];
+
+const GLOSSARY = [
+  ["الجرعة", "Dose", "وزن البن الجاف المستخدم في التحضير."],
+  ["الناتج", "Yield", "وزن الإسبريسو الخارج في الكوب."],
+  ["الريشيو", "Brew Ratio", "النسبة بين وزن البن ووزن الماء أو الناتج."],
+  ["الكريما", "Crema", "الطبقة الذهبية فوق الإسبريسو، من الزيوت وغاز ثاني أكسيد الكربون."],
+  ["الحامل", "Portafilter", "المقبض الذي يحمل سلة البن ويُركّب في المكينة."],
+  ["السلة", "Basket", "الوعاء المعدني المثقّب داخل الحامل."],
+  ["الكبس", "Tamp", "ضغط البن في السلة ليصبح قرصًا مستويًا."],
+  ["القرص", "Puck", "البن المكبوس بعد الاستخلاص."],
+  ["التشقق", "Channeling", "مرور الماء من نقطة ضعيفة في القرص، فيتفاوت الاستخلاص."],
+  ["التفتّح", "Bloom", "أول صبة تُخرج الغاز من البن الطازج."],
+  ["الاستخلاص", "Extraction", "إذابة مركبات النكهة من البن في الماء."],
+  ["الرغوة الدقيقة", "Microfoam", "حليب مبخر بفقاعات صغيرة جدًا لامعة، أساس اللاتيه آرت."],
+  ["الإبريق", "Pitcher", "إبريق الستانلس الذي يُبخّر فيه الحليب."],
+  ["الشطف", "Purge", "تشغيل الماء أو البخار لحظات لتنظيف الرأس أو العصا."],
+  ["الغسيل العكسي", "Backflush", "تنظيف الرأس والصمام بسلة عمياء ومنظّف."],
+  ["المطحنة بالأقراص", "Burr Grinder", "مطحنة بقرصين تعطي طحنة متساوية."],
+  ["الأملاح الذائبة", "TDS", "مقياس لتركيز المواد الذائبة في الماء أو القهوة."],
+  ["التصفير", "Tare", "تصفير الميزان بعد وضع الوعاء."],
+  ["الضبط", "Dial-in", "تعديل الطحنة والوصفة للوصول للطعم المطلوب."],
+  ["التصفية", "Drawdown", "المرحلة الأخيرة في التقطير حين ينزل الماء المتبقي."],
+  ["السلة العمياء", "Blind Basket", "سلة بلا ثقوب تُستخدم للغسيل العكسي."],
+  ["مجرى الصب", "Spout", "مقدمة الإبريق التي يُرسم بها."]
+];
+
+/* ---------- drinks ---------- */
+const CATS = [["all", "الكل"], ["fav", "المفضلة"], ["espresso", "إسبريسو"], ["milk", "بالحليب"], ["iced", "باردة"], ["brew", "تحضير يدوي"], ["trad", "تقليدية"], ["nocoffee", "بدون قهوة"]];
+// layers: [label, color token key, share] bottom→top, for the cup diagram
+const L = { esp: ["إسبريسو", "#5a3418"], milk: ["حليب مبخر", "#e9dcc6"], foam: ["رغوة", "#fbf6ec"], water: ["ماء", "#9ec3d6"], choc: ["شوكولاتة", "#3d2314"], ice: ["ثلج", "#cfe6ef"], cream: ["كريمة", "#fffaf0"], cold: ["حليب بارد", "#f1ead9"], syrup: ["صوص/سيرب", "#c98a3a"], coffee: ["قهوة مقطرة", "#6b3f1f"], cond: ["حليب مكثف", "#f0dcb0"], green: ["ماتشا", "#7da453"], chai: ["شاي متبل", "#a8683a"], tonic: ["تونك", "#e6f0ea"], ice2: ["آيس كريم", "#fdf3d8"] };
+
+const DRINKS = [
+  // espresso
+  { id: "espresso", name: "إسبريسو", en: "Espresso (Single)", cat: "espresso", lv: 1, cup: "كوب ديميتاس 60–90 مل", base: "جرعة واحدة مركزة", ratio: "1:2", time: "25–30 ث", method: "espresso",
+    ings: [["بن مطحون ناعم", "8–10 غ"], ["الناتج", "16–20 غ"]],
+    steps: ["سخّن الكوب مسبقًا.", "حضّر السلة المفردة: اطحن، وزّع، اكبس.", "استخلص حتى 16–20 غ خلال 25–30 ثانية.", "قدّمه فورًا مع كأس ماء."],
+    tip: "معظم المقاهي تستخدم الجرعة المزدوجة كأساس لأنها أسهل في الضبط.", layers: [["esp", 1]] },
+  { id: "doppio", name: "دبل إسبريسو", en: "Doppio", cat: "espresso", lv: 1, cup: "ديميتاس 90 مل", base: "الأساس لمعظم المشروبات", ratio: "1:2", time: "25–32 ث", method: "espresso",
+    ings: [["بن مطحون ناعم", "18 غ"], ["الناتج", "36 غ"]],
+    steps: ["اشطف الرأس وجفّف السلة.", "اطحن 18 غ ووزّعها ثم اكبس باستواء.", "استخلص 36 غ خلال 25–32 ثانية.", "حرّك الإسبريسو بملعقة قبل التذوق."],
+    tip: "هذه هي الوصفة المرجعية التي تضبط عليها المطحنة كل صباح.", layers: [["esp", 1]] },
+  { id: "ristretto", name: "ريستريتو", en: "Ristretto", cat: "espresso", lv: 2, cup: "ديميتاس 60 مل", base: "إسبريسو أقصر وأحلى", ratio: "1:1 – 1:1.5", time: "15–20 ث", method: "espresso",
+    ings: [["بن", "18 غ"], ["الناتج", "18–27 غ"]],
+    steps: ["حضّر السلة كالمعتاد.", "اطحن أنعم قليلًا من الإسبريسو.", "أوقف الاستخلاص عند 18–27 غ.", "قدّمه فورًا."],
+    tip: "قوام أثقل وحلاوة أعلى ومرارة أقل. أساس الفلات وايت والبيكولو في كثير من المقاهي.", layers: [["esp", 1]] },
+  { id: "lungo", name: "لونغو", en: "Lungo", cat: "espresso", lv: 2, cup: "كوب 120 مل", base: "إسبريسو طويل", ratio: "1:3 – 1:4", time: "35–45 ث", method: "espresso",
+    ings: [["بن", "18 غ"], ["الناتج", "54–72 غ"]],
+    steps: ["اطحن أخشن قليلًا من الإسبريسو.", "استخلص حتى 54–72 غ.", "قدّمه مباشرة."],
+    tip: "يختلف عن الأمريكانو: كل الماء هنا يمر عبر البن، فيكون أكثر مرارة.", layers: [["esp", 1]] },
+  { id: "americano", name: "أمريكانو", en: "Americano", cat: "espresso", lv: 1, cup: "كوب 240–300 مل", base: "إسبريسو + ماء ساخن", ratio: "إسبريسو 1:2", time: "دقيقة",
+    ings: [["دبل إسبريسو", "36 غ"], ["ماء ساخن 85–90°م", "150–200 مل"]],
+    steps: ["حضّر دبل إسبريسو في الكوب.", "أضف الماء الساخن فوقه.", "قدّمه، والسكر جانبًا."],
+    tip: "اسأل العميل عن القوة: ماء أقل للأقوى.", layers: [["esp", .2], ["water", .8]] },
+  { id: "longblack", name: "لونغ بلاك", en: "Long Black", cat: "espresso", lv: 1, cup: "كوب 180 مل", base: "ماء ساخن ثم إسبريسو فوقه", ratio: "إسبريسو 1:2", time: "دقيقة",
+    ings: [["ماء ساخن", "100–120 مل"], ["دبل إسبريسو أو ريستريتو", "36 غ"]],
+    steps: ["صب الماء الساخن أولًا في الكوب.", "استخلص الإسبريسو مباشرة فوق الماء.", "قدّمه دون تحريك لتبقى الكريما."],
+    tip: "ترتيب الماء أولًا هو ما يحفظ الكريما، وهذا الفرق عن الأمريكانو.", layers: [["water", .7], ["esp", .3]] },
+  { id: "redeye", name: "ريد آي", en: "Red Eye", cat: "espresso", lv: 1, cup: "كوب 300 مل", base: "قهوة مقطرة + شوت إسبريسو", ratio: "—", time: "دقيقتان",
+    ings: [["قهوة مقطرة", "240 مل"], ["إسبريسو", "1 شوت"]],
+    steps: ["صب القهوة المقطرة في الكوب.", "أضف شوت الإسبريسو فوقها."],
+    tip: "مع شوتين يسمى بلاك آي.", layers: [["coffee", .85], ["esp", .15]] },
+  { id: "conpanna", name: "إسبريسو كون بانا", en: "Espresso con Panna", cat: "espresso", lv: 1, cup: "ديميتاس 90 مل", base: "إسبريسو + كريمة مخفوقة", ratio: "1:2", time: "دقيقة",
+    ings: [["دبل إسبريسو", "36 غ"], ["كريمة مخفوقة", "ملعقة كبيرة"]],
+    steps: ["حضّر الإسبريسو.", "ضع الكريمة المخفوقة فوقه.", "قدّمه فورًا مع ملعقة."],
+    tip: "قريب منه قهوة فيينا: أمريكانو قصير أو دبل إسبريسو مع طبقة كريمة أكبر.", layers: [["esp", .65], ["cream", .35]] },
+  { id: "affogato", name: "أفوغاتو", en: "Affogato", cat: "espresso", lv: 1, cup: "كأس حلى 150 مل", base: "آيس كريم + إسبريسو ساخن", ratio: "—", time: "دقيقة",
+    ings: [["آيس كريم فانيلا", "كرة كبيرة (60–80 غ)"], ["دبل إسبريسو", "36 غ"]],
+    steps: ["ضع كرة الآيس كريم في كأس مبرد.", "حضّر الإسبريسو.", "اسكبه فوق الآيس كريم أمام العميل."],
+    tip: "قدّم الإسبريسو في كوب صغير جانبًا ليسكبه العميل بنفسه.", layers: [["ice2", .6], ["esp", .4]] },
+
+  // milk
+  { id: "macchiato", name: "ماكياتو", en: "Espresso Macchiato", cat: "milk", lv: 1, cup: "ديميتاس 90 مل", base: "إسبريسو + لمسة رغوة", ratio: "1:2", time: "دقيقة", method: "espresso",
+    ings: [["دبل إسبريسو", "36 غ"], ["رغوة حليب", "1–2 ملعقة"]],
+    steps: ["حضّر الإسبريسو في الكوب.", "بخّر كمية صغيرة من الحليب برغوة كثيفة.", "ضع ملعقة أو ملعقتين من الرغوة في المنتصف."],
+    tip: "ماكياتو تعني «مُبقّع»: مجرد بقعة رغوة، وليس مشروب الكراميل الطويل.", layers: [["esp", .75], ["foam", .25]] },
+  { id: "cortado", name: "كورتادو", en: "Cortado", cat: "milk", lv: 2, cup: "كأس 120–150 مل", base: "إسبريسو + حليب بالتساوي", ratio: "1:1 حليب", time: "دقيقتان",
+    ings: [["دبل إسبريسو", "36 غ"], ["حليب مبخر", "40–60 مل"]],
+    steps: ["حضّر الإسبريسو في الكأس.", "بخّر الحليب برغوة رقيقة (تهوية 1–2 ثانية).", "صب الحليب بالتساوي مع الإسبريسو، ويمكن رسم قلب صغير."],
+    tip: "الهدف توازن تام بين القهوة والحليب مع رغوة قليلة جدًا.", layers: [["esp", .5], ["milk", .4], ["foam", .1]] },
+  { id: "piccolo", name: "بيكولو لاتيه", en: "Piccolo", cat: "milk", lv: 2, cup: "كأس 90–100 مل", base: "ريستريتو + حليب ناعم", ratio: "ريستريتو 1:1.5", time: "دقيقتان",
+    ings: [["ريستريتو", "20–25 غ"], ["حليب مبخر", "60 مل"]],
+    steps: ["استخلص ريستريتو في الكأس.", "بخّر الحليب كما للاتيه.", "صب وارسم قلبًا صغيرًا."],
+    tip: "لاتيه مصغّر بطعم قهوة أوضح.", layers: [["esp", .35], ["milk", .5], ["foam", .15]] },
+  { id: "flatwhite", name: "فلات وايت", en: "Flat White", cat: "milk", lv: 2, cup: "كوب 150–180 مل", base: "دبل ريستريتو + حليب برغوة رقيقة", ratio: "—", time: "دقيقتان",
+    ings: [["دبل ريستريتو أو إسبريسو", "36 غ"], ["حليب مبخر", "110–130 مل"]],
+    steps: ["حضّر القهوة في الكوب.", "بخّر الحليب بتهوية قصيرة جدًا (رغوة 0.5 سم).", "صب بخيط منخفض وارسم شكلًا بسيطًا.", "يجب أن يبقى السطح مستويًا لامعًا."],
+    tip: "الفرق عن اللاتيه: كوب أصغر، قهوة أبرز، رغوة أرق.", layers: [["esp", .3], ["milk", .62], ["foam", .08]] },
+  { id: "cappuccino", name: "كابتشينو", en: "Cappuccino", cat: "milk", lv: 2, cup: "كوب 180 مل", base: "إسبريسو + حليب + رغوة كثيفة", ratio: "ثلث لكل طبقة", time: "دقيقتان",
+    ings: [["دبل إسبريسو", "36 غ"], ["حليب", "120 مل قبل التبخير"], ["كاكاو أو قرفة (اختياري)", "رشة"]],
+    steps: ["حضّر الإسبريسو في كوب ساخن.", "بخّر الحليب بتهوية أطول (4–6 ثوانٍ) لرغوة 1.5–2 سم.", "صب الحليب ودع الرغوة تكوّن قبة فوق الكوب.", "رش الكاكاو إن طلبه العميل."],
+    tip: "الكابتشينو الجيد يكون خفيف الوزن في اليد بسبب الرغوة.", layers: [["esp", .3], ["milk", .35], ["foam", .35]] },
+  { id: "latte", name: "لاتيه", en: "Caffè Latte", cat: "milk", lv: 1, cup: "كوب 240–300 مل", base: "إسبريسو + حليب كثير + رغوة خفيفة", ratio: "—", time: "دقيقتان",
+    ings: [["دبل إسبريسو", "36 غ"], ["حليب", "200–250 مل"]],
+    steps: ["حضّر الإسبريسو في الكوب.", "بخّر الحليب بتهوية 2–4 ثوانٍ (رغوة 1 سم) حتى 60°م.", "صب وارسم القلب أو التوليب."],
+    tip: "أشهر مشروب للتدرّب على اللاتيه آرت.", layers: [["esp", .18], ["milk", .67], ["foam", .15]] },
+  { id: "flavored", name: "لاتيه بالنكهات", en: "Flavored Latte", cat: "milk", lv: 1, cup: "كوب 300–350 مل", base: "لاتيه + سيرب (فانيلا، بندق، كراميل)", ratio: "—", time: "دقيقتان",
+    ings: [["سيرب النكهة", "15–20 مل"], ["دبل إسبريسو", "36 غ"], ["حليب", "220–250 مل"]],
+    steps: ["ضع السيرب في الكوب.", "استخلص الإسبريسو فوقه وحرّك.", "بخّر الحليب وصبه."],
+    tip: "قاعدة المقاهي: مضخة سيرب (حوالي 10 مل) لكل 120 مل من حجم الكوب تقريبًا.", layers: [["syrup", .08], ["esp", .17], ["milk", .62], ["foam", .13]] },
+  { id: "spanish", name: "سبانش لاتيه", en: "Spanish Latte", cat: "milk", lv: 1, cup: "كوب 240–300 مل", base: "إسبريسو + حليب مكثف محلى + حليب", ratio: "—", time: "دقيقتان",
+    ings: [["حليب مكثف محلى", "20–30 مل"], ["دبل إسبريسو", "36 غ"], ["حليب", "180–200 مل"]],
+    steps: ["ضع الحليب المكثف في الكوب.", "استخلص الإسبريسو فوقه وحرّك جيدًا.", "بخّر الحليب وصبه، أو أضف حليبًا باردًا وثلجًا للنسخة الباردة."],
+    tip: "من أكثر المشروبات طلبًا في الخليج، وغالبًا يُطلب باردًا.", layers: [["cond", .12], ["esp", .16], ["milk", .6], ["foam", .12]] },
+  { id: "mocha", name: "موكا", en: "Caffè Mocha", cat: "milk", lv: 1, cup: "كوب 300 مل", base: "إسبريسو + شوكولاتة + حليب", ratio: "—", time: "دقيقتان",
+    ings: [["صوص شوكولاتة", "20–30 مل"], ["دبل إسبريسو", "36 غ"], ["حليب", "200 مل"], ["كريمة مخفوقة (اختياري)", "حسب الرغبة"]],
+    steps: ["ضع صوص الشوكولاتة في الكوب.", "استخلص الإسبريسو فوقه وحرّك حتى يذوب.", "بخّر الحليب وصبه.", "زيّن بالكريمة أو رشة كاكاو."],
+    tip: "خلط الصوص مع الإسبريسو الساخن أولًا يمنع ترسبه في القاع.", layers: [["choc", .12], ["esp", .14], ["milk", .6], ["cream", .14]] },
+  { id: "whitemocha", name: "وايت موكا", en: "White Mocha", cat: "milk", lv: 1, cup: "كوب 300 مل", base: "إسبريسو + شوكولاتة بيضاء + حليب", ratio: "—", time: "دقيقتان",
+    ings: [["صوص شوكولاتة بيضاء", "25–30 مل"], ["دبل إسبريسو", "36 غ"], ["حليب", "200 مل"]],
+    steps: ["ضع الصوص في الكوب.", "استخلص الإسبريسو فوقه وحرّك.", "بخّر الحليب وصبه."],
+    tip: "أحلى من الموكا العادية، فقلّل الصوص قليلًا إن كان العميل لا يفضل الحلو.", layers: [["cond", .12], ["esp", .14], ["milk", .62], ["foam", .12]] },
+  { id: "caramelmac", name: "كراميل ماكياتو", en: "Caramel Macchiato", cat: "milk", lv: 2, cup: "كوب 350 مل", base: "فانيلا + حليب + إسبريسو فوقه + كراميل", ratio: "—", time: "3 دقائق",
+    ings: [["سيرب فانيلا", "15–20 مل"], ["حليب", "220 مل"], ["دبل إسبريسو", "36 غ"], ["صوص كراميل", "للتزيين"]],
+    steps: ["ضع سيرب الفانيلا في الكوب.", "بخّر الحليب وصبه برغوة قليلة.", "صب الإسبريسو ببطء فوق الرغوة ليصنع بقعة.", "ارسم شبكة كراميل فوق السطح."],
+    tip: "يُقدَّم دون تحريك، فالطبقات جزء من المشروب.", layers: [["syrup", .08], ["milk", .6], ["esp", .17], ["foam", .1], ["syrup", .05]] },
+  { id: "aulait", name: "كافيه أوليه", en: "Café au Lait", cat: "milk", lv: 1, cup: "كوب 300 مل", base: "قهوة مقطرة + حليب ساخن", ratio: "1:1", time: "5 دقائق",
+    ings: [["قهوة مقطرة قوية (1:14)", "150 مل"], ["حليب مبخر", "150 مل"]],
+    steps: ["حضّر قهوة مقطرة أقوى من المعتاد.", "سخّن الحليب أو بخّره برغوة خفيفة.", "صبهما معًا في الكوب."],
+    tip: "خيار جيد حين لا تتوفر مكينة إسبريسو.", layers: [["coffee", .5], ["milk", .45], ["foam", .05]] },
+  { id: "bombon", name: "كافيه بومبون", en: "Café Bombón", cat: "milk", lv: 1, cup: "كأس زجاجي 90 مل", base: "حليب مكثف + إسبريسو بطبقتين", ratio: "1:1", time: "دقيقة",
+    ings: [["حليب مكثف محلى", "30 مل"], ["إسبريسو", "30–36 غ"]],
+    steps: ["ضع الحليب المكثف في كأس زجاجي.", "صب الإسبريسو ببطء فوق ظهر ملعقة لتبقى طبقتان.", "قدّمه مع ملعقة ليحرّكه العميل."],
+    tip: "الكأس الزجاجي ضروري لإظهار الطبقتين.", layers: [["cond", .5], ["esp", .5]] },
+
+  // iced
+  { id: "icedlatte", name: "آيس لاتيه", en: "Iced Latte", cat: "iced", lv: 1, cup: "كأس 350–400 مل", base: "ثلج + حليب بارد + إسبريسو", ratio: "—", time: "دقيقة",
+    ings: [["ثلج", "ثلثا الكأس"], ["حليب بارد", "180–200 مل"], ["دبل إسبريسو", "36 غ"]],
+    steps: ["املأ الكأس بالثلج.", "صب الحليب البارد.", "استخلص الإسبريسو في كوب صغير ثم اسكبه فوق الحليب ببطء."],
+    tip: "سكب الإسبريسو في النهاية يصنع طبقات جميلة. أضف السيرب قبل الثلج لو طُلب.", layers: [["cold", .55], ["ice", .2], ["esp", .25]] },
+  { id: "icedamericano", name: "آيس أمريكانو", en: "Iced Americano", cat: "iced", lv: 1, cup: "كأس 350 مل", base: "ثلج + ماء بارد + إسبريسو", ratio: "—", time: "دقيقة",
+    ings: [["ثلج", "ثلثا الكأس"], ["ماء بارد", "150 مل"], ["دبل إسبريسو", "36 غ"]],
+    steps: ["املأ الكأس بالثلج.", "صب الماء البارد.", "أضف الإسبريسو فوقه."],
+    tip: "لا تصب الإسبريسو مباشرة على الثلج قبل الماء، فالصدمة الحرارية تزيد المرارة.", layers: [["water", .55], ["ice", .2], ["esp", .25]] },
+  { id: "icedspanish", name: "آيس سبانش لاتيه", en: "Iced Spanish Latte", cat: "iced", lv: 1, cup: "كأس 350 مل", base: "حليب مكثف + حليب بارد + ثلج + إسبريسو", ratio: "—", time: "دقيقة",
+    ings: [["حليب مكثف محلى", "25–30 مل"], ["حليب بارد", "150 مل"], ["ثلج", "ثلثا الكأس"], ["دبل إسبريسو", "36 غ"]],
+    steps: ["اخلط الحليب المكثف مع الحليب البارد.", "املأ الكأس بالثلج وصب الخليط.", "اسكب الإسبريسو فوقه."],
+    tip: "خلط المكثف مع الحليب أولًا يمنع تكتله في القاع.", layers: [["cond", .15], ["cold", .45], ["ice", .15], ["esp", .25]] },
+  { id: "icedmocha", name: "آيس موكا", en: "Iced Mocha", cat: "iced", lv: 1, cup: "كأس 400 مل", base: "شوكولاتة + إسبريسو + حليب بارد + ثلج", ratio: "—", time: "دقيقتان",
+    ings: [["صوص شوكولاتة", "25 مل"], ["دبل إسبريسو", "36 غ"], ["حليب بارد", "180 مل"], ["ثلج", "ثلثا الكأس"]],
+    steps: ["اخلط الصوص مع الإسبريسو الساخن حتى يذوب.", "املأ الكأس بالثلج والحليب البارد.", "اسكب خليط الموكا فوقه."],
+    tip: "زيّنه بالكريمة المخفوقة وصوص الشوكولاتة على جدار الكأس.", layers: [["choc", .1], ["cold", .5], ["ice", .15], ["esp", .25]] },
+  { id: "shakerato", name: "شيكيراتو", en: "Shakerato", cat: "iced", lv: 2, cup: "كأس مارتيني 150 مل", base: "إسبريسو مرجوج مع ثلج وسيرب", ratio: "—", time: "دقيقتان",
+    ings: [["دبل إسبريسو", "36 غ"], ["سيرب سكر", "10 مل"], ["ثلج", "5–6 مكعبات"]],
+    steps: ["ضع الثلج والسيرب في الشيكر.", "أضف الإسبريسو الساخن مباشرة.", "رج بقوة 15 ثانية.", "صفّه في كأس مبرد، وستظهر رغوة كثيفة."],
+    tip: "الرج القوي هو سر الرغوة الكريمية.", layers: [["esp", .7], ["foam", .3]] },
+  { id: "tonic", name: "إسبريسو تونك", en: "Espresso Tonic", cat: "iced", lv: 2, cup: "كأس 300 مل", base: "ثلج + تونك + إسبريسو", ratio: "—", time: "دقيقة",
+    ings: [["ثلج", "ملء الكأس"], ["ماء تونك بارد", "120–150 مل"], ["إسبريسو", "36 غ"], ["شريحة برتقال (اختياري)", "1"]],
+    steps: ["املأ الكأس بالثلج وصب التونك.", "اسكب الإسبريسو ببطء جدًا فوق ظهر ملعقة.", "قدّمه فورًا دون تحريك."],
+    tip: "يناسبه إسبريسو فاتح التحميص بنكهات فواكه.", layers: [["tonic", .55], ["ice", .2], ["esp", .25]] },
+  { id: "frappe", name: "فرابيه", en: "Blended Frappé", cat: "iced", lv: 2, cup: "كأس 400 مل", base: "إسبريسو + حليب + ثلج في الخلاط", ratio: "—", time: "3 دقائق",
+    ings: [["دبل إسبريسو مبرد", "36 غ"], ["حليب بارد", "120 مل"], ["ثلج", "كوب (150–180 غ)"], ["سيرب سكر أو كراميل", "20–30 مل"], ["كريمة للتزيين", "اختياري"]],
+    steps: ["برّد الإسبريسو قليلًا.", "ضع كل المكونات في الخلاط.", "اخلط 20–30 ثانية حتى يصبح ناعمًا.", "صبّه وزيّنه بالكريمة والصوص."],
+    tip: "ملعقة صغيرة من مثبّت الفرابيه أو زانثان تمنع انفصال الثلج.", layers: [["cold", .75], ["cream", .25]] },
+  { id: "dalgona", name: "قهوة دالغونا", en: "Dalgona Coffee", cat: "iced", lv: 1, cup: "كأس 300 مل", base: "قهوة سريعة مخفوقة فوق حليب", ratio: "1:1:1", time: "5 دقائق",
+    ings: [["قهوة سريعة الذوبان", "2 ملعقة كبيرة"], ["سكر", "2 ملعقة كبيرة"], ["ماء ساخن", "2 ملعقة كبيرة"], ["حليب بارد", "200 مل"], ["ثلج", "حسب الرغبة"]],
+    steps: ["اخفق القهوة والسكر والماء بالمضرب حتى تصبح كريمة كثيفة فاتحة (2–4 دقائق).", "ضع الثلج والحليب في الكأس.", "ضع الكريمة بالملعقة فوق الحليب."],
+    tip: "النسبة متساوية 1:1:1، والسكر ضروري لثبات الرغوة.", layers: [["cold", .65], ["ice", .1], ["syrup", .25]] },
+  { id: "coldbrew", name: "كولد برو", en: "Cold Brew", cat: "iced", lv: 1, cup: "كأس 300 مل", base: "نقع بارد 12–18 ساعة", ratio: "1:8 مركّز", time: "12–18 ساعة", method: "coldbrew",
+    ings: [["بن مطحون خشن جدًا", "100 غ"], ["ماء بارد مفلتر", "800 غ"]],
+    steps: ["اخلط البن والماء في وعاء وحرّك حتى يتشبع كل البن.", "غطّه واتركه في الثلاجة 12–18 ساعة.", "صفّه مرتين: بمصفاة ثم بفلتر ورقي.", "خفّف المركّز 1:1 بالماء أو الحليب، وقدّمه على الثلج."],
+    tip: "يبقى المركّز صالحًا 7–10 أيام في الثلاجة في وعاء محكم.", layers: [["coffee", .6], ["ice", .4]] },
+  { id: "japanese", name: "آيس V60 (الطريقة اليابانية)", en: "Japanese Iced Coffee", cat: "iced", lv: 2, cup: "كأس 300 مل", base: "تقطير ساخن مباشرة على الثلج", ratio: "1:15 (ماء + ثلج)", time: "3 دقائق", method: "v60",
+    ings: [["بن مطحون متوسط ناعم", "20 غ"], ["ماء ساخن 94°م", "200 غ"], ["ثلج في الإبريق", "100 غ"]],
+    steps: ["ضع الثلج في إبريق التقديم تحت V60.", "اطحن أنعم قليلًا من المعتاد لأن الماء أقل.", "حضّر كالـ V60 العادية بـ 200 غ ماء فقط.", "حرّك حتى يذوب الثلج وقدّمه على ثلج جديد."],
+    tip: "يحفظ الروائح الحمضية والفاكهية أفضل من الكولد برو.", layers: [["coffee", .6], ["ice", .4]] },
+
+  // manual brew
+  { id: "v60", name: "V60", en: "Hario V60", cat: "brew", lv: 2, cup: "كوب 250 مل", base: "تقطير يدوي صافٍ", ratio: "1:16", time: "2:45–3:15", method: "v60",
+    ings: [["بن مطحون متوسط ناعم", "15 غ"], ["ماء 92–96°م", "250 غ"], ["فلتر ورقي", "1"]],
+    steps: ["اشطف الفلتر بالماء الساخن وتخلص من الماء.", "ضع البن وسوِّ السطح وصفّر الميزان.", "التفتّح: 40 غ ماء وانتظر 45 ثانية.", "صب حتى 150 غ بدوائر بطيئة.", "صب حتى 250 غ عند 1:15.", "لفّ المخروط برفق واترك التصفية تنتهي قرابة 3:00."],
+    tip: "استخدم المؤقّت داخل التطبيق ليرشدك بالوزن والوقت.", layers: [["coffee", 1]] },
+  { id: "chemex", name: "كيمكس", en: "Chemex", cat: "brew", lv: 2, cup: "يكفي 2–3 أكواب", base: "تقطير بفلتر سميك، طعم نظيف جدًا", ratio: "1:16", time: "4:00–4:30", method: "chemex",
+    ings: [["بن متوسط خشن", "30 غ"], ["ماء 93–96°م", "500 غ"], ["فلتر كيمكس", "1"]],
+    steps: ["ضع الفلتر والجهة الثلاثية نحو المجرى، واشطفه جيدًا.", "أضف البن وصفّر الميزان.", "التفتّح: 75 غ وانتظر 45 ثانية.", "صب على دفعات حتى 500 غ.", "انتظر التصفية الكاملة (حوالي 4:15) ثم ارفع الفلتر."],
+    tip: "الفلتر السميك يبطئ التصفية، لذلك الطحنة أخشن من V60.", layers: [["coffee", 1]] },
+  { id: "kalita", name: "كاليتا ويف", en: "Kalita Wave", cat: "brew", lv: 2, cup: "كوب 300 مل", base: "قاع مسطح واستخلاص متساوٍ", ratio: "1:16", time: "3:00–3:30", method: "kalita",
+    ings: [["بن متوسط", "20 غ"], ["ماء 92–95°م", "320 غ"]],
+    steps: ["اشطف الفلتر المموج دون تسطيحه.", "التفتّح بـ 50 غ لمدة 40 ثانية.", "صب على دفعات صغيرة كل 20–30 ثانية حتى 320 غ.", "الهدف انتهاء التصفية قرب 3:20."],
+    tip: "أسهل من V60 للمبتدئ لأنه أكثر تسامحًا مع أخطاء الصب.", layers: [["coffee", 1]] },
+  { id: "frenchpress", name: "فرنش برس", en: "French Press", cat: "brew", lv: 1, cup: "يكفي كوبين", base: "نقع كامل، قوام ثقيل", ratio: "1:15", time: "4:30", method: "frenchpress",
+    ings: [["بن خشن", "30 غ"], ["ماء 94–96°م", "450–500 غ"]],
+    steps: ["سخّن الإبريق بماء ساخن ثم تخلص منه.", "ضع البن وصب كل الماء.", "ضع الغطاء دون كبس وانتظر 4 دقائق.", "اكسر القشرة وحرّك وأزل الرغوة.", "اكبس ببطء وصب كل القهوة فورًا."],
+    tip: "لا تترك القهوة في الإبريق بعد الكبس، فهي تستمر بالاستخلاص وتصبح مُرّة.", layers: [["coffee", 1]] },
+  { id: "aeropress", name: "إيروبرس", en: "AeroPress", cat: "brew", lv: 1, cup: "كوب 200 مل", base: "نقع مع ضغط خفيف", ratio: "1:15", time: "2:15", method: "aeropress",
+    ings: [["بن متوسط ناعم", "15 غ"], ["ماء 85–92°م", "225 غ"], ["فلتر ورقي", "1"]],
+    steps: ["اشطف الفلتر في الغطاء.", "ضع البن وصب كل الماء.", "حرّك 10 مرات.", "ركّب المكبس واسحبه قليلًا لأعلى، وانتظر حتى 1:45.", "اكبس ببطء 30 ثانية حتى تسمع صوت الهواء."],
+    tip: "أداة مرنة جدًا: جرّب وصفات بطحنات وحرارة مختلفة.", layers: [["coffee", 1]] },
+  { id: "moka", name: "موكا بوت", en: "Moka Pot", cat: "brew", lv: 1, cup: "2–3 فناجين صغيرة", base: "قهوة مركزة على الموقد", ratio: "≈ 1:7", time: "4–5 دقائق", method: "moka",
+    ings: [["بن ناعم متوسط", "15–20 غ (حسب السلة)"], ["ماء ساخن", "حتى الصمام"]],
+    steps: ["املأ القاعدة بماء ساخن حتى أسفل الصمام.", "املأ السلة بالبن وسوِّها دون كبس.", "اربط الجزأين جيدًا (بقطعة قماش لأن القاعدة ساخنة).", "ضعه على نار متوسطة والغطاء مفتوح.", "ارفعه عند سماع الغرغرة وبرّد القاعدة."],
+    tip: "الماء الساخن من البداية يقلّل الوقت على النار ويمنع طعم الاحتراق.", layers: [["coffee", 1]] },
+
+  // traditional
+  { id: "arabic", name: "قهوة عربية", en: "Arabic Coffee (Gahwa)", cat: "trad", lv: 2, cup: "فناجين صغيرة", base: "بن فاتح التحميص مع الهيل", ratio: "≈ 1:25", time: "15–20 دقيقة", method: "arabic",
+    ings: [["ماء", "750 مل"], ["بن عربي فاتح التحميص مطحون", "30 غ (3 ملاعق كبيرة)"], ["هيل مطحون", "1–1.5 ملعقة كبيرة"], ["زعفران أو قرنفل (اختياري)", "رشة"]],
+    steps: ["اغلِ الماء في الدلة أو القدر.", "أضف البن وخفّف النار واتركه يغلي بهدوء 10–15 دقيقة.", "أضف الهيل (والزعفران) واتركها دقيقة.", "ارفعها عن النار واتركها 5 دقائق ليترسب البن.", "صبّها مع التصفية في الترمس، وقدّمها مع التمر."],
+    tip: "تُصب باليد اليسرى في الفنجان بقدر قليل، ويُقدّم الفنجان باليمين.", layers: [["syrup", 1]] },
+  { id: "turkish", name: "قهوة تركية", en: "Turkish Coffee", cat: "trad", lv: 2, cup: "فنجان 70 مل", base: "بن ناعم كالدقيق في الكنكة", ratio: "1:10", time: "3 دقائق", method: "turkish",
+    ings: [["بن ناعم جدًا", "7 غ (ملعقة صغيرة ممتلئة)"], ["ماء بارد", "70 مل"], ["سكر (اختياري)", "0–2 ملعقة صغيرة"]],
+    steps: ["اخلط البن والماء البارد والسكر في الكنكة.", "ضعها على نار هادئة جدًا ولا تحرّك.", "حين ترتفع الرغوة وقبل الغليان ارفعها.", "ضع الرغوة في الفنجان أولًا ثم صب الباقي ببطء."],
+    tip: "الرغوة علامة الجودة: النار الهادئة تعطي رغوة كثيفة.", layers: [["esp", .85], ["foam", .15]] },
+
+  // no coffee
+  { id: "hotchoc", name: "شوكولاتة ساخنة", en: "Hot Chocolate", cat: "nocoffee", lv: 1, cup: "كوب 300 مل", base: "شوكولاتة + حليب مبخر", ratio: "—", time: "دقيقتان",
+    ings: [["صوص أو بودرة شوكولاتة", "30 مل / 25 غ"], ["حليب", "250 مل"]],
+    steps: ["ضع الشوكولاتة في الكوب مع قليل من الحليب الساخن وحرّك حتى تصبح عجينة ناعمة.", "بخّر باقي الحليب.", "صبه وحرّك، وزيّن بالكريمة أو المارشملو."],
+    tip: "خلطها بقليل من الحليب أولًا يمنع التكتلات.", layers: [["choc", .2], ["milk", .65], ["foam", .15]] },
+  { id: "chai", name: "شاي لاتيه", en: "Chai Latte", cat: "nocoffee", lv: 1, cup: "كوب 300 مل", base: "شاي متبل + حليب مبخر", ratio: "—", time: "دقيقتان",
+    ings: [["مركّز شاي متبل", "60–90 مل"], ["حليب", "180–200 مل"], ["قرفة للتزيين", "رشة"]],
+    steps: ["ضع مركّز الشاي في الكوب.", "بخّر الحليب كما للاتيه.", "صب الحليب ورش القرفة."],
+    tip: "أضف شوت إسبريسو ليصبح «ديرتي تشاي».", layers: [["chai", .3], ["milk", .55], ["foam", .15]] },
+  { id: "matcha", name: "ماتشا لاتيه", en: "Matcha Latte", cat: "nocoffee", lv: 2, cup: "كوب 300 مل", base: "ماتشا مخفوقة + حليب", ratio: "—", time: "3 دقائق",
+    ings: [["ماتشا", "2–3 غ (ملعقة صغيرة)"], ["ماء 75–80°م", "40–60 مل"], ["حليب", "200 مل"], ["سيرب (اختياري)", "10 مل"]],
+    steps: ["انخل الماتشا في وعاء.", "أضف الماء واخفق بحركة حرف M حتى تختفي التكتلات وتظهر رغوة.", "صبها في الكوب.", "بخّر الحليب وصبه فوقها، أو استخدم حليبًا باردًا وثلجًا للنسخة الباردة."],
+    tip: "الماء المغلي يحرق الماتشا ويجعلها مُرّة.", layers: [["green", .25], ["milk", .6], ["foam", .15]] }
+];
+
+/* ---------- state ---------- */
+const S = {
+  done: store.get("done", {}),
+  favs: store.get("favs", {}),
+  calc: Object.assign({ method: "v60", coffee: 15, ratio: 16, cups: 1, cupMl: 240 }, store.get("calc", {})),
+  cat: "all", q: "",
+  timer: { method: store.get("timerMethod", "v60"), running: false, start: 0, elapsed: 0, raf: 0, lastStep: -1 }
+};
+if (!METHODS[S.calc.method]) S.calc.method = "v60";
+const saveCalc = () => store.set("calc", S.calc);
+
+/* ---------- theme ---------- */
+(function () {
+  const t = store.get("theme", null);
+  if (t) document.documentElement.setAttribute("data-theme", t);
+  $("#themeBtn").addEventListener("click", () => {
+    const cur = document.documentElement.getAttribute("data-theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    const next = cur === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    store.set("theme", next);
+  });
+})();
+
+/* ---------- router ---------- */
+const main = $("#main");
+function route() {
+  const h = (location.hash || "").slice(1) || store.get("tab", "learn");
+  let tab = h, arg = null;
+  const m = h.match(/^(lesson|drink)-(.+)$/);
+  if (m) { tab = m[1] === "lesson" ? "learn" : "recipes"; arg = m; }
+  if (!["learn", "ratio", "timer", "recipes"].includes(tab)) tab = "learn";
+  document.querySelectorAll(".nav a").forEach((a) => { if (a.dataset.tab === tab) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
+  if (tab !== "timer") stopTick();
+  if (!arg) store.set("tab", tab);
+  if (arg && arg[1] === "lesson") renderLesson(arg[2]);
+  else if (arg && arg[1] === "drink") renderDrink(arg[2]);
+  else ({ learn: renderLearn, ratio: renderRatio, timer: renderTimer, recipes: renderRecipes })[tab]();
+  window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", route);
+const go = (h) => { if (location.hash === "#" + h) route(); else location.hash = h; };
+
+/* ---------- LEARN ---------- */
+function renderLearn() {
+  const n = LESSONS.filter((l) => S.done[l.id]).length;
+  let stage = "", items = "";
+  LESSONS.forEach((l, i) => {
+    if (l.stage !== stage) { stage = l.stage; items += `<li class="stage">${esc(stage)}</li>`; }
+    items += `<li><button class="lesson-link ${S.done[l.id] ? "done" : ""}" data-l="${l.id}">
+      <span class="n">${S.done[l.id] ? "✓" : i + 1}</span>
+      <span><span class="t">${esc(l.title)}</span><small>${esc(l.sub)}</small></span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button></li>`;
+  });
+  const next = LESSONS.find((l) => !S.done[l.id]);
+  main.innerHTML = `<section class="view">
+    <div><p class="eyebrow">مسار الباريستا المبتدئ</p><h1>من الريشيو حتى الكوب</h1>
+    <p class="lead">${LESSONS.length} دروس قصيرة بالترتيب: افهم الأرقام أولًا، ثم الاستخلاص، ثم الحليب. أنهِ اختبار كل درس ليُحتسب مكتملًا.</p></div>
+    <div class="card progress"><div class="row" style="justify-content:space-between"><b>تقدّمك</b><span class="num">${n} / ${LESSONS.length}</span></div>
+      <div class="track"><div class="fill" style="width:${(n / LESSONS.length) * 100}%"></div></div>
+      ${next ? `<button class="btn" data-l="${next.id}">${n ? "تابع" : "ابدأ"}: ${esc(next.title)}</button>` : `<p>أحسنت! أنهيت كل الدروس. طبّق الآن من قسم الوصفات.</p>`}
+    </div>
+    <ul class="lessons">${items}</ul>
+    <div class="card"><h2>قاموس الباريستا</h2>
+      <input class="search" id="glossQ" type="search" placeholder="ابحث عن مصطلح… (مثل: كريما، Tamp)" aria-label="ابحث في المصطلحات">
+      <dl class="gloss" id="gloss"></dl></div>
+  </section>`;
+  main.querySelectorAll("[data-l]").forEach((b) => b.addEventListener("click", () => go("lesson-" + b.dataset.l)));
+  const drawGloss = (q) => {
+    q = (q || "").trim().toLowerCase();
+    const rows = GLOSSARY.filter((g) => !q || g.join(" ").toLowerCase().includes(q));
+    $("#gloss").innerHTML = rows.length ? rows.map((g) => `<div><dt>${esc(g[0])}<span class="num">${esc(g[1])}</span></dt><dd>${esc(g[2])}</dd></div>`).join("") : `<p class="note">لا يوجد مصطلح مطابق.</p>`;
+  };
+  drawGloss("");
+  $("#glossQ").addEventListener("input", (e) => drawGloss(e.target.value));
+}
+
+function renderLesson(id) {
+  const i = LESSONS.findIndex((l) => l.id === id);
+  if (i < 0) return go("learn");
+  const l = LESSONS[i], nx = LESSONS[i + 1];
+  main.innerHTML = `<section class="view">
+    <button class="back" id="back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>كل الدروس</button>
+    <div><p class="eyebrow">الدرس ${i + 1} من ${LESSONS.length} · ${esc(l.stage)}</p><h1>${esc(l.title)}</h1><p class="lead">${esc(l.sub)}</p></div>
+    <article class="card prose">${l.body}</article>
+    <div class="card"><h2>اختبر فهمك</h2><div id="quiz" class="quiz"></div></div>
+    <div class="row">${nx ? `<button class="btn ghost" id="nextL">الدرس التالي: ${esc(nx.title)}</button>` : ""}</div>
+  </section>`;
+  $("#back").addEventListener("click", () => go("learn"));
+  if (nx) $("#nextL").addEventListener("click", () => go("lesson-" + nx.id));
+  const answered = {};
+  const qz = $("#quiz");
+  qz.innerHTML = l.quiz.map((q, qi) => `<div class="quiz" data-q="${qi}"><b>${esc(q.q)}</b>
+    ${q.opts.map((o, oi) => `<button class="opt" data-o="${oi}">${esc(o)}</button>`).join("")}<p class="why" hidden></p></div>`).join("") +
+    `<p id="quizRes" class="note">${S.done[l.id] ? "✓ أكملت هذا الدرس سابقًا." : "أجب عن الأسئلة لإكمال الدرس."}</p>`;
+  qz.querySelectorAll("[data-q]").forEach((box) => {
+    const q = l.quiz[+box.dataset.q];
+    box.querySelectorAll(".opt").forEach((b) => b.addEventListener("click", () => {
+      if (answered[box.dataset.q] === true) return;
+      const ok = +b.dataset.o === q.a;
+      b.classList.add(ok ? "right" : "wrong");
+      const why = box.querySelector(".why");
+      why.hidden = false;
+      why.textContent = ok ? "إجابة صحيحة. " + q.why : "ليست هذه. حاول مرة أخرى.";
+      if (ok) {
+        answered[box.dataset.q] = true;
+        if (l.quiz.every((_, k) => answered[k] === true)) {
+          S.done[l.id] = true; store.set("done", S.done);
+          $("#quizRes").textContent = "✓ ممتاز! اكتمل الدرس.";
+        }
+      }
+    }));
+  });
+}
+
+/* ---------- RATIO ---------- */
+function renderRatio() {
+  const c = S.calc;
+  main.innerHTML = `<section class="view">
+    <div><p class="eyebrow">حاسبة الريشيو</p><h1>كم بنًا وكم ماءً؟</h1>
+    <p class="lead">اختر طريقة التحضير، ثم أدخل وزن البن أو الماء، وسنحسب الباقي.</p></div>
+    <div class="chips" id="mchips" role="group" aria-label="طريقة التحضير">${Object.entries(METHODS).map(([k, m]) => `<button class="chip" data-m="${k}" aria-pressed="${k === c.method}">${esc(m.name)}</button>`).join("")}</div>
+    <div class="scale" aria-live="polite">
+      <div class="scale-row">
+        <div class="readout"><label for="inCoffee">البن (Dose)</label><div class="val"><input id="inCoffee" type="number" inputmode="decimal" min="1" step="0.5"><span class="unit">g</span></div></div>
+        <div class="readout"><label for="inWater" id="waterLbl">الماء</label><div class="val"><input id="inWater" type="number" inputmode="decimal" min="1" step="1"><span class="unit">g</span></div></div>
+      </div>
+      <div class="ratio-line"><span class="ratio-big" id="ratioBig"></span><span class="ratio-hint" id="ratioHint"></span></div>
+      <input type="range" id="inRatio" aria-label="الريشيو">
+      <div class="bar" aria-hidden="true"><i class="c" id="barC"></i><i class="w" id="barW"></i></div>
+      <div class="bar-legend"><span id="legStrong">أقوى</span><span id="legLight">أخف</span></div>
+    </div>
+    <div class="card" id="cupsCard"><h3>حسب عدد الأكواب</h3>
+      <div class="row">
+        <div class="stepper"><button id="cMinus" aria-label="أقل">−</button><output id="cups"></output><button id="cPlus" aria-label="أكثر">+</button></div>
+        <span>أكواب، حجم الكوب</span>
+        <select id="cupMl" aria-label="حجم الكوب"><option value="150">150 مل</option><option value="200">200 مل</option><option value="240">240 مل</option><option value="300">300 مل</option><option value="350">350 مل</option></select>
+      </div>
+      <p class="note">نضيف تلقائيًا الماء الذي يمتصه البن (حوالي ضعفي وزنه).</p>
+    </div>
+    <div class="card"><h2 id="mTitle"></h2><div class="facts" id="facts"></div><p class="note" id="mNote"></p>
+      <div class="row"><button class="btn" id="toTimer">ابدأ المؤقّت بهذه الكمية</button></div></div>
+  </section>`;
+  $("#cupMl").value = String(c.cupMl);
+  main.querySelectorAll("[data-m]").forEach((b) => b.addEventListener("click", () => {
+    const m = METHODS[b.dataset.m];
+    c.method = b.dataset.m; c.ratio = m.ratio; c.coffee = m.dose; saveCalc(); renderRatio();
+  }));
+  const inC = $("#inCoffee"), inW = $("#inWater"), inR = $("#inRatio");
+  const update = (src) => {
+    const m = METHODS[c.method];
+    if (src !== "c") inC.value = r1(c.coffee);
+    if (src !== "w") inW.value = Math.round(c.coffee * c.ratio * 10) / 10;
+    inR.min = m.min; inR.max = m.max; inR.step = m.step; inR.value = c.ratio;
+    $("#ratioBig").textContent = "1 : " + r1(c.ratio);
+    const span = m.max - m.min, pos = (c.ratio - m.min) / (span || 1);
+    $("#ratioHint").textContent = pos < 0.34 ? "قوي وكثيف" : pos > 0.66 ? "خفيف وصافٍ" : "متوازن، الموصى به";
+    const total = 1 + c.ratio;
+    $("#barC").style.width = (100 / total) + "%"; $("#barW").style.width = (100 * c.ratio / total) + "%";
+    const esp = m.kind === "espresso";
+    $("#waterLbl").textContent = esp ? "الناتج في الكوب (Yield)" : m.kind === "cold" ? "الماء البارد" : "الماء";
+    $("#cupsCard").hidden = esp || c.method === "moka";
+    $("#cups").textContent = c.cups;
+    const water = c.coffee * c.ratio;
+    const drink = esp ? water : Math.max(0, water - c.coffee * 2);
+    $("#mTitle").textContent = m.name + " · " + m.en;
+    $("#facts").innerHTML = [
+      ["البن", r1(c.coffee) + " غ"], [esp ? "الناتج" : "الماء", Math.round(water) + " غ"],
+      [esp ? "الوقت" : "المشروب تقريبًا", esp ? m.time : Math.round(drink) + " مل"],
+      ["الطحنة", m.grind], ["الحرارة", m.temp], ["وقت التحضير", m.time]
+    ].filter((f, i) => !(esp && i === 5)).map((f) => `<div class="fact"><span>${f[0]}</span><b>${escN(f[1])}</b></div>`).join("");
+    $("#mNote").textContent = m.note || "";
+    $("#mNote").hidden = !m.note;
+    $("#toTimer").hidden = !m.steps;
+    saveCalc();
+  };
+  inC.addEventListener("input", () => { const v = parseFloat(inC.value); if (v > 0) { c.coffee = v; update("c"); } });
+  inW.addEventListener("input", () => { const v = parseFloat(inW.value); if (v > 0) { c.coffee = v / c.ratio; update("w"); } });
+  inR.addEventListener("input", () => { c.ratio = parseFloat(inR.value); update(); });
+  const fromCups = () => { const r = c.ratio; c.coffee = Math.max(1, (c.cups * c.cupMl) / (r - 2)); update(); };
+  $("#cMinus").addEventListener("click", () => { c.cups = Math.max(1, c.cups - 1); fromCups(); });
+  $("#cPlus").addEventListener("click", () => { c.cups = Math.min(12, c.cups + 1); fromCups(); });
+  $("#cupMl").addEventListener("change", (e) => { c.cupMl = +e.target.value; fromCups(); });
+  $("#toTimer").addEventListener("click", () => { S.timer.method = c.method; store.set("timerMethod", c.method); go("timer"); });
+  update();
+}
+
+/* ---------- TIMER ---------- */
+let audioCtx = null, wakeLock = null;
+function beep(f = 880, d = 0.15) {
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.frequency.value = f; o.connect(g); g.connect(audioCtx.destination);
+    g.gain.setValueAtTime(0.2, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + d);
+    o.start(); o.stop(audioCtx.currentTime + d);
+  } catch (e) {}
+  try { navigator.vibrate && navigator.vibrate(120); } catch (e) {}
+}
+function stopTick() { cancelAnimationFrame(S.timer.raf); }
+function timerDose() {
+  const T = S.timer, m = METHODS[T.method];
+  if (S.calc.method === T.method) return { coffee: S.calc.coffee, water: S.calc.coffee * S.calc.ratio };
+  return { coffee: m.dose, water: m.dose * m.ratio };
+}
+function stepTarget(st, d) { return st.w === "bloom" ? Math.round(d.coffee * 2.5) : Math.round(d.water * st.w); }
+
+function renderTimer() {
+  const T = S.timer;
+  const list = Object.entries(METHODS).filter(([, m]) => m.steps);
+  if (!METHODS[T.method] || !METHODS[T.method].steps) T.method = "v60";
+  main.innerHTML = `<section class="view">
+    <div><p class="eyebrow">مؤقّت التحضير الموجَّه</p><h1>اتبع الخطوات بالثانية والغرام</h1>
+    <p class="lead">ضع الأداة على الميزان وصفّره، ثم اضغط «ابدأ». نخبرك متى تصب وإلى أي وزن.</p></div>
+    <div class="chips" role="group" aria-label="طريقة التحضير">${list.map(([k, m]) => `<button class="chip" data-tm="${k}" aria-pressed="${k === T.method}">${esc(m.name)}</button>`).join("")}</div>
+    <div class="scale clock">
+      <div class="time" id="tTime">0:00</div>
+      <div class="target" id="tTarget"></div>
+      <div class="now" id="tNow"></div>
+      <div class="tprog"><i id="tProg"></i></div>
+    </div>
+    <div class="row"><button class="btn" id="tGo">ابدأ</button><button class="btn ghost" id="tReset">إعادة</button>
+      <span class="note" id="tDose"></span></div>
+    <div class="card"><h3>الخطوات</h3><ol class="tsteps" id="tSteps"></ol>
+      <p class="note">لتغيير الكمية استخدم <a href="#ratio">حاسبة الريشيو</a> ثم «ابدأ المؤقّت».</p></div>
+  </section>`;
+  main.querySelectorAll("[data-tm]").forEach((b) => b.addEventListener("click", () => {
+    resetTimer(); T.method = b.dataset.tm; store.set("timerMethod", T.method); renderTimer();
+  }));
+  $("#tGo").addEventListener("click", toggleTimer);
+  $("#tReset").addEventListener("click", () => { resetTimer(); drawTimer(); });
+  drawTimer();
+  if (T.running) tick();
+}
+function toggleTimer() {
+  const T = S.timer;
+  if (T.running) { T.elapsed += (performance.now() - T.start) / 1000; T.running = false; stopTick(); releaseWake(); }
+  else { T.start = performance.now(); T.running = true; beep(660, .08); requestWake(); tick(); }
+  drawTimer();
+}
+function resetTimer() { const T = S.timer; T.running = false; T.elapsed = 0; T.lastStep = -1; stopTick(); releaseWake(); }
+async function requestWake() { try { wakeLock = await navigator.wakeLock.request("screen"); } catch (e) {} }
+function releaseWake() { try { wakeLock && wakeLock.release(); } catch (e) {} wakeLock = null; }
+function curTime() { const T = S.timer; return T.elapsed + (T.running ? (performance.now() - T.start) / 1000 : 0); }
+function tick() { drawTimer(); if (S.timer.running) S.timer.raf = requestAnimationFrame(tick); }
+function drawTimer() {
+  const T = S.timer, m = METHODS[T.method], d = timerDose();
+  if (!$("#tTime")) return;
+  const t = curTime();
+  let idx = -1; m.steps.forEach((s, i) => { if (t >= s.at) idx = i; });
+  if (!T.running && t === 0) idx = -1;
+  if (T.running && idx !== T.lastStep) { if (T.lastStep !== -1 || idx > 0) beep(); T.lastStep = idx; }
+  const done = t >= m.end;
+  if (done && T.running) { T.elapsed = m.end; T.running = false; stopTick(); releaseWake(); beep(990, .3); }
+  $("#tTime").textContent = fmtT(Math.min(t, m.end));
+  const st = idx >= 0 ? m.steps[idx] : m.steps[0];
+  const tgt = stepTarget(st, d);
+  const isEsp = m.kind === "espresso";
+  $("#tTarget").innerHTML = (isEsp && idx < m.steps.length - 1 && idx >= 0 && st.w < 1) ? `الهدف النهائي <b class="num">${Math.round(d.water)}</b> غ` : `${idx < 0 ? "أول صبة حتى" : (isEsp ? "الهدف" : "الميزان يجب أن يقرأ")} <b class="num">${tgt}</b> غ`;
+  $("#tNow").textContent = done ? "انتهى التحضير. تذوّق ودوّن ملاحظتك." : idx < 0 ? "جاهز؟ " + m.steps[0].txt : st.txt;
+  $("#tProg").style.width = Math.min(100, (t / m.end) * 100) + "%";
+  $("#tGo").textContent = T.running ? "إيقاف مؤقت" : (t > 0 && !done ? "متابعة" : "ابدأ");
+  $("#tGo").disabled = done;
+  $("#tDose").innerHTML = `<bdi>${esc(m.name)}</bdi> · <span class="num">${r1(d.coffee)}g → ${Math.round(d.water)}g</span>`;
+  $("#tSteps").innerHTML = m.steps.map((s, i) => `<li class="${i < idx ? "past" : i === idx ? "cur" : ""}"><span class="num">${fmtT(s.at)}</span><span>${escN(s.txt)}</span><span class="w">${isEsp && s.w < 1 ? "" : stepTarget(s, d) + "g"}</span></li>`).join("") +
+    `<li class="${done ? "cur" : ""}"><span class="num">${fmtT(m.end)}</span><span>النهاية</span><span></span></li>`;
+}
+
+/* ---------- RECIPES ---------- */
+function renderRecipes() {
+  main.innerHTML = `<section class="view">
+    <div><p class="eyebrow">دليل الوصفات · ${DRINKS.length} مشروبًا</p><h1>وصفة كل مشروب</h1>
+    <p class="lead">المقادير بالغرام والمليلتر لكوب واحد، مع ترتيب التحضير ونصيحة من خلف البار.</p></div>
+    <input class="search" id="dq" type="search" placeholder="ابحث: لاتيه، Cortado، بارد…" aria-label="ابحث في الوصفات">
+    <div class="chips" id="cats" role="group" aria-label="التصنيف">${CATS.map(([k, n]) => `<button class="chip" data-c="${k}" aria-pressed="${k === S.cat}">${n}</button>`).join("")}</div>
+    <div class="drinks" id="drinks"></div>
+  </section>`;
+  $("#dq").value = S.q;
+  const draw = () => {
+    const q = S.q.trim().toLowerCase();
+    const rows = DRINKS.filter((d) => (S.cat === "all" || (S.cat === "fav" ? S.favs[d.id] : d.cat === S.cat)) &&
+      (!q || (d.name + " " + d.en + " " + d.base).toLowerCase().includes(q)));
+    $("#drinks").innerHTML = rows.length ? rows.map((d) => `<button class="drink" data-d="${d.id}">
+      ${S.favs[d.id] ? `<span class="fav-mark" aria-label="مفضلة">★</span>` : ""}
+      <span class="en">${esc(d.en)}</span><span class="name">${esc(d.name)}</span><span class="base">${escN(d.base)}</span>
+      <span class="meta"><span class="tag lv${d.lv}">${["", "سهل", "متوسط", "متقدم"][d.lv]}</span><span class="tag">${escN(d.cup)}</span></span></button>`).join("")
+      : `<p class="empty">${S.cat === "fav" ? "لم تضف مفضلات بعد. افتح أي وصفة واضغط ☆." : "لا توجد وصفة مطابقة."}</p>`;
+    $("#drinks").querySelectorAll("[data-d]").forEach((b) => b.addEventListener("click", () => go("drink-" + b.dataset.d)));
+  };
+  $("#dq").addEventListener("input", (e) => { S.q = e.target.value; draw(); });
+  main.querySelectorAll("[data-c]").forEach((b) => b.addEventListener("click", () => {
+    S.cat = b.dataset.c; main.querySelectorAll("[data-c]").forEach((x) => x.setAttribute("aria-pressed", x === b)); draw();
+  }));
+  draw();
+}
+
+function cupSVG(layers) {
+  // glass: trapezoid from y=12 to y=120; fill bottom→top
+  const top = 14, bot = 118, H = bot - top;
+  let y = bot, defs = "", rects = "";
+  layers.forEach(([k, share], i) => {
+    const h = H * share; y -= h;
+    rects += `<rect x="0" y="${y.toFixed(1)}" width="100" height="${(h + .6).toFixed(1)}" fill="${L[k][1]}"/>`;
+  });
+  return `<svg viewBox="0 0 100 130" role="img" aria-label="مكونات الكوب">
+    <defs><clipPath id="glass"><path d="M14 12 L86 12 L78 120 Q77 124 73 124 L27 124 Q23 124 22 120 Z"/></clipPath></defs>
+    <g clip-path="url(#glass)"><rect x="0" y="0" width="100" height="130" fill="var(--surface-2)"/>${rects}</g>
+    <path d="M14 12 L86 12 L78 120 Q77 124 73 124 L27 124 Q23 124 22 120 Z" fill="none" stroke="var(--ink)" stroke-width="2.2" stroke-linejoin="round"/></svg>`;
+}
+
+function renderDrink(id) {
+  const d = DRINKS.find((x) => x.id === id);
+  if (!d) return go("recipes");
+  const seen = new Set(), legend = d.layers.slice().reverse().filter(([k]) => !seen.has(k) && seen.add(k));
+  const fav = !!S.favs[d.id];
+  main.innerHTML = `<section class="view">
+    <button class="back" id="back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>كل الوصفات</button>
+    <div class="row" style="justify-content:space-between;align-items:flex-start">
+      <div style="min-width:0;flex:1"><p class="eyebrow num" style="direction:ltr;text-align:right">${esc(d.en)}</p><h1>${esc(d.name)}</h1><p class="lead">${esc(d.base)}</p></div>
+      <button class="icon-btn" id="fav" aria-pressed="${fav}" aria-label="${fav ? "إزالة من المفضلة" : "إضافة للمفضلة"}" style="color:var(--crema);font-size:1.2rem">${fav ? "★" : "☆"}</button>
+    </div>
+    <div class="card cup">${cupSVG(d.layers)}<div class="layers">${legend.map(([k]) => `<span><i style="background:${L[k][1]};border:1px solid var(--line)"></i>${L[k][0]}</span>`).join("")}</div></div>
+    <div class="facts">
+      <div class="fact"><span>الكوب</span><b>${escN(d.cup)}</b></div>
+      <div class="fact"><span>النسبة</span><b>${escN(d.ratio)}</b></div>
+      <div class="fact"><span>الوقت</span><b>${escN(d.time)}</b></div>
+      <div class="fact"><span>المستوى</span><b>${["", "سهل", "متوسط", "متقدم"][d.lv]}</b></div>
+    </div>
+    <div class="card"><h2>المقادير</h2><ul class="ings">${d.ings.map(([a, b]) => `<li><span>${escN(a)}</span><b>${escN(b)}</b></li>`).join("")}</ul></div>
+    <div class="card"><h2>طريقة التحضير</h2><ol class="steps">${d.steps.map((s) => `<li><span>${escN(s)}</span></li>`).join("")}</ol></div>
+    <div class="key"><b>نصيحة الباريستا:</b> ${escN(d.tip)}</div>
+    ${d.method ? `<div class="row">${METHODS[d.method].steps ? `<button class="btn" id="dTimer">افتح المؤقّت لهذه الطريقة</button>` : ""}<button class="btn ghost" id="dCalc">احسب الكمية بالريشيو</button></div>` : ""}
+  </section>`;
+  $("#back").addEventListener("click", () => go("recipes"));
+  $("#fav").addEventListener("click", () => {
+    if (S.favs[d.id]) delete S.favs[d.id]; else S.favs[d.id] = true;
+    store.set("favs", S.favs); renderDrink(id);
+  });
+  const m = d.method && METHODS[d.method];
+  if (m) {
+    const setCalc = () => { S.calc.method = d.method; S.calc.ratio = m.ratio; S.calc.coffee = m.dose; saveCalc(); };
+    if ($("#dTimer")) $("#dTimer").addEventListener("click", () => { setCalc(); S.timer.method = d.method; resetTimer(); go("timer"); });
+    $("#dCalc").addEventListener("click", () => { setCalc(); go("ratio"); });
+  }
+}
+
+route();
+
+/* offline support when installed from the repo (ignored where service workers are unavailable) */
+try { if ("serviceWorker" in navigator && location.protocol === "https:" && /\/barista\//.test(location.pathname)) navigator.serviceWorker.register("sw.js").catch(() => {}); } catch (e) {}
+</script>
+</body>
+</html>
