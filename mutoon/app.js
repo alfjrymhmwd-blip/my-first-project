@@ -404,6 +404,7 @@
     const exam = '<button class="lesson-item exam-item' + (examDone ? " done" : allMastered ? " current" : "") + '" data-go="#/exam/matn/' + id + '"' + (allMastered && open ? "" : " disabled") + '><span class="num">' + (examDone ? "✓" : "🎓") + '</span><span class="grow"><b>الاختبار النهائي للمتن</b><div class="muted small">' + ar(QCOUNT.matn) + " سؤالاً من كل الدروس · النجاح " + pct(PASS.matn) + "</div></span>" + (examDone ? '<span class="pill good">' + pct(S.matns[id].score) + "</span>" : "") + "</button>";
     app.innerHTML =
       '<div class="stack fade-in"><section class="card"><div class="muted small">' + esc(L.name) + "</div><h1>" + esc(m.fullTitle || m.title) + '</h1><div class="muted">' + esc(m.author) + (m.died ? " (ت " + esc(m.died) + ")" : "") + "</div>" +
+      (m.note ? '<div class="muted small">' + esc(m.note) + "</div>" : "") +
       '<div class="row" style="margin-top:12px"><div class="grow"><div class="bar"><i style="width:' + Math.round(p * 100) + '%"></i></div></div><b>' + pct(p) + "</b></div>" +
       (open ? "" : '<div class="tip" style="margin-top:12px">هذا المتن مقفل حتى تُجاز في المتن الذي قبله. يمكنك قراءته الآن، وتُفتح الاختبارات عند وصولك إليه.</div>') +
       '<div class="btns" style="margin-top:12px"><a class="btn secondary" href="#/read/' + id + '">قراءة المتن كاملاً</a></div></section>' +

@@ -1,10 +1,10 @@
 // أكاديمية المتون — يعمل دون إنترنت: يحفظ ملفات التطبيق والنصوص والخطوط في الجهاز.
-const SHELL = "mutoon-academy-v1";
+const SHELL = "mutoon-academy-v2";
 const ASSETS = [
   "./", "./index.html", "./style.css", "./app.js", "./app-data.js", "./manifest.webmanifest",
   "./icon.svg", "./icon-192.png", "./icon-512.png",
   "./data/nawaqid.js", "./data/qawaid.js", "./data/usul.js", "./data/nawawi.js",
-  "./data/tuhfa.js", "./data/shurut.js", "./data/bayquniyya.js", "./data/unwan.js"
+  "./data/tuhfa.js", "./data/shurut.js", "./data/tawhid.js", "./data/bayquniyya.js", "./data/unwan.js"
 ];
 
 self.addEventListener("install", (e) => {
