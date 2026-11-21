@@ -44,7 +44,8 @@
     if (S.settings.theme === "auto") root.removeAttribute("data-theme"); else root.setAttribute("data-theme", S.settings.theme);
     root.style.setProperty("--matn-size", SIZES[S.settings.size] + "rem");
     const dark = S.settings.theme === "dark" || (S.settings.theme === "auto" && matchMedia("(prefers-color-scheme: dark)").matches);
-    $('meta[name="theme-color"]').setAttribute("content", dark ? "#11161d" : "#1d3557");
+    const tc = $('meta[name="theme-color"]');
+    if (tc) tc.setAttribute("content", dark ? "#11161d" : "#1d3557");
   }
 
   function bumpStreak() {
@@ -764,10 +765,12 @@
       if (Q && !Q.done) renderQ(); else if (!Q) route();
     }));
     $("#resetBtn").onclick = () => {
-      if (!confirm("سيُمسح كل تقدّمك في الأكاديمية. هل أنت متأكد؟")) return;
-      const keep = S.settings; S = blank(); S.settings = keep; save(); closeSettings(); go("#/"); toast("تم مسح التقدّم");
+      ask("سيُمسح كل تقدّمك في الأكاديمية: الدروس المتقنة والشهادات والمراجعات. هل أنت متأكد؟", "نعم، امسح", () => {
+        const keep = S.settings; S = blank(); S.settings = keep; save(); go("#/"); toast("تم مسح التقدّم");
+      });
     };
     $("#exportBtn").onclick = () => {
+      try { navigator.clipboard.writeText(JSON.stringify(S)).then(() => toast("نُسخت النسخة الاحتياطية أيضاً"), () => {}); } catch (e) { /* clipboard unavailable */ }
       const blob = new Blob([JSON.stringify(S)], { type: "application/json" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob); a.download = "mutoon-academy-backup.json"; a.click();
@@ -787,11 +790,28 @@
   }
   function closeSettings() { $("#modal").hidden = true; $("#modal").innerHTML = ""; }
 
+  // In-page confirmation (browser dialogs are not available everywhere).
+  function ask(msg, okLabel, onOk) {
+    const md = $("#modal");
+    md.innerHTML = '<div class="sheet" role="alertdialog" aria-modal="true"><p style="font-weight:700;margin-top:0">' + esc(msg) + '</p><div class="btns"><button class="btn" id="askOk">' + esc(okLabel) + '</button><button class="btn secondary" id="askNo">إلغاء</button></div></div>';
+    md.hidden = false;
+    md.onclick = (e) => { if (e.target === md) closeSettings(); };
+    $("#askNo").onclick = closeSettings;
+    $("#askOk").onclick = () => { closeSettings(); onOk(); };
+    $("#askOk").focus();
+  }
+
   // ---------- Router ----------
-  function go(h) { if (location.hash === h) route(); else location.hash = h; }
+  // The current view lives in `cur`; the address bar follows it where the host allows.
+  let cur = location.hash && location.hash.startsWith("#/") ? location.hash : "#/";
+  function go(h) {
+    cur = h;
+    route();
+    try { if (location.hash !== h) location.hash = h; } catch (e) { /* hash not writable here */ }
+  }
   let lastRoute = "";
   function route() {
-    const h = location.hash.replace(/^#\/?/, "");
+    const h = cur.replace(/^#\/?/, "");
     const p = h.split("/").filter(Boolean);
     if (p[0] !== "lesson" || lastRoute.split("/").slice(0, 3).join("/") !== p.slice(0, 3).join("/")) viewLesson.mode = "read";
     lastRoute = p.join("/");
@@ -813,8 +833,8 @@
     if (b && !b.disabled) go(b.dataset.go);
   });
   $("#backBtn").onclick = () => {
-    if (Q && !Q.done && !confirm("هل تريد الخروج من الاختبار؟ لن تُحفظ نتيجته.")) return;
-    const p = location.hash.replace(/^#\/?/, "").split("/");
+    if (Q && !Q.done) { ask("هل تريد الخروج من الاختبار؟ لن تُحفظ نتيجته.", "نعم، اخرج", () => { Q = null; route(); }); return; }
+    const p = cur.replace(/^#\/?/, "").split("/");
     if (Q) { Q = null; route(); return; }
     if (p[0] === "lesson" || p[0] === "read" || (p[0] === "exam" && p[1] === "matn") || (p[0] === "cert" && p[1] === "matn")) go("#/matn/" + (p[0] === "lesson" || p[0] === "read" ? p[1] : p[2]));
     else go("#/");
@@ -823,7 +843,17 @@
   $("#settingsBtn").onclick = openSettings;
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("#modal").hidden) closeSettings(); });
   matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applySettings);
-  window.addEventListener("hashchange", route);
+  window.addEventListener("hashchange", () => {
+    const h = location.hash && location.hash.startsWith("#/") ? location.hash : "#/";
+    if (h === cur) return;
+    cur = h; route();
+  });
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest('a[href^="#/"]');
+    if (!a) return;
+    e.preventDefault();
+    go(a.getAttribute("href"));
+  });
 
   applySettings();
   route();
