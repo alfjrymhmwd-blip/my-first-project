@@ -226,8 +226,13 @@ const store = { get(k) { try { return JSON.parse(localStorage.getItem(k)); } cat
 
 let INDEX = null, CURATED = {};
 const BOOKS = {};               // "b8" -> rows [[key, displayNo, text]]
-async function getJSON(u) { const r = await fetch(u); if (!r.ok) throw new Error(u + " " + r.status); return r.json(); }
-async function loadBook(c, id) { const k = c + id; if (!BOOKS[k]) BOOKS[k] = await getJSON(`data/${k}.json`); return BOOKS[k]; }
+async function getJSON(u) {
+  for (let i = 0; ; i++) {
+    try { const r = await fetch(u); if (!r.ok) throw new Error(u + " " + r.status); return await r.json(); }
+    catch (e) { if (i >= 1) throw e; await new Promise((ok) => setTimeout(ok, 800)); }
+  }
+}
+async function loadBook(c, id) { const k = c + id; if (!BOOKS[k]) BOOKS[k] = getJSON(`data/${k}.json`).catch((e) => { delete BOOKS[k]; throw e; }); return BOOKS[k]; }
 const bookMeta = (c, id) => INDEX[c].books.find((b) => b.id === +id);
 const hkey = (c, id, key) => `h-${c}-${id}-${key}`;
 const dispNo = (c, row) => row[1] ? ar(row[1]) : (c === "m" ? "—" : ar(row[0]));
@@ -251,7 +256,7 @@ async function viewHome() {
   if (ck.length) {
     const k = ck[Math.floor(Date.now() / 86400000) % ck.length];
     const [c, key] = k.split(":");
-    const loc = await findCurated(c, key);
+    const loc = await findCurated(c, key).catch(() => null);
     if (loc) {
       const cur = CURATED[k];
       today = `<section class="folio">
@@ -463,7 +468,7 @@ async function viewHifz() {
   for (const [c, id, key] of memo) { const row = (await loadBook(c, id)).find((r) => r[0] === key); if (row) items.push([c, id, row]); }
   const start = Object.keys(CURATED).filter((k) => !S.memo[k]).slice(0, 12);
   const startRows = [];
-  for (const k of start) { const [c, key] = k.split(":"); const loc = await findCurated(c, key); if (loc) startRows.push([c, loc.id, loc.row, CURATED[k].ttl]); }
+  for (const k of start) { const [c, key] = k.split(":"); const loc = await findCurated(c, key).catch(() => null); if (loc) startRows.push([c, loc.id, loc.row, CURATED[k].ttl]); }
   return `<h2>الحفظ</h2>
   <section class="panel"><div class="stats">
     <div><b>${ar(items.length)}</b><span>حديثًا حفظته</span></div>
@@ -480,7 +485,7 @@ const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) {
 async function quizPool() {
   const pool = [], seen = {};
   for (const [c, id, key] of Object.values(S.memo)) { const row = (await loadBook(c, id)).find((r) => r[0] === key); if (row) { pool.push({ c, id, row }); seen[c + ":" + key] = 1; } }
-  for (const k of Object.keys(CURATED)) { if (seen[k]) continue; const [c, key] = k.split(":"); const loc = await findCurated(c, key); if (loc) pool.push({ c, id: loc.id, row: loc.row }); }
+  for (const k of Object.keys(CURATED)) { if (seen[k]) continue; const [c, key] = k.split(":"); const loc = await findCurated(c, key).catch(() => null); if (loc) pool.push({ c, id: loc.id, row: loc.row }); }
   return pool;
 }
 function halves(t) { const w = memoText(t).split(/\s+/); const cut = Math.ceil(w.length / 2); return [w.slice(0, cut).join(" "), w.slice(cut).join(" ")]; }
@@ -543,6 +548,8 @@ async function saveAll() {
 
 /* ---------- لمعرفة موضع الأحاديث المشروحة ---------- */
 async function findCurated(c, key) {
+  const cur = CURATED[c + ":" + key];
+  if (cur && cur.b !== undefined) { const row = (await loadBook(c, cur.b)).find((r) => r[0] === key); return row ? { id: cur.b, row } : null; }
   for (const b of INDEX[c].books) { if (c === "b" && (parseFloat(key) < parseFloat(b.k0) || parseFloat(key) > parseFloat(b.k1))) continue;
     const rows = await loadBook(c, b.id); const row = rows.find((r) => r[0] === key); if (row) return { id: b.id, row }; }
   return null;
@@ -562,7 +569,7 @@ async function route() {
     else if (h === "hifz") { tab = "hifz"; html = await viewHifz(); }
     else if (h === "quiz") { tab = "hifz"; html = await viewQuiz(); }
     else html = await viewHome();
-  } catch (e) { html = `<div class="panel"><p>تعذّر تحميل البيانات. تحقق من الاتصال ثم حدّث الصفحة.</p><p class="muted small">${esc(e.message || e)}</p></div>`; }
+  } catch (e) { html = `<div class="panel"><p>تعذّر تحميل الأحاديث. تحقق من اتصالك بالإنترنت ثم أعد المحاولة.</p><div class="row"><button class="btn primary" data-act="retry" type="button">أعد المحاولة</button></div></div>`; }
   if (my !== seq) return;
   app.innerHTML = html;
   document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("on", t.dataset.go === tab));
@@ -596,6 +603,7 @@ document.addEventListener("click", async (e) => {
       try { await navigator.clipboard.writeText(txt); ok(); } catch (err) { const ta = document.createElement("textarea"); ta.value = txt; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); ok(); } catch (x) { toast("تعذّر النسخ"); } ta.remove(); }
       break; }
     case "moreResults": sq.lim += 30; runSearch(); break;
+    case "retry": route(); break;
     case "offline": el.disabled = true; saveAll(); break;
     case "reveal": document.querySelectorAll("#memoText .w.hid").forEach((w) => { w.classList.remove("hid"); w.classList.add("rev"); }); break;
     case "rehide": route(); break;
@@ -617,8 +625,8 @@ document.getElementById("themeBtn").addEventListener("click", () => {
 });
 applySize();
 // داخل مشروع «رفيق الحفظ»: زر التبديل إلى القرآن وعامل العمل دون إنترنت المشترك
-fetch("../index.html", { method: "HEAD", cache: "no-store" }).then((r) => {
-  if (!r.ok) return;
+fetch("../index.html", { cache: "no-store" }).then(async (r) => {
+  if (!r.ok || !(await r.text()).includes("رفيق الحفظ")) return;
   document.getElementById("appSwitch").hidden = false;
   if (!canOffline) return;
   navigator.serviceWorker.getRegistrations().then((rs) => rs.forEach((x) => { if (/\/sahih\/$/.test(x.scope)) x.unregister(); })).catch(() => {});
