@@ -1,0 +1,19 @@
+{
+  "name": "أكاديمية المتون — حفظ متون طالب العلم",
+  "short_name": "أكاديمية المتون",
+  "description": "احفظ متون طالب العلم بالمستويات والدروس والاختبارات حتى الإتقان، مع مراجعة متباعدة وشهادات، ويعمل دون إنترنت",
+  "lang": "ar",
+  "dir": "rtl",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f0e6",
+  "theme_color": "#1d3557",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

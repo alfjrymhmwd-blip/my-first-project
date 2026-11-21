@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>أكاديمية المتون</title>
+<meta name="description" content="أكاديمية لحفظ متون طالب العلم بالمستويات والاختبارات حتى الإتقان">
+<meta name="theme-color" content="#1d3557">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="أكاديمية المتون">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <button class="icon-btn" id="backBtn" aria-label="رجوع" hidden>
+    <svg viewBox="0 0 24 24" width="22" height="22"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <div class="brand" id="brand"><span class="logo">م</span><span id="topTitle">أكاديمية المتون</span></div>
+  <div class="top-actions">
+    <span class="streak" id="streak" title="أيام متتالية">🔥 <b>0</b></span>
+    <button class="icon-btn" id="settingsBtn" aria-label="الإعدادات">
+      <svg viewBox="0 0 24 24" width="22" height="22"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</header>
+<main id="app" tabindex="-1"></main>
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="modal" class="modal" hidden></div>
+
+<script src="app-data.js"></script>
+<script src="data/nawaqid.js"></script>
+<script src="data/qawaid.js"></script>
+<script src="data/usul.js"></script>
+<script src="data/nawawi.js"></script>
+<script src="data/tuhfa.js"></script>
+<script src="data/shurut.js"></script>
+<script src="data/tawhid.js"></script>
+<script src="data/bayquniyya.js"></script>
+<script src="data/ilbiri.js"></script>
+<script src="data/ajurrumiyya.js"></script>
+<script src="data/wasitiyya.js"></script>
+<script src="data/waraqat.js"></script>
+<script src="data/unwan.js"></script>
+<script src="data/rahbiyya.js"></script>
+<script src="data/tahawiyya.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
