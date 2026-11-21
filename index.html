@@ -175,7 +175,7 @@
 <header>
   <h1>📖 رفيق الحفظ</h1>
   <span class="netbadge" id="netBadge" hidden>⚡ دون اتصال</span>
-  <nav class="appswitch" aria-label="التبديل بين التطبيقين"><a class="on" href="index.html" aria-current="page">القرآن</a><a href="hadith.html">الأحاديث</a></nav>
+  <nav class="appswitch" aria-label="التبديل بين التطبيقين"><a class="on" href="index.html" aria-current="page">القرآن</a><a href="sahih/">الأحاديث</a></nav>
   <button id="themeBtn" title="الوضع الليلي">🌓</button>
 </header>
 
@@ -423,15 +423,23 @@
     store.set("dl", dl);
   }
 
+  // Every network request gets a time limit, so a stalled connection shows an error instead of loading forever.
+  async function fetchT(url, opts = {}, ms = 15000) {
+    const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), ms);
+    try { return await fetch(url, { ...opts, signal: ctl.signal }); }
+    catch (e) { throw new Error(e.name === "AbortError" ? "انتهت مهلة الاتصال" : "تعذّر الاتصال"); }
+    finally { clearTimeout(t); }
+  }
+
   // Quran data never changes → cache-first, network on miss.
-  async function fetchJSON(url) {
+  async function fetchJSON(url, ms) {
     if (hasCache) {
       try {
         const hit = await (await openCache(DATA_CACHE)).match(url);
         if (hit) { const j = await hit.json(); if (j.code === 200) return j.data; }
       } catch {}
     }
-    const r = await fetch(url);
+    const r = await fetchT(url, {}, ms);
     if (!r.ok) throw new Error("HTTP " + r.status);
     const j = await r.clone().json();
     if (j.code !== 200) throw new Error(j.status || "API error");
@@ -446,7 +454,7 @@
   async function cacheFullText() {
     if (!hasCache || store.get("fullText", false) || !navigator.onLine) return;
     try {
-      const r = await fetch(`${API}/quran/quran-uthmani`);
+      const r = await fetchT(`${API}/quran/quran-uthmani`, {}, 90000);
       const j = await r.json();
       if (j.code !== 200) return;
       const c = await openCache(DATA_CACHE);
@@ -465,8 +473,8 @@
       const c = await openCache(AUDIO_CACHE);
       if (await c.match(url)) return true;
       let r;
-      try { r = await fetch(url, { mode: "cors" }); if (!r.ok) throw new Error(); }
-      catch { r = await fetch(url, { mode: "no-cors" }); }
+      try { r = await fetchT(url, { mode: "cors" }, 60000); if (!r.ok) throw new Error(); }
+      catch { r = await fetchT(url, { mode: "no-cors" }, 60000); }
       if (r.type !== "opaque" && !r.ok) return false;
       await c.put(url, r);
       return true;
@@ -522,7 +530,7 @@
 
   async function loadSurah(n, reciter) {
     el.quran.innerHTML = '<div class="loading">جارٍ تحميل السورة…</div>';
-    const [tRes, aRes] = await Promise.allSettled([fetchJSON(textURL(n)), fetchJSON(audioURL(n, reciter))]);
+    const [tRes, aRes] = await Promise.allSettled([fetchJSON(textURL(n)), fetchJSON(audioURL(n, reciter), 10000)]);
     if (tRes.status !== "fulfilled") throw tRes.reason;
     const textEd = tRes.value;
     const audioEd = aRes.status === "fulfilled" ? aRes.value : null;
@@ -944,7 +952,8 @@
       clampRangeTo(current.ayahs.length);
       save(); syncInputs(); render();
     } catch (err) {
-      el.quran.innerHTML = `<div class="error">تعذّر تحميل السورة (${err.message}). ${navigator.onLine ? "تحقق من الاتصال ثم أعد المحاولة." : "أنت دون اتصال ولم تُحفظ هذه السورة على جهازك بعد."}</div>`;
+      el.quran.innerHTML = `<div class="error">تعذّر تحميل السورة (${err.message}). ${navigator.onLine ? "تحقق من الاتصال ثم أعد المحاولة." : "أنت دون اتصال ولم تُحفظ هذه السورة على جهازك بعد."}<br><button class="chip" id="retryBtn" type="button" style="margin-top:12px">أعد المحاولة</button></div>`;
+      $("retryBtn").onclick = () => changeSurah(n, keepRange);
     }
     renderOffline();
   }
@@ -1103,7 +1112,8 @@
       await changeSurah(+S.surah, true);
       cacheFullText();
     } catch (err) {
-      el.quran.innerHTML = `<div class="error">تعذّر الاتصال بالخادم (${err.message}). عند أول تشغيل يحتاج التطبيق إلى الإنترنت ليحفظ المصحف على جهازك.</div>`;
+      el.quran.innerHTML = `<div class="error">تعذّر الاتصال بالخادم (${err.message}). عند أول تشغيل يحتاج التطبيق إلى الإنترنت ليحفظ المصحف على جهازك.<br><button class="chip" id="retryBtn" type="button" style="margin-top:12px">أعد المحاولة</button></div>`;
+      $("retryBtn").onclick = () => location.reload();
     }
     renderOffline();
   })();
