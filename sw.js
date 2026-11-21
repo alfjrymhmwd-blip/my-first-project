@@ -1,6 +1,6 @@
 // رفيق الحفظ — service worker for the whole app (Quran + hadith): keeps it and its fonts available offline.
 // Quran text and recitations are cached by the page (Cache API: hifz-data / hifz-audio).
-const SHELL = "hifz-shell-v4";
+const SHELL = "hifz-shell-v5";
 const ASSETS = ["./", "./index.html", "./hadith.html", "./sahih/", "./sahih/index.html", "./sahih/icon.svg", "./sahih/icon-192.png", "./sahih/data/index.json", "./sahih/data/curated.json", "./manifest.webmanifest", "./icon.svg", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", (e) => {
@@ -32,8 +32,9 @@ self.addEventListener("fetch", (e) => {
       const c = await caches.open(SHELL);
       const hit = (await c.match(req, { ignoreSearch: true })) ||
         (req.mode === "navigate" ? await c.match(url.pathname.includes("/sahih/") ? "./sahih/index.html" : "./index.html") : undefined);
-      const net = fetch(req).then((r) => { if (r.ok) c.put(req, r.clone()); return r; }).catch(() => hit);
-      return hit || net;
+      const net = fetch(req).then((r) => { if (r.ok) c.put(req, r.clone()); return r; });
+      if (hit) { net.catch(() => {}); return hit; }   // refresh in the background
+      return net;                                     // no copy yet: a failed load reaches the page as a normal network error
     })());
     return;
   }
