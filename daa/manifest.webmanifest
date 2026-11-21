@@ -1,0 +1,19 @@
+{
+  "name": "رسائل الداء والدواء — ابن القيم",
+  "short_name": "الداء والدواء",
+  "description": "كل مرة تفتح التطبيق تصلك رسالة من كتاب «الداء والدواء» لابن القيم مع شرح مبسّط، والكتاب كاملًا للقراءة، ويعمل دون إنترنت",
+  "lang": "ar",
+  "dir": "rtl",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#efe7d8",
+  "theme_color": "#7a2e2a",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
