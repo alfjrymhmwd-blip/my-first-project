@@ -1,0 +1,10 @@
+{
+  "series_name": "اسم المسلسل",
+  "caption_template": "{series} | الحلقة {n}\n{title}\n\n#انمي #انميشن #{file}",
+  "fit": "blur",
+  "share_to_feed": true,
+  "release_tag": "episodes",
+  "episodes_dir": "episodes",
+  "max_seconds": 900,
+  "graph_api_version": "v21.0"
+}

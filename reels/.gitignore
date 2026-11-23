@@ -1,0 +1,4 @@
+work/
+out/
+episodes/*
+!episodes/.gitkeep
