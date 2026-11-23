@@ -1,10 +1,10 @@
 {
-  "series_name": "اسم المسلسل",
-  "caption_template": "{series} | الحلقة {n}\n{title}\n\n#انمي #انميشن #{file}",
+  "series_name": "البداية والنهاية",
+  "caption_template": "{series} | الحلقة {n}: {title}\n\nسلسلة رسوم متحركة تروي كتاب «البداية والنهاية» للحافظ ابن كثير، من بدء الخلق إلى آخر الزمان. حلقة جديدة كل يوم.\n\nالتلاوة: الشيخ محمود خليل الحصري. التعليق الصوتي مولَّد بالذكاء الاصطناعي.\n\n#البداية_والنهاية #ابن_كثير #قصص_الأنبياء #قصص_إسلامية #رسوم_متحركة #انميشن",
   "fit": "blur",
   "share_to_feed": true,
   "release_tag": "episodes",
-  "episodes_dir": "episodes",
+  "episodes_dir": "library",
   "max_seconds": 900,
   "graph_api_version": "v21.0"
 }
